@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/myprofile"
+            android:icon="@mipmap/profile"
+            android:title="My Profile" />
+
+        <item
+            android:id="@+id/manageact"
+            android:icon="@drawable/ic_menu_gallery"
+            android:title="My Activity" />
+
+        <item
+            android:id="@+id/favourite"
+            android:icon="@mipmap/favourite"
+            android:title="Favourite" />
+
+        <item
+            android:id="@+id/callog"
+            android:icon="@mipmap/calllog"
+            android:title="Recent Log" />
+
+        <item
+            android:id="@+id/help"
+            android:icon="@mipmap/info"
+            android:title="Help/Feedback" />
+    </group>
+
+
+</menu>
