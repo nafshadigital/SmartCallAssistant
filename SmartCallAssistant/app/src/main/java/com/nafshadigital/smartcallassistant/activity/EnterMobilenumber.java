@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
@@ -55,6 +57,24 @@ public class EnterMobilenumber extends AppCompatActivity {
             }
             public void onNothingSelected(AdapterView<?> arg0) { }
         });
+
+        // Enable if the button is disabled ! To prevent multiple click
+        txtmobileno.addTextChangedListener(new TextWatcher() {
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start,
+                                          int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start,
+                                      int before, int count) {
+                btnok.setEnabled(true);
+            }
+        });
     }
 
     public void getCountry() {
@@ -102,29 +122,32 @@ public class EnterMobilenumber extends AppCompatActivity {
         String confirmMessage = "Is this your correct phone number? \n" + mobileNumber;
         String windowTitle = "Confirm Your Number";
 
-        return confirmWindow(windowTitle,confirmMessage);
+        confirmWindow(windowTitle,confirmMessage);
+
+        return true;
     }
 
-    public boolean confirmWindow(String title, String message)
+    public void confirmWindow(String title, String message)
     {
-        final boolean[] userAnswer = {false};
-        AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+        final AlertDialog alertDialog = new AlertDialog.Builder(this).create();
         alertDialog.setTitle(title);
         alertDialog.setMessage(message);
         alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Yes",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        userAnswer[0] = true;
+                        alertDialog.dismiss();
+                        signUp();
+
                     }
                 });
         alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "No",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        userAnswer[0] = false;
+                        btnok.setEnabled(true);
+                        alertDialog.dismiss();
                     }
                 });
         alertDialog.show();
-        return  userAnswer[0];
     }
     public void alertWindow(String title,String message)
     {
@@ -148,41 +171,37 @@ public class EnterMobilenumber extends AppCompatActivity {
     }
     public void okverify(View view)
     {
-        if(isValidation()) {
-            UsersVO usersVO = new UsersVO();
-            usersVO.country_code = txtcountrycode.getText().toString();
-            usersVO.mobile = txtmobileno.getText().toString();
+        isValidation();
 
-            String res = MyRestAPI.PostCall("signUp", usersVO.toJSONObject());
-          //  MyToast.show(this, res);
-
-            try {
-                JSONObject jsonObject = new JSONObject(res);
-                String status = jsonObject.getString("status");
-                String id = jsonObject.getString("user_id");
-                String otp = jsonObject.getString("otp");
-             //   MyToast.show(this, "res=" + status);
-
-                if (status.equals("1")) {
-              /*  String phnnum = txtmobileno.getText().toString();
-                    try {
-                        SmsManager smsManager = SmsManager.getDefault();
-                        smsManager.sendTextMessage(phnnum, null, otp, null, null);
-                        //   Toast.makeText(context, "SMS Sent!", Toast.LENGTH_LONG).show();
-                    } catch (Exception e) {
-                        //  Toast.makeText(context, "SMS failed, please try again later!", Toast.LENGTH_LONG).show();
-                        e.printStackTrace();
-                    } */
-                     MyToast.show(this,"Success");
-                    Intent in = new Intent(this, NumberVerify.class);
-                 //   MyToast.show(this, usersVO.id);
-                    in.putExtra("userVO", id);
-                    startActivity(in);
-                }
-
-            } catch (Exception e) {
-
-            }
+        if(isValidation())
+        {
         }
+    }
+
+    public void signUp()
+    {
+        UsersVO usersVO = new UsersVO();
+        usersVO.country_code = txtcountrycode.getText().toString();
+        usersVO.mobile = txtmobileno.getText().toString();
+
+        String res = MyRestAPI.PostCall("signUp", usersVO.toJSONObject());
+
+        try {
+            JSONObject jsonObject = new JSONObject(res);
+            String status = jsonObject.getString("status");
+            String id = jsonObject.getString("user_id");
+            String otp = jsonObject.getString("otp");
+
+            if (status.equals("1")) {
+                MyToast.show(this,"Success");
+                Intent in = new Intent(this, NumberVerify.class);
+                in.putExtra("userVO", id);
+                startActivity(in);
+            }
+
+        } catch (Exception e) {
+
+        }
+
     }
 }
