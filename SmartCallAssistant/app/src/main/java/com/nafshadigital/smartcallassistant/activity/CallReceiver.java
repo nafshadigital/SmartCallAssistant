@@ -5,10 +5,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.AudioManager;
+import android.os.Bundle;
 import android.telephony.SmsManager;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 import android.widget.Toast;
 
+import com.nafshadigital.smartcallassistant.helpers.AppRunning;
 import com.nafshadigital.smartcallassistant.helpers.MyToast;
 import com.nafshadigital.smartcallassistant.vo.ActivityVO;
 import com.nafshadigital.smartcallassistant.vo.CallLogVO;
@@ -20,6 +23,7 @@ import com.nafshadigital.smartcallassistant.vo.UsersVO;
 import com.nafshadigital.smartcallassistant.webservice.ActivityService;
 import com.nafshadigital.smartcallassistant.webservice.MyRestAPI;
 
+import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -34,11 +38,12 @@ public class CallReceiver extends BroadcastReceiver {
     String message,activity_id;
     SettingsVO settingsVO;
     public static String userId;
+    Intent intent;
 
     @Override
     public void onReceive(Context context , Intent intent){
         System.out.println("Receiver Start");
-
+      this.intent = intent;
 
         if(intent.getAction().equals("android.intent.action.NEW_OUTGOING_CALL")){
             savedNumber = intent.getExtras().getString("android.intent.extra.PHONE_NUMBER");
@@ -58,6 +63,14 @@ public class CallReceiver extends BroadcastReceiver {
             }
             onCallStateChanged(context, state, number);
         }
+
+        if(!AppRunning.isMyServiceRunning(context, BgPCICallService.class)) {
+            Intent background = new Intent(context, BgPCICallService.class);
+            context.startService(background);
+        }else {
+            System.out.println("BgPCICallService: Service is running");
+        }
+
     }
 
     public void onCallStateChanged(Context context, int state, String number){
@@ -85,9 +98,83 @@ public class CallReceiver extends BroadcastReceiver {
                 if(settingsVO.favmute.equals("yes") && res > 0) {
                     AudioManager am = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
                     am.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
-              //      Toast.makeText(context, "Ringing RINGER_MODE_NORMAL" + savedNumber + " Call time " + callStartTime +" Date " + new Date() , Toast.LENGTH_LONG).show();
-                }
+                    //Toast.makeText(context, "Ringing RINGER_MODE_NORMAL" + savedNumber + " Call time " + callStartTime +" Date " + new Date() , Toast.LENGTH_LONG).show();
+                }else{
+                    if(settingsVO.ismobilemute.equals("1")){
+                        TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+                        try {
+                            // Get the getITelephony() method
+                            Class<?> classTelephony = Class.forName(telephonyManager.getClass().getName());
+                            Method method = classTelephony.getDeclaredMethod("getITelephony");
+                            // Disable access check
+                            method.setAccessible(true);
+                            // Invoke getITelephony() to get the ITelephony interface
+                            Object telephonyInterface = method.invoke(telephonyManager);
+                            // Get the endCall method from ITelephony
+                            Class<?> telephonyInterfaceClass =Class.forName(telephonyInterface.getClass().getName());
+                            Method methodEndCall = telephonyInterfaceClass.getDeclaredMethod("endCall");
+                            // Invoke endCall()
+                            methodEndCall.invoke(telephonyInterface);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            MyToast.show(context,e.getMessage());
+                        }
 
+                        activity_id =settingsVO.activity_id ;
+                        System.out.println("ActivityId="+activity_id);
+
+                        ActivityService activityService = new ActivityService(context);
+                        ActivityVO activityVO = new ActivityVO();
+                        activityVO = activityService.getActivityById(activity_id);
+                        String sms = activityVO.activity_message;
+                        //  MyToast.show(context,activityVO.activity_message);
+                        System.out.println("sms=" +sms );
+
+                        String totime = settingsVO.totime;
+                        final Date todate = DBHelper.strinToDate(totime);
+
+                        Date today = new Date();
+                        long mills = todate.getTime() - today.getTime();
+                        int hours = (int) (mills/(1000 * 60 * 60));
+                        String h= String.format("%02d",hours);
+                        int mins = (int) (mills/(1000*60)) % 60;
+                        String m= String.format("%02d",mins);
+                        String replyTime = "";
+                        if(hours > 0) {
+                            replyTime = h + " hours";
+                        }
+                        if(mins > 0) {
+                            if(replyTime .length() > 0) {
+                                replyTime = replyTime + " and ";
+                            }
+                            replyTime = replyTime + m + " minutes";
+                        }
+                        sms = sms.replace("<time>",replyTime);
+
+                        try {
+
+                               /* SmsManager smsManager = SmsManager.getDefault();
+                                smsManager.sendTextMessage(phoneNo, null, sms, null, null);
+                                Toast.makeText(context, "SMS Sent to "+ phoneNo, Toast.LENGTH_LONG).show(); */
+
+                                SharedPreferences sharedPreferences = context.getSharedPreferences("LoginDetails", Context.MODE_PRIVATE);
+                                userId = sharedPreferences.getString("userID","");
+                                //  MyToast.show(context,userId);
+                                NotificationVO noti = new NotificationVO();
+                                noti.phnNum = phoneNo;
+                                noti.user_id = userId;
+                                noti.message = sms;
+
+                                String result = MyRestAPI.PostCall("sendNotify",noti.toJSONObject());
+                                //MyToast.show(context,result);
+                                System.out.println("result="+noti.toJSONObject().toString()+" phoneno="+phoneNo);
+
+                        } catch (Exception e) {
+                            //  Toast.makeText(context, "SMS failed, please try again later!", Toast.LENGTH_LONG).show();
+                            e.printStackTrace();
+                        }
+                    }
+                }
                 isIncoming = true;
                 callStartTime = new Date();
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss a");
@@ -132,7 +219,7 @@ public class CallReceiver extends BroadcastReceiver {
 
                     settingsVO = new SettingsVO(context);
                     settingsVO.getSettings();
-
+                    Date today = new Date();
                     favoriteVO = new FavoriteVO(context);
                     phoneNo = savedNumber;
                     phoneNo = phoneNo.replace(" ", "");
@@ -140,65 +227,9 @@ public class CallReceiver extends BroadcastReceiver {
 
                     res = favoriteVO.checkFavorites(phoneNo);
 
-                    activity_id =settingsVO.activity_id ;
-                    System.out.println("ActivityId="+activity_id);
-
-                    ActivityService activityService = new ActivityService(context);
-                    ActivityVO activityVO = new ActivityVO();
-                    activityVO = activityService.getActivityById(activity_id);
-                    String sms = activityVO.activity_message;
-                  //  MyToast.show(context,activityVO.activity_message);
-                    System.out.println("sms=" +sms );
-
-                    String totime = settingsVO.totime;
-                    final Date todate = DBHelper.strinToDate(totime);
-
-                    Date today = new Date();
-                    long mills = todate.getTime() - today.getTime();
-                    int hours = (int) (mills/(1000 * 60 * 60));
-                    String h= String.format("%02d",hours);
-                    int mins = (int) (mills/(1000*60)) % 60;
-                    String m= String.format("%02d",mins);
-                    String replyTime = "";
-                    if(hours > 0) {
-                        replyTime = h + " hours";
-                    }
-                    if(mins > 0) {
-                        if(replyTime .length() > 0) {
-                            replyTime = replyTime + " and ";
-                        }
-                        replyTime = replyTime + m + " minutes";
-                    }
-                    sms = sms.replace("<time>",replyTime);
-
-
-                    //MyToast.show(context,"Favourite Count = " + phoneNo + " => " + res);
-                    if(settingsVO.smsmute.equals("yes")) {
-                        try {
-                            if (settingsVO.ismobilemute.equals("1") && res == 0) {
-                               /* SmsManager smsManager = SmsManager.getDefault();
-                                smsManager.sendTextMessage(phoneNo, null, sms, null, null);
-                                Toast.makeText(context, "SMS Sent to "+ phoneNo, Toast.LENGTH_LONG).show(); */
-
-                                SharedPreferences sharedPreferences = context.getSharedPreferences("LoginDetails", Context.MODE_PRIVATE);
-                                userId = sharedPreferences.getString("userID","");
-                              //  MyToast.show(context,userId);
-                                NotificationVO noti = new NotificationVO();
-                                noti.phnNum = phoneNo;
-                                noti.user_id = userId;
-                                noti.message = sms;
-
-                                String result = MyRestAPI.PostCall("sendNotify",noti.toJSONObject());
-                                //MyToast.show(context,result);
-                                System.out.println("result="+noti.toJSONObject().toString()+" phoneno="+phoneNo);
-                            }
-                        } catch (Exception e) {
-                            //  Toast.makeText(context, "SMS failed, please try again later!", Toast.LENGTH_LONG).show();
-                            e.printStackTrace();
-                        }
-                    }
 
                     if(settingsVO.favmute.equals("yes") && res > 0) {
+
                         try {
                             if(settingsVO.fromtime == null || settingsVO.fromtime.equals("") || settingsVO.totime == null || settingsVO.totime.equals("") ) {
                                 System.out.println("From and to time not set.");

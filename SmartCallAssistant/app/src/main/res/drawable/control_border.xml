@@ -9,4 +9,9 @@
     <!-- Round Corners -->
     <corners android:radius="5dp" />
 
+    <selector xmlns:android="http://schemas.android.com/apk/res/android">
+        <!-- disabled state -->
+        <item android:state_enabled="false" android:color="#9D9FA2" />
+        <item android:color="#000"/>
+    </selector>
 </shape>

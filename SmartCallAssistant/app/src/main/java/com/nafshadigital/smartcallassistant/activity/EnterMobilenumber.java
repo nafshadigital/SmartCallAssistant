@@ -102,7 +102,7 @@ public class EnterMobilenumber extends AppCompatActivity {
 
             String res = MyRestAPI.PostCall("signUp", usersVO.toJSONObject());
           //  MyToast.show(this, res);
-
+            btnok.setEnabled(false);
             try {
                 JSONObject jsonObject = new JSONObject(res);
                 String status = jsonObject.getString("status");
@@ -120,15 +120,13 @@ public class EnterMobilenumber extends AppCompatActivity {
                         //  Toast.makeText(context, "SMS failed, please try again later!", Toast.LENGTH_LONG).show();
                         e.printStackTrace();
                     } */
-                     MyToast.show(this,"Success");
                     Intent in = new Intent(this, NumberVerify.class);
                  //   MyToast.show(this, usersVO.id);
                     in.putExtra("userVO", id);
                     startActivity(in);
                 }
-
             } catch (Exception e) {
-
+                btnok.setEnabled(true);
             }
         }
     }
