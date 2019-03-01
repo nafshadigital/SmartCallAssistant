@@ -122,12 +122,22 @@ class SmartCallRestHandler extends SimpleRest
 		
 		$m = new MySQL();
 		$resultUpdateAccObj = new stdClass();
-		
-    	$query = "update tbl_users set name = '{$updateAccObj -> name}', email = '{$updateAccObj -> email}' where id = '{$updateAccObj -> id}' ";
-		$m -> executeQuery($query);
-		
-		$resultUpdateAccObj -> message = "Update Account Success..";
-		
+
+
+		$query = "select count(name) from tbl_users where email = '{$updateAccObj -> email}'";
+		$isExists = $m -> executeScalar($query);
+
+		if($isExists != 0)
+		{
+			$query = "update tbl_users set name = '{$updateAccObj -> name}', email = '{$updateAccObj -> email}' where id = '{$updateAccObj -> id}' ";
+			$m -> executeQuery($query);
+
+			$resultUpdateAccObj -> message = "Update Account Success..";
+		}
+		else
+		{
+			$resultUpdateAccObj -> message = "Email Address already exist !";
+		}
 		$this -> output($resultUpdateAccObj);
 	}
 	
