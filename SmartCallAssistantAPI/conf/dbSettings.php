@@ -2,7 +2,7 @@
 
 
 
-/*---------- LOCAL ---------- */
+/*---------- LOCAL ---------- 
 
 	define("server"	,	"localhost");
 
@@ -10,20 +10,20 @@
 
 	define("db_password" ,	"");
 
-	define("database"	,	"smartcallassistant");
+	define("database"	,	"smartcallassistant"); */
 
-/* ---------- LIVE ---------- 
+/* ---------- LIVE ---------- */
 
 
 
-	define("server", "184.168.226.83");
+	define("server", "localhost");
 
-	define("username", "myvision2020");
+	define("db_username", "mcschenn_scassit");
 
-	define("password", "snow96Heavy");
+	define("db_password", "]VX0s;D&GLH!");
 
-	define("database", "myvision2020");
+	define("database", "mcschenn_smartcallassistant");
 	
-*/
+
 
 ?>

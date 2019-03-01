@@ -5,11 +5,14 @@ require_once("Mobile.php");
 include_once "conf/dbSettings.php";
 include_once 'class/MySQL.php';
 include_once 'class/MailClient.php';
+require_once 'class/twilio-php-master/Twilio/autoload.php';
+require_once 'class/twilio-php-master/TwilioAPI.php';
+
 class SmartCallRestHandler extends SimpleRest 
 {
 	function getCountry()
 	{
-		$m = new MySQL();
+	/*	$m = new MySQL();
 		$resultCountryObj = new stdClass();
 		$query = "select * from tbl_country where is_active = '1' ";
 		$res = $m -> executeQuery($query);
@@ -18,11 +21,12 @@ class SmartCallRestHandler extends SimpleRest
 		{
 			$datas [] = $row;
 		}
-		$resultCountryObj = $datas;
+		$resultCountryObj = $datas; */
 		
-		$this -> output($resultCountryObj);
+		$arr = json_decode(file_get_contents("CountryCodes.json"));
+		$this -> output($arr);
 	}
-		
+	
 	function signUp($signUpObj)
 	{
 		if(!$signUpObj)
@@ -71,6 +75,9 @@ class SmartCallRestHandler extends SimpleRest
 			$m -> executeQuery($query);
 		}
 		
+		//Send SMS to user.
+		$message = TwilioAPI::sms("{$signUpObj -> country_code}{$signUpObj -> mobile}", "Your OTP is: $otp . Regards, Smart Call Assistant");
+
 		$this -> output($resultSignUpObj);
 	}
 	
@@ -116,7 +123,7 @@ class SmartCallRestHandler extends SimpleRest
 		$m = new MySQL();
 		$resultUpdateAccObj = new stdClass();
 		
-		$query = "update tbl_users set name = '{$updateAccObj -> name}', email = '{$updateAccObj -> email}' where id = '{$updateAccObj -> id}' ";
+    	$query = "update tbl_users set name = '{$updateAccObj -> name}', email = '{$updateAccObj -> email}' where id = '{$updateAccObj -> id}' ";
 		$m -> executeQuery($query);
 		
 		$resultUpdateAccObj -> message = "Update Account Success..";
@@ -223,7 +230,6 @@ class SmartCallRestHandler extends SimpleRest
 				}
 			}
 			$this -> output($user);
-				
 }
 
 
@@ -256,7 +262,7 @@ function sendNotification($sendNotiObj){
 	
 function getMaxid($userObj){
 	$m = new MySQL();
-	$query = "select max(id) from tbl_notifications where user_id = '{$userObj -> user_id}'";
+	$query = "select max(id) from tbl_notifications where to_user_id = '{$userObj -> user_id}'";
 	$maxId = $m -> executeScalar($query);
 	$resObj = new stdClass();
 	$resObj -> maxId = $maxId;
@@ -266,11 +272,12 @@ function getMaxid($userObj){
 function getNotification($getNotiObj){
 	$m = new MySQL();
 	
-	$query = "select * from tbl_notifications where id > '{$getNotiObj -> id}' and to_user_id = '{$getNotiObj -> user_id}' order by id desc limit 0,5";
-	//echo $query;
+//	$query = "select * from tbl_notifications where id > '{$getNotiObj -> id}' and to_user_id = '{$getNotiObj -> user_id}' order by id desc limit 0,5";
+	$query = "SELECT t1.*,t2.* FROM tbl_notifications t1 LEFT OUTER JOIN tbl_users t2 ON t1.user_id = t2.id WHERE t1.id > '{$getNotiObj -> id}' AND t1.to_user_id = '{$getNotiObj -> user_id}' ORDER BY t1.id DESC LIMIT 0,5";
 	$res =  $m -> executeQuery($query);
 	$arr = array();
 	while($row = mysql_fetch_assoc($res)) {
+	    $row['created_date'] = date('Y-m-d',strtotime($row['created_date']));
 		$arr[] = $row;
 	}
 	
@@ -286,6 +293,7 @@ function getNotification($getNotiObj){
 	
 	$this -> output($objRes);
 }
+
 
 }
 ?>

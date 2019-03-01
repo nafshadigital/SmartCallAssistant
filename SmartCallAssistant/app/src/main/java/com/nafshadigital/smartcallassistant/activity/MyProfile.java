@@ -127,7 +127,14 @@ public class MyProfile extends AppCompatActivity {
             MyToast.show(this,"Enter Name");
             return false;
         }
-        else if(txtemail.getText().toString().equals(""))
+
+        if (!txtemail.getText().toString().matches("[a-zA-Z0-9._-]+@[a-z]+.[a-z]+")) {
+          //  txtemail.setError("Invalid Email Address");
+            MyToast.show(this,"Invalid EmailId");
+            return false;
+        }
+
+        /*else if(txtemail.getText().toString().equals(""))
         {
             MyToast.show(this,"Enter Email");
             return false;

@@ -1,20 +1,27 @@
 package com.nafshadigital.smartcallassistant.activity;
 
+import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TimePicker;
+
 
 import com.nafshadigital.smartcallassistant.R;
 import com.nafshadigital.smartcallassistant.helpers.MyToast;
@@ -28,14 +35,16 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
 public class Remainder extends AppCompatActivity {
-    EditText txtfromtime,txttotime;
+    static EditText txtfromtime,txttotime;
     Button btnsave;
     TextView tvremaintitle,tvremdate;
     ActivityVO selectedactivityVO;
     EditText txtrplymsg;
-    String formattedDate;
+    String formattedFromDate;
+    String formattedToDate;
     private static final int SYSTEM_ALERT_WINDOW_PERMISSION = 2084;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,26 +68,19 @@ public class Remainder extends AppCompatActivity {
 
             tvremaintitle.setText(selectedactivityVO.activity_name);
             if(selectedactivityVO.activity_message == null || selectedactivityVO.activity_message.length() == 0)
-                txtrplymsg.setText(selectedactivityVO.activity_name+". Notification to the Caller <time>.");
+                txtrplymsg.setText(selectedactivityVO.activity_name+". Please call me after <time>.");
             else
                 txtrplymsg.setText(selectedactivityVO.activity_message);
         }
 
-        String input = txtrplymsg.getText().toString();
-
-        if(input.contains("'"))
-        {
-            selectedactivityVO.activity_message = input.replace("'", "`");
-
-        }
-
-
         Calendar mcurrentTime = Calendar.getInstance();
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd ");
-        formattedDate = df.format(mcurrentTime.getTime());
-    //    MyToast.show(this,formattedDate);
+        formattedFromDate = df.format(mcurrentTime.getTime());
+        formattedToDate = df.format(mcurrentTime.getTime());
+    //    MyToast.show(this,formattedFromDate);
 
-        tvremdate.setText(formattedDate);
+        SimpleDateFormat dfDisplay = new SimpleDateFormat("dd-MM-yyyy");
+        tvremdate.setText(df.format(mcurrentTime.getTime()));
 
         datesettings();
 
@@ -91,11 +93,40 @@ public class Remainder extends AppCompatActivity {
     public boolean onOptionsItemSelected(android.view.MenuItem item){
         finish();
         return true;
-
     }
+
 
     public void remfromdate(View view)
     {
+
+        /*
+        final View dialogView = View.inflate(this, R.layout.date_time_picker, null);
+        final AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+
+        dialogView.findViewById(R.id.date_time_set).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                DatePicker datePicker = (DatePicker) dialogView.findViewById(R.id.date_picker);
+                TimePicker timePicker = (TimePicker) dialogView.findViewById(R.id.time_picker);
+
+                Calendar calendar = new GregorianCalendar(datePicker.getYear(),
+                        datePicker.getMonth(),
+                        datePicker.getDayOfMonth(),
+                        timePicker.getCurrentHour(),
+                        timePicker.getCurrentMinute());
+
+                long time = calendar.getTimeInMillis();
+                alertDialog.dismiss();
+
+                txtfromtime.setText(datePicker.getDayOfMonth() + "/" + datePicker.getMonth() + "/" + datePicker.getYear() + " " + DBHelper.getTime(timePicker.getCurrentHour(), timePicker.getCurrentMinute()));
+            }});
+        alertDialog.setView(dialogView);
+        alertDialog.show();
+
+        /* */
+       // showTruitonDatePickerDialog(view);
+       // showTruitonTimePickerDialog(view);
         Calendar mcurrentTime = Calendar.getInstance();
         int hour = mcurrentTime.get(Calendar.HOUR_OF_DAY);
         int minute = mcurrentTime.get(Calendar.MINUTE);
@@ -104,7 +135,7 @@ public class Remainder extends AppCompatActivity {
         mTimePicker = new TimePickerDialog(Remainder.this,  android.R.style.Theme_Holo_Light_Dialog,new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
-               txtfromtime.setText(DBHelper.getTime(selectedHour, selectedMinute));
+                txtfromtime.setText(DBHelper.getTime(selectedHour, selectedMinute));
             }
         }, hour, minute, false);//Yes 24 hour time
         mTimePicker.setTitle("Select Time");
@@ -112,6 +143,7 @@ public class Remainder extends AppCompatActivity {
 
 
     }
+
 
     public void remtodate(View view)
     {
@@ -146,8 +178,15 @@ public class Remainder extends AppCompatActivity {
             return false;
         }
 
-        Date fromDateVal = DBHelper.strinToDate(formattedDate + "" + txtfromtime.getText().toString());
-        Date toDateVal = DBHelper.strinToDate(formattedDate + "" + txttotime.getText().toString());
+        Date fromDateVal = DBHelper.strinToDate(formattedFromDate + "" + txtfromtime.getText().toString());
+        Date toDateVal = DBHelper.strinToDate(formattedToDate + "" + txttotime.getText().toString());
+        if(txtfromtime.getText().toString().toLowerCase().contains("pm") && txttotime.getText().toString().toLowerCase().contains("am")) {
+            Calendar mcurrentTimeTo = Calendar.getInstance();
+            mcurrentTimeTo.add(Calendar.DATE, 1);
+            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd ");
+            formattedToDate = df.format(mcurrentTimeTo.getTime());
+            toDateVal = DBHelper.strinToDate(formattedToDate  + "" + txttotime.getText().toString());
+        }
         fromDateVal.setSeconds(new Date().getSeconds());
 
         //MyToast.show(getApplicationContext(), fromDateVal.toString() + " => " + (new Date()).toString() + " = " + fromDateVal.compareTo(new Date()) );
@@ -171,8 +210,8 @@ public class Remainder extends AppCompatActivity {
 
                             //   MyToast.show(this,txtfromtime.getText().toString());
                             SettingsVO settingsVO = new SettingsVO(getApplicationContext());
-                            settingsVO.fromtime = formattedDate + "" + txtfromtime.getText().toString();
-                            settingsVO.totime = formattedDate + "" + txttotime.getText().toString();
+                            settingsVO.fromtime = formattedFromDate + "" + txtfromtime.getText().toString();
+                            settingsVO.totime = formattedToDate + "" + txttotime.getText().toString();
                             settingsVO.activity_id = selectedactivityVO.id;
                             settingsVO.activity_name = selectedactivityVO.activity_name;
                             long res = settingsVO.updateSettings();
@@ -218,4 +257,58 @@ public class Remainder extends AppCompatActivity {
                 Uri.parse("package:" + getPackageName()));
         startActivityForResult(intent, SYSTEM_ALERT_WINDOW_PERMISSION);
     }
+
+
+    public void showTruitonDatePickerDialog(View v) {
+        DialogFragment newFragment = new DatePickerFragment();
+        newFragment.show(getSupportFragmentManager(), "datePicker");
+    }
+
+    public static class DatePickerFragment extends DialogFragment implements
+            DatePickerDialog.OnDateSetListener {
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            // Use the current date as the default date in the picker
+            final Calendar c = Calendar.getInstance();
+            int year = c.get(Calendar.YEAR);
+            int month = c.get(Calendar.MONTH);
+            int day = c.get(Calendar.DAY_OF_MONTH);
+
+            // Create a new instance of DatePickerDialog and return it
+            return new DatePickerDialog(getActivity(), this, year, month, day);
+        }
+
+        public void onDateSet(DatePicker view, int year, int month, int day) {
+            // Do something with the date chosen by the user
+            txtfromtime.setText(day + "/" + (month + 1) + "/" + year);
+        }
+    }
+
+    public void showTruitonTimePickerDialog(View v) {
+        DialogFragment newFragment = new TimePickerFragment();
+        newFragment.show(getSupportFragmentManager(), "timePicker");
+    }
+
+    public static class TimePickerFragment extends DialogFragment implements
+            TimePickerDialog.OnTimeSetListener {
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            // Use the current time as the default values for the picker
+            final Calendar c = Calendar.getInstance();
+            int hour = c.get(Calendar.HOUR_OF_DAY);
+            int minute = c.get(Calendar.MINUTE);
+
+            // Create a new instance of TimePickerDialog and return it
+            return new TimePickerDialog(getActivity(), this, hour, minute,
+                    DateFormat.is24HourFormat(getActivity()));
+        }
+
+        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+            // Do something with the time chosen by the user
+            txtfromtime.setText(txtfromtime.getText() + " -" + hourOfDay + ":" + minute);
+        }
+    }
+
 }

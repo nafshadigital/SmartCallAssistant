@@ -78,7 +78,7 @@ switch($view){
 		$smartCallRestHandler -> getProfile($requestObj);
 	break;
 	
-	case "SEND_NOTIFY":
+		case "SEND_NOTIFY":
 		$smartCallRestHandler = new SmartCallRestHandler();
 		$smartCallRestHandler -> sendNotification($requestObj);
 	break; 
