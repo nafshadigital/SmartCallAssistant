@@ -85,7 +85,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10sp"
-        android:text="SMS Message"
+        android:text="Notification to the Caller"
+        android:textSize="18sp"
         android:textStyle="bold" />
 
     <EditText
@@ -94,6 +95,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10sp"
         android:textColor="#000000"
+        style="@style/buttonStyle"
         android:lines="5" android:background="@drawable/control_border" android:padding="10dp" android:inputType="none" android:enabled="false" />
 
     <Button

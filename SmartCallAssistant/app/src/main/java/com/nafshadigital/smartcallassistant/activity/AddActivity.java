@@ -17,6 +17,7 @@ import com.nafshadigital.smartcallassistant.webservice.ActivityService;
 public class AddActivity extends AppCompatActivity {
     EditText txtaddact;
     Button btnsave;
+    String actname;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,6 +28,7 @@ public class AddActivity extends AppCompatActivity {
 
         txtaddact = (EditText) findViewById(R.id.txtaddactivity);
         btnsave = (Button) findViewById(R.id.btnsaveactivity);
+
     }
 
     public boolean onOptionsItemSelected(android.view.MenuItem item){
@@ -48,8 +50,13 @@ public class AddActivity extends AppCompatActivity {
         if (isValidate()) {
             ActivityService activityService = new ActivityService(getApplicationContext());
             ActivityVO activityVO = new ActivityVO();
-            activityVO.activity_name = txtaddact.getText().toString();
 
+            actname = txtaddact.getText().toString();
+
+            actname=actname.replace("'","''");
+            activityVO.activity_name = actname;
+
+            //actname=actname.replace('"','"');
             int countact = activityService.checkActivity();
            // MyToast.show(this,"count="+countact);
             if(countact < 10) {

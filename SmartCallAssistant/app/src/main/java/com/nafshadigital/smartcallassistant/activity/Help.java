@@ -44,10 +44,16 @@ public class Help extends AppCompatActivity {
     }
 
     public boolean isVaildation(){
-        if(txttomail.getText().toString().equals("")){
+     /*   if(txttomail.getText().toString().equals("")){
             MyToast.show(this,"Enter E-Mail");
             return false;
+        } */
+
+        if (!txttomail.getText().toString().matches("[a-zA-Z0-9._-]+@[a-z]+.[a-z]+")) {
+            MyToast.show(this,"Invalid EmailId");
+            return false;
         }
+
         if(txtmessage.getText().toString().equals("")){
             MyToast.show(this,"Enter Message");
             return false;

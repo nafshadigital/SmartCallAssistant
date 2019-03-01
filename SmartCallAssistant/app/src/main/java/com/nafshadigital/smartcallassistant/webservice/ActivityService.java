@@ -23,7 +23,7 @@ public class ActivityService {
         SQLiteDatabase db = this.dbHelper.getWritableDatabase();
         ContentValues cv = new ContentValues();
 
-        String selectQuery = "select * from " + dbHelper.ACTIVITY_TABLE_NAME + " WHERE activity_name = '"+ activityVO.activity_name +"'";
+        String selectQuery = "select * from " + dbHelper.ACTIVITY_TABLE_NAME + " WHERE activity_name= '" + activityVO.activity_name+"' ";
 
         Cursor cursor = db.rawQuery(selectQuery,null);
         long res = 0;

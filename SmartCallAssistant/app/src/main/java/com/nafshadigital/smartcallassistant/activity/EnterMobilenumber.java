@@ -172,10 +172,6 @@ public class EnterMobilenumber extends AppCompatActivity {
     public void okverify(View view)
     {
         isValidation();
-
-        if(isValidation())
-        {
-        }
     }
 
     public void signUp()
