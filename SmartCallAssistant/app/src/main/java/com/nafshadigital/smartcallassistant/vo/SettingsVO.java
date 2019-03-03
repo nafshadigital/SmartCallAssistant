@@ -92,7 +92,7 @@ public class SettingsVO {
                 ismobilemute = res.getString(res.getColumnIndex("ismobilemute"));
                 System.out.println("setting obj=" + toString());
             } while (res.moveToNext());
-            System.out.println("SettingsVO.java ---> From Time from Database = "+res.getColumnIndex("fromtime") + " To Time ="+ res.getColumnIndex("totime"));
+            System.out.println("SettingsVO.java ---> From Time from Database = "+fromtime + " To Time ="+ totime);
         }
         res.close();
         db.close();

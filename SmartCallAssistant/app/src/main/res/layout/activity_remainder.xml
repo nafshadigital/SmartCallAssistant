@@ -129,20 +129,11 @@
         android:layout_alignParentBottom="true"
         />
 
+
     <Button
         android:id="@+id/btnremsave"
-        android:text="Start"
-        android:gravity="center"
-        android:layout_gravity="center"
-        android:textColor="#FFFFFF"
-        android:textSize="15sp"
-        android:layout_width="150dp"
-        android:layout_height="30dp"
-        android:background="@drawable/buttonshape"
-        android:shadowColor="#347DA8"
         android:onClick="remdatesave"
-        android:shadowDx="2"
-        android:shadowDy="2"
-        android:shadowRadius="5"
+        android:text="Start"
+        style="@style/SmartButton"
         />
 </LinearLayout>
