@@ -7,9 +7,20 @@
     android:orientation="vertical"
     tools:context="com.nafshadigital.smartcallassistant.activity.AddActivity" android:padding="10dp" android:background="@drawable/activity_gradient_bk">
 
+    <View
+        android:id = "@+id/dummy_view"
+        android:layout_height = "200dip"
+        android:layout_width = "match_parent"
+        android:visibility="invisible"
+        android:layout_alignParentBottom="true"/>
+
+
     <TextView
         android:id="@+id/tvaddactivity"
         android:layout_width="wrap_content"
+        android:textColor="#347DA8"
+        android:textStyle="bold"
+        android:textSize="25sp"
         android:layout_height="wrap_content"
         android:text="Activity Name:"/>
 
@@ -19,10 +30,28 @@
         android:layout_height="wrap_content"
         android:hint="Enter Activity"/>
 
+    <View
+        android:id = "@+id/empty_view"
+        android:layout_height = "20dip"
+        android:layout_width = "match_parent"
+        android:visibility="invisible"
+        android:layout_alignParentBottom="true"
+        />
+
     <Button
         android:id="@+id/btnsaveactivity"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:text="Save"
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:textColor="#FFFFFF"
+        android:textSize="15sp"
+        android:layout_width="150dp"
+        android:layout_height="30dp"
+        android:background="@drawable/buttonshape"
+        android:shadowColor="#347DA8"
         android:onClick="saveact"
-        android:text="Save"/>
+        android:shadowDx="2"
+        android:shadowDy="2"
+        android:shadowRadius="5"
+        />
 </LinearLayout>

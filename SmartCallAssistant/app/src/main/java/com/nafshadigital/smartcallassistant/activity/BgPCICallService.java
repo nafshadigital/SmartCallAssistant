@@ -9,10 +9,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
-import android.graphics.PixelFormat;
 import android.media.AudioManager;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
@@ -22,8 +19,7 @@ import android.view.WindowManager;
 import android.widget.LinearLayout;
 
 import com.nafshadigital.smartcallassistant.R;
-import com.nafshadigital.smartcallassistant.helpers.AppRunning;
-import com.nafshadigital.smartcallassistant.helpers.MyToast;
+import com.nafshadigital.smartcallassistant.helpers.DBHelper;
 import com.nafshadigital.smartcallassistant.vo.NotificationVO;
 import com.nafshadigital.smartcallassistant.vo.RemainderVO;
 import com.nafshadigital.smartcallassistant.vo.SettingsVO;
@@ -32,7 +28,6 @@ import com.nafshadigital.smartcallassistant.webservice.MyRestAPI;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -130,7 +125,7 @@ SettingsVO settingsVO;
                 return;
             }
              Date today = new Date();
-             System.out.println("fromtodate =" + fdate + "" + tdate + "" + today);
+             System.out.println("BgPCICallService ---> fromtodate =" + fdate + "" + tdate + "" + today);
                 am = (AudioManager) getBaseContext().getSystemService(Context.AUDIO_SERVICE);
 
                 System.out.println("BGSERVICE: Condition: " + today.getTime() + " > " + fdate.getTime() +"  && " + today.getTime() + " < "+  tdate.getTime());

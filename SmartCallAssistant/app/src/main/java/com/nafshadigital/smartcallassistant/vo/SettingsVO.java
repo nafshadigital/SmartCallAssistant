@@ -4,15 +4,8 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.telecom.Call;
 
-import com.nafshadigital.smartcallassistant.activity.DBHelper;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
+import com.nafshadigital.smartcallassistant.helpers.DBHelper;
 
 public class SettingsVO {
     public String id = "";
@@ -99,6 +92,7 @@ public class SettingsVO {
                 ismobilemute = res.getString(res.getColumnIndex("ismobilemute"));
                 System.out.println("setting obj=" + toString());
             } while (res.moveToNext());
+            System.out.println("SettingsVO.java ---> From Time from Database = "+res.getColumnIndex("fromtime") + " To Time ="+ res.getColumnIndex("totime"));
         }
         res.close();
         db.close();
@@ -123,7 +117,7 @@ public class SettingsVO {
     }
 
     public String toString() {
-        return "id-" + id + ", activity_id-" + activity_id + ", activity_name-" + activity_name + ", fromtime" + fromtime + ", totime-" + totime + ", smsmute=" + smsmute + ", favmute=" + favmute + ",vibmute=" + vibmute + ",ismobilemute=" +ismobilemute;
+        return "SettingsVO.java --->  id-" + id + ", activity_id-" + activity_id + ", activity_name-" + activity_name + ", fromtime" + fromtime + ", totime-" + totime + ", smsmute=" + smsmute + ", favmute=" + favmute + ",vibmute=" + vibmute + ",ismobilemute=" +ismobilemute;
     }
 }
 

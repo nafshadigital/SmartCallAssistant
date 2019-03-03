@@ -3,14 +3,11 @@ package com.nafshadigital.smartcallassistant.activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.format.DateFormat;
@@ -24,18 +21,15 @@ import android.widget.TimePicker;
 
 
 import com.nafshadigital.smartcallassistant.R;
+import com.nafshadigital.smartcallassistant.helpers.DBHelper;
 import com.nafshadigital.smartcallassistant.helpers.MyToast;
 import com.nafshadigital.smartcallassistant.vo.ActivityVO;
 import com.nafshadigital.smartcallassistant.vo.SettingsVO;
 import com.nafshadigital.smartcallassistant.webservice.ActivityService;
 
-import java.sql.Time;
-import java.text.Format;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 
 public class Remainder extends AppCompatActivity {
     static EditText txtfromtime,txttotime;
