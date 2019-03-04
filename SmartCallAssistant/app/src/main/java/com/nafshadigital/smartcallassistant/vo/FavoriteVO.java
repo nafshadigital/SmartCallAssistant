@@ -4,18 +4,10 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.telecom.Call;
 
-import com.nafshadigital.smartcallassistant.activity.DBHelper;
-import com.nafshadigital.smartcallassistant.helpers.MyToast;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.nafshadigital.smartcallassistant.helpers.DBHelper;
 
 import java.util.ArrayList;
-
-import static android.provider.BlockedNumberContract.BlockedNumbers.COLUMN_ID;
 
 public class FavoriteVO {
     public String id = "";

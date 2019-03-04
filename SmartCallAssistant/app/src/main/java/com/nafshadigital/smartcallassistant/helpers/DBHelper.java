@@ -1,4 +1,4 @@
-package com.nafshadigital.smartcallassistant.activity;
+package com.nafshadigital.smartcallassistant.helpers;
 
 import android.content.ContentValues;
 import android.content.Context;

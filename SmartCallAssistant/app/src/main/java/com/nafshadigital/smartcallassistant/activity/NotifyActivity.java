@@ -1,23 +1,14 @@
 package com.nafshadigital.smartcallassistant.activity;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.graphics.Color;
-import android.graphics.PixelFormat;
 import android.graphics.Typeface;
 import android.media.AudioManager;
 import android.os.Build;
 import android.os.Handler;
 import android.provider.Settings;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -25,8 +16,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.nafshadigital.smartcallassistant.R;
-import com.nafshadigital.smartcallassistant.helpers.MyToast;
-import com.nafshadigital.smartcallassistant.helpers.ServiceTools;
+import com.nafshadigital.smartcallassistant.helpers.DBHelper;
 import com.nafshadigital.smartcallassistant.interfaces.TransparentWindowEvent;
 import com.nafshadigital.smartcallassistant.vo.RemainderVO;
 import com.nafshadigital.smartcallassistant.vo.SettingsVO;
@@ -34,8 +24,6 @@ import com.nafshadigital.smartcallassistant.vo.SettingsVO;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class NotifyActivity extends FrameLayout {
 
@@ -162,6 +150,8 @@ public class NotifyActivity extends FrameLayout {
             this.setVisibility(VISIBLE);
         }
 
+        System.out.println("NotifyActivity ---> From Time =" + fromtime);
+        System.out.println("NotifyActivity ---> To Time =" + totime);
         final Date fromdate = DBHelper.strinToDate(fromtime);
         final Date todate = DBHelper.strinToDate(totime);
 
@@ -181,7 +171,7 @@ public class NotifyActivity extends FrameLayout {
 
         Date today = new Date();
 
-        System.out.println("fromdate=" + fromdate);
+        System.out.println("NotifyActivity ---> fromdate=" + fromdate);
         try {
             if(fromdate != null && !fromdate .equals("")) {
                 long mills = today.getTime() - fromdate.getTime();
