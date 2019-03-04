@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:padding="10sp" android:layout_margin="15sp"
+    xmlns:app="http://schemas.android.com/apk/res-auto" android:background="@drawable/transparent_border">
+
+    <RelativeLayout
+        android:id="@+id/layoutCollapsed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="visible">
+        <!-- this is the expanded layout -->
+        <LinearLayout
+            android:id="@+id/layoutExpanded"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="8sp"
+           >
+
+
+
+            <ImageView
+                android:id="@+id/imgremaindertrans"
+                android:layout_width="75dp"
+                android:layout_height="75dp"
+                android:src = "@mipmap/appicon"
+                android:layout_marginTop="8dp"
+                android:layout_gravity="center" />
+
+            <com.nafshadigital.smartcallassistant.activity.NotifyActivity
+                android:id="@+id/remactivitytrans"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                ></com.nafshadigital.smartcallassistant.activity.NotifyActivity>
+
+        <!--    <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center">
+                <Button
+                    android:id="@+id/btnoffmutetrans"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="OFF"/>
+
+                <Button
+                    android:id="@+id/btncancelnotiftrans"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Cancel"/>
+            </LinearLayout> -->
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/buttonClose"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+           android:layout_alignParentRight="true"
+            android:src="@mipmap/close" android:layout_margin="10dp"
+            />
+
+    </RelativeLayout>
+
+</FrameLayout>

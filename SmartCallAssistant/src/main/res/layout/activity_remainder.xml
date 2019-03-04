@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.nafshadigital.smartcallassistant.activity.Remainder" android:padding="10dp" android:background="@drawable/activity_gradient_bk" >
+
+    <TextView
+        android:id="@+id/tvremaintitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:textSize="20sp" android:text="Activity Name"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" android:layout_marginTop="10sp">
+
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Date"  android:minWidth="30dp"
+            android:textStyle="bold"  />
+    <TextView
+        android:id="@+id/remdate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:textSize="18sp" android:layout_weight="12"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="From"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/txtremfromdate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:editable="false"
+            android:focusable="false"
+            android:hint="From Time"
+            android:onClick="remfromdate" android:layout_weight="12" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"  android:minWidth="30dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content" android:minWidth="30dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="To"
+            android:textStyle="bold" />
+
+    <EditText
+        android:id="@+id/txtremtodate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="To Time"
+        android:editable="false"
+        android:focusable="false"
+        android:onClick="remtodate"  android:layout_weight="12" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10sp"
+        android:text="Notification to the Caller"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <EditText
+        android:id="@+id/rplymsgact"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10sp"
+        android:textColor="#000000"
+        style="@style/buttonStyle"
+        android:lines="5" android:background="@drawable/control_border" android:padding="10dp" android:inputType="none" android:enabled="false" />
+
+    <Button
+        android:id="@+id/btnremsave"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="remdatesave"
+        android:text="Start"
+        android:layout_gravity="center"/>
+</LinearLayout>
