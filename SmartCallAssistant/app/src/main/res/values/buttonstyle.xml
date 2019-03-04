@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <style name="SmartButton">
-        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:textColor">@color/text_color</item>
         <item name="android:textSize">15sp</item>
         <item name="android:padding">5sp</item>
         <item name="android:layout_width">150dp</item>
@@ -17,8 +17,8 @@
         <item name="android:shadowRadius">5</item>
     </style>
     <style name="GradientButton">
-        <item name="android:textColor">#FFFFFF</item>
         <item name="android:textSize">15sp</item>
+        <item name="android:textColor">@color/text_color</item>
         <item name="android:padding">5sp</item>
         <item name="android:layout_width">150dp</item>
         <item name="android:layout_height">30dp</item>
