@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/activity_gradient_bk"
+    android:padding="10sp"
+    tools:context=".activity.NotificationDetail">
+
+    <TextView
+        android:id="@+id/tvnamenotif"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"/>
+
+    <TextView
+        android:id="@+id/tvdatenotif"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5sp"
+        />
+
+    <TextView
+        android:id="@+id/tvmesgnotif"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5sp"/>
+
+    <Button
+        android:id="@+id/btnbacknotidet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="backnotifdet"
+        android:layout_gravity="center"
+        android:text="Back"/>
+</LinearLayout>
