@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:id="@+id/layoutactivity"
+    android:background="@drawable/listactborder"
+    tools:context="com.nafshadigital.smartcallassistant.adapter.ListAdapterViewActivity" android:padding="8dp">
+
+    <RadioButton
+        android:id="@+id/chkactivity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="5" android:text=""
+        android:buttonTint="#000000"/>
+
+    <ImageView
+        android:id="@+id/imgstatact"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        app:srcCompat = "@mipmap/roundwrong" android:paddingTop="2dp"  android:layout_gravity="right" android:layout_weight="1"/>
+
+
+
+    <ImageView
+        android:id="@+id/imgremainder"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        app:srcCompat = "@mipmap/remainder" android:layout_gravity="right" android:layout_weight="1"/>
+
+    <ImageView
+        android:id="@+id/imgrightarrow"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        app:srcCompat="@mipmap/rightarrow"
+        android:layout_marginRight="5sp"  android:layout_gravity="right"
+        />
+</LinearLayout>

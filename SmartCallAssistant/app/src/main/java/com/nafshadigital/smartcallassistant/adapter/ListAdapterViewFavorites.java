@@ -3,27 +3,17 @@ package com.nafshadigital.smartcallassistant.adapter;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.RadioButton;
 import android.widget.TextView;
 
 import com.nafshadigital.smartcallassistant.R;
-import com.nafshadigital.smartcallassistant.activity.DBHelper;
-import com.nafshadigital.smartcallassistant.activity.Dashboard;
 import com.nafshadigital.smartcallassistant.activity.FavouriteActivity;
 import com.nafshadigital.smartcallassistant.helpers.MyToast;
-import com.nafshadigital.smartcallassistant.vo.ActivityVO;
-import com.nafshadigital.smartcallassistant.vo.AlarmVO;
 import com.nafshadigital.smartcallassistant.vo.FavoriteVO;
-import com.nafshadigital.smartcallassistant.vo.RemainderVO;
 
 import java.util.ArrayList;
 

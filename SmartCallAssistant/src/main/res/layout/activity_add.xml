@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.nafshadigital.smartcallassistant.activity.AddActivity" android:padding="10dp" android:background="@drawable/activity_gradient_bk">
+
+    <TextView
+        android:id="@+id/tvaddactivity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Activity Name:"/>
+
+    <EditText
+        android:id="@+id/txtaddactivity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter Activity"/>
+
+    <Button
+        android:id="@+id/btnsaveactivity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="saveact"
+        android:text="Save"/>
+</LinearLayout>

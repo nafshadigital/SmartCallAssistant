@@ -116,13 +116,16 @@
             android:textStyle="bold"
             android:layout_gravity="center"
             android:textSize="20dp" android:text="ELAPSED" />
+
         <Button
-            android:id="@+id/btnoffmute"
-            android:layout_width="wrap_content"
-            android:layout_height="35dp"
-            android:text="Cancel Activity"
             android:textSize="10sp"
-            android:layout_gravity="center"/>
+            android:layout_height="35dp"
+            android:layout_width="wrap_content"
+            android:id="@+id/btnoffmute"
+            android:text="Cancel Activity"
+            android:layout_marginTop="30sp"
+            style="@style/SmartButton"
+            />
     </LinearLayout>
 
     <LinearLayout

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="10sp"
+    tools:context=".activity.NumberVerify" android:background="@drawable/activity_gradient_bk">
+
+    <TextView
+        android:id="@+id/tvverifydet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Waiting to automatically detect an SMS sent to"
+        android:textSize="20sp" android:layout_marginTop="50dp"
+        android:textStyle="bold"/>
+
+    <EditText
+        android:id="@+id/txtverifycode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:inputType="number"
+        android:ems="8"
+        android:background="@drawable/control_border"
+        android:layout_centerInParent="true"
+        android:padding="5sp"
+        />
+
+    <Button
+        android:id="@+id/btnverifycode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Verify"
+        android:onClick="verifycode"
+        android:layout_gravity="center"
+        android:layout_marginBottom="60sp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerInParent="true"/>
+</RelativeLayout>
