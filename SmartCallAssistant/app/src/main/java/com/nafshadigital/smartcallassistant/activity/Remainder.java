@@ -27,6 +27,7 @@ import com.nafshadigital.smartcallassistant.vo.ActivityVO;
 import com.nafshadigital.smartcallassistant.vo.SettingsVO;
 import com.nafshadigital.smartcallassistant.webservice.ActivityService;
 
+import java.sql.SQLOutput;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -200,28 +201,31 @@ public class Remainder extends AppCompatActivity {
     }
     public void remdatesave(View view)
     {
-        if(isValidate()) {
+        if (isValidate()) {
 
-                            //   MyToast.show(this,txtfromtime.getText().toString());
-                            SettingsVO settingsVO = new SettingsVO(getApplicationContext());
-                            settingsVO.fromtime = formattedFromDate + "" + txtfromtime.getText().toString();
-                            settingsVO.totime = formattedToDate + "" + txttotime.getText().toString();
-                            settingsVO.activity_id = selectedactivityVO.id;
-                            settingsVO.activity_name = selectedactivityVO.activity_name;
-                            long res = settingsVO.updateSettings();
+            //   MyToast.show(this,txtfromtime.getText().toString());
+            SettingsVO settingsVO = new SettingsVO(getApplicationContext());
+            settingsVO.fromtime = formattedFromDate + "" + txtfromtime.getText().toString();
+            settingsVO.totime = formattedToDate + "" + txttotime.getText().toString();
+            System.out.println("Remainder ---> " + settingsVO.fromtime);
+            System.out.println("Remainder ---> " + settingsVO.totime);
+            settingsVO.activity_id = selectedactivityVO.id;
+            settingsVO.activity_name = selectedactivityVO.activity_name;
+            //long res = settingsVO.updateSettings();
+            long res = settingsVO.addsettings();
 
-                            ActivityService activity = new ActivityService(getApplicationContext());
-                            ActivityVO activityVO = new ActivityVO();
-                            activityVO.id = selectedactivityVO.id;
-                            activityVO.activity_message = txtrplymsg.getText().toString();
-                            int ress = activity.updateActivitymsg(activityVO);
+            ActivityService activity = new ActivityService(getApplicationContext());
+            ActivityVO activityVO = new ActivityVO();
+            activityVO.id = selectedactivityVO.id;
+            activityVO.activity_message = txtrplymsg.getText().toString();
+            int ress = activity.updateActivitymsg(activityVO);
 
-                            MyToast.show(this,selectedactivityVO.activity_name + " from " + txtfromtime.getText().toString() + " To " + txttotime.getText().toString());
-                            new ActivityService(getApplicationContext()).updateIsactive(selectedactivityVO.id);
+            MyToast.show(this, selectedactivityVO.activity_name + " from " + txtfromtime.getText().toString() + " To " + txttotime.getText().toString());
+            new ActivityService(getApplicationContext()).updateIsactive(selectedactivityVO.id);
 
-                            finish();
+            finish();
 
-                    }
+        }
     }
 
     public void datesettings(){
@@ -233,12 +237,16 @@ public class Remainder extends AppCompatActivity {
             Date fromdate =null;
             fromdate= DBHelper.strinToDate(settingsVO.fromtime);
             String fromtime=DBHelper.strinToTime(settingsVO.fromtime);
+
+            fromtime = "11:40 PM";
             txtfromtime.setText(fromtime);
 
             Date todate =null;
             todate=DBHelper.strinToDate(settingsVO.totime);
 
             String totime=DBHelper.strinToTime(settingsVO.totime);
+
+            totime = "11:55 PM";
             txttotime.setText(totime);
         } catch (Exception ex) {
             Log.v("Exception", ex.getLocalizedMessage());
@@ -304,5 +312,6 @@ public class Remainder extends AppCompatActivity {
             txtfromtime.setText(txtfromtime.getText() + " -" + hourOfDay + ":" + minute);
         }
     }
+
 
 }

@@ -67,6 +67,7 @@
             android:editable="false"
             android:textColor="#347DA8"
             android:focusable="false"
+            android:text="11:14 PM"
             android:hint="From Time"
             android:onClick="remfromdate"
             android:layout_weight="12" />
@@ -91,6 +92,7 @@
         android:id="@+id/txtremtodate"
         android:layout_height="wrap_content"
         android:hint="To Time"
+        android:text="11:59 PM"
         android:layout_width="150dp"
         android:textColor="#347DA8"
         android:editable="false"

@@ -228,7 +228,7 @@ public class CallReceiver extends BroadcastReceiver {
 
                         try {
                             if(settingsVO.fromtime == null || settingsVO.fromtime.equals("") || settingsVO.totime == null || settingsVO.totime.equals("") ) {
-                                System.out.println("From and to time not set.");
+                                System.out.println("CallReceiver ---> From and to time not set.");
                                 return;
                             }
 
