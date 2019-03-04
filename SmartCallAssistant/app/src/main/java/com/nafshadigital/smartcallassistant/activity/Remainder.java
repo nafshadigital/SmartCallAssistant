@@ -3,14 +3,11 @@ package com.nafshadigital.smartcallassistant.activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.format.DateFormat;
@@ -24,18 +21,16 @@ import android.widget.TimePicker;
 
 
 import com.nafshadigital.smartcallassistant.R;
+import com.nafshadigital.smartcallassistant.helpers.DBHelper;
 import com.nafshadigital.smartcallassistant.helpers.MyToast;
 import com.nafshadigital.smartcallassistant.vo.ActivityVO;
 import com.nafshadigital.smartcallassistant.vo.SettingsVO;
 import com.nafshadigital.smartcallassistant.webservice.ActivityService;
 
-import java.sql.Time;
-import java.text.Format;
-import java.text.ParseException;
+import java.sql.SQLOutput;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 
 public class Remainder extends AppCompatActivity {
     static EditText txtfromtime,txttotime;
@@ -206,28 +201,31 @@ public class Remainder extends AppCompatActivity {
     }
     public void remdatesave(View view)
     {
-        if(isValidate()) {
+        if (isValidate()) {
 
-                            //   MyToast.show(this,txtfromtime.getText().toString());
-                            SettingsVO settingsVO = new SettingsVO(getApplicationContext());
-                            settingsVO.fromtime = formattedFromDate + "" + txtfromtime.getText().toString();
-                            settingsVO.totime = formattedToDate + "" + txttotime.getText().toString();
-                            settingsVO.activity_id = selectedactivityVO.id;
-                            settingsVO.activity_name = selectedactivityVO.activity_name;
-                            long res = settingsVO.updateSettings();
+            //   MyToast.show(this,txtfromtime.getText().toString());
+            SettingsVO settingsVO = new SettingsVO(getApplicationContext());
+            settingsVO.fromtime = formattedFromDate + "" + txtfromtime.getText().toString();
+            settingsVO.totime = formattedToDate + "" + txttotime.getText().toString();
+            System.out.println("Remainder ---> " + settingsVO.fromtime);
+            System.out.println("Remainder ---> " + settingsVO.totime);
+            settingsVO.activity_id = selectedactivityVO.id;
+            settingsVO.activity_name = selectedactivityVO.activity_name;
+            //long res = settingsVO.updateSettings();
+            long res = settingsVO.addsettings();
 
-                            ActivityService activity = new ActivityService(getApplicationContext());
-                            ActivityVO activityVO = new ActivityVO();
-                            activityVO.id = selectedactivityVO.id;
-                            activityVO.activity_message = txtrplymsg.getText().toString();
-                            int ress = activity.updateActivitymsg(activityVO);
+            ActivityService activity = new ActivityService(getApplicationContext());
+            ActivityVO activityVO = new ActivityVO();
+            activityVO.id = selectedactivityVO.id;
+            activityVO.activity_message = txtrplymsg.getText().toString();
+            int ress = activity.updateActivitymsg(activityVO);
 
-                            MyToast.show(this,selectedactivityVO.activity_name + " from " + txtfromtime.getText().toString() + " To " + txttotime.getText().toString());
-                            new ActivityService(getApplicationContext()).updateIsactive(selectedactivityVO.id);
+            MyToast.show(this, selectedactivityVO.activity_name + " from " + txtfromtime.getText().toString() + " To " + txttotime.getText().toString());
+            new ActivityService(getApplicationContext()).updateIsactive(selectedactivityVO.id);
 
-                            finish();
+            finish();
 
-                    }
+        }
     }
 
     public void datesettings(){
@@ -239,12 +237,16 @@ public class Remainder extends AppCompatActivity {
             Date fromdate =null;
             fromdate= DBHelper.strinToDate(settingsVO.fromtime);
             String fromtime=DBHelper.strinToTime(settingsVO.fromtime);
+
+            fromtime = "11:40 PM";
             txtfromtime.setText(fromtime);
 
             Date todate =null;
             todate=DBHelper.strinToDate(settingsVO.totime);
 
             String totime=DBHelper.strinToTime(settingsVO.totime);
+
+            totime = "11:55 PM";
             txttotime.setText(totime);
         } catch (Exception ex) {
             Log.v("Exception", ex.getLocalizedMessage());
@@ -310,5 +312,6 @@ public class Remainder extends AppCompatActivity {
             txtfromtime.setText(txtfromtime.getText() + " -" + hourOfDay + ":" + minute);
         }
     }
+
 
 }

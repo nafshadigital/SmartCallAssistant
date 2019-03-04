@@ -9,10 +9,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
-import android.graphics.PixelFormat;
 import android.media.AudioManager;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
@@ -22,8 +19,7 @@ import android.view.WindowManager;
 import android.widget.LinearLayout;
 
 import com.nafshadigital.smartcallassistant.R;
-import com.nafshadigital.smartcallassistant.helpers.AppRunning;
-import com.nafshadigital.smartcallassistant.helpers.MyToast;
+import com.nafshadigital.smartcallassistant.helpers.DBHelper;
 import com.nafshadigital.smartcallassistant.vo.NotificationVO;
 import com.nafshadigital.smartcallassistant.vo.RemainderVO;
 import com.nafshadigital.smartcallassistant.vo.SettingsVO;
@@ -32,7 +28,6 @@ import com.nafshadigital.smartcallassistant.webservice.MyRestAPI;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -48,7 +43,7 @@ public class BgPCICallService extends Service {
     AudioManager am;
     int showTransAct = 0;
     int maxid = 0;
-SettingsVO settingsVO;
+    SettingsVO settingsVO;
     private WindowManager wm;
     private static LinearLayout ly1;
     private WindowManager.LayoutParams params1;
@@ -72,7 +67,7 @@ SettingsVO settingsVO;
     private final Handler handler = new Handler();
     private Runnable runnable = new Runnable() {
         public void run() {
-            System.out.println("THE BACKGROUND SERVICE");
+            System.out.println("BgPCICallService----> Runnable Thread THE BACKGROUND SERVICE");
             TASK();
             getNotification();
             handler.postDelayed(this, 10000);
@@ -99,8 +94,6 @@ SettingsVO settingsVO;
         settingsVO.getSettings();
 
         if(showTransAct == 0) {
-
-
             showTransAct = 1;
         }
      //   SharedPreferences sharedPreferences = getBaseContext().getSharedPreferences("bgservice", Context.MODE_PRIVATE);
@@ -110,107 +103,105 @@ SettingsVO settingsVO;
         String isMobileMute = settingsVO.ismobilemute;
 
         System.out.println("BGSERVICE: Inside service " + isMobileMute);
+        System.out.println("BGSERVICE: Inside isMobileMute = 0.");
+        //SettingsVO settingsVO = new SettingsVO(context);
+        settingsVO.getSettings();
+        fromtime = settingsVO.fromtime;
+        totime = settingsVO.totime;
+        System.out.println("fromtodatestring =" + fromtime + "" + totime);
+        if (fromtime == null || fromtime.equals("") || totime == null || totime.equals("")) {
+            System.out.println("BgPCICallService ---> From and to time not set.");
+            return;
+        }
 
-            System.out.println("BGSERVICE: Inside isMobileMute = 0.");
-             //SettingsVO settingsVO = new SettingsVO(context);
-             settingsVO.getSettings();
-             fromtime = settingsVO.fromtime;
-             totime = settingsVO.totime;
-             System.out.println("fromtodatestring =" + fromtime + "" + totime);
-             if(fromtime == null || fromtime.equals("") || totime == null || totime.equals("") ) {
-                 System.out.println("From and to time not set.");
-                 return;
-             }
+        Date fdate = DBHelper.strinToDate(fromtime);
+        Date tdate = DBHelper.strinToDate(totime);
 
-             Date fdate = DBHelper.strinToDate(fromtime);
-             Date tdate = DBHelper.strinToDate(totime);
+        if (fdate == null || tdate == null) {
+            System.out.println("From and to time not set: null.");
+            return;
+        }
+        Date today = new Date();
+        System.out.println("BgPCICallService ---> fromtodate =" + fdate + "" + tdate + "" + today);
+        am = (AudioManager) getBaseContext().getSystemService(Context.AUDIO_SERVICE);
 
-            if(fdate == null || tdate == null ) {
-                System.out.println("From and to time not set: null.");
-                return;
+        System.out.println("BGSERVICE: Condition: " + today.getTime() + " > " + fdate.getTime() + "  && " + today.getTime() + " < " + tdate.getTime());
+
+
+        System.out.println("BGSERVICE: Condition: today.compareTo(fdate) " + today.compareTo(fdate) + " && today.compareTo(tdate) " + tdate.compareTo(today));
+        //if (today.getTime() > fdate.getTime() && today.getTime() < tdate.getTime()) {
+        if (today.compareTo(fdate) == 1 && tdate.compareTo(today) == 1) {
+            System.out.println("BGSERVICE: INSIDE CONDITION");
+
+            if (isMobileMute.equals("0")) {
+                am.setRingerMode(AudioManager.RINGER_MODE_VIBRATE);
+
+                Intent intents = new Intent(this, NotifyActivity.class);
+                intents.setAction(Intent.ACTION_MAIN);
+                intents.addCategory(Intent.CATEGORY_LAUNCHER);
+                intents.setAction(Long.toString(System.currentTimeMillis()));
+                intents.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intents, PendingIntent.FLAG_UPDATE_CURRENT);
+
+                Notification noti = new Notification.Builder(this)
+
+                        .setSmallIcon(R.mipmap.ic_launcher_round)
+                        // .setColor(NotificationCompat.COLOR_DEFAULT)
+                        .setContentTitle("Smart Call Assisstant")
+                        .setContentText("Your Mobile is Mute Now")
+                        .setContentIntent(pendingIntent).build();
+
+                NotificationManager notificationManager = (NotificationManager) this.getSystemService(this.NOTIFICATION_SERVICE);
+                // hide the notification after its selected
+                noti.flags |= Notification.FLAG_AUTO_CANCEL;
+                noti.defaults |= Notification.DEFAULT_SOUND;
+                notificationManager.notify(0, noti);
+
+                //SettingsVO settingsVO = new SettingsVO(getApplicationContext());
+                settingsVO.ismobilemute = "1";
+                settingsVO.updateIsmobilemute();
+                System.out.println("BGSERVICE update 1: " + settingsVO.ismobilemute);
+
+                boolean isRun = isAppIsInBackground(getApplicationContext());
+
+                if (isRun == false) {
+                    isAppRun = "1";
+                } else if (isRun == true) {
+                    isAppRun = "0";
+                }
+
+                SharedPreferences sharedPref = getApplicationContext().getSharedPreferences("AppRunning", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPref.edit();
+                editor.putString("isRun", isAppRun);
+                editor.commit();
+
+                SharedPreferences sharedPrefer = context.getSharedPreferences("AppRunning", Context.MODE_PRIVATE);
+                String isRunApp = sharedPrefer.getString("isRun", "");
+
+                System.out.println("RunApp=" + isRunApp);
+
+                if (isRunApp == "0") {
+                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+                        startService(new Intent(this, NotifyTransparent.class));
+                    } else if (Settings.canDrawOverlays(this)) {
+                        startService(new Intent(this, NotifyTransparent.class));
+                    }
+                }
             }
-             Date today = new Date();
-             System.out.println("fromtodate =" + fdate + "" + tdate + "" + today);
-                am = (AudioManager) getBaseContext().getSystemService(Context.AUDIO_SERVICE);
+        } else {
+            System.out.println("BGSERVICE: OUTSIDE CONDITION");
+            if (isMobileMute.equals("1")) {
+                //SettingsVO setting = new SettingsVO(getApplicationContext());
+                settingsVO.ismobilemute = "0";
+                settingsVO.updateIsmobilemute();
 
-                System.out.println("BGSERVICE: Condition: " + today.getTime() + " > " + fdate.getTime() +"  && " + today.getTime() + " < "+  tdate.getTime());
+                am.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
 
-
-             System.out.println("BGSERVICE: Condition: today.compareTo(fdate) " + today.compareTo(fdate) + " && today.compareTo(tdate) " + tdate.compareTo(today));
-                //if (today.getTime() > fdate.getTime() && today.getTime() < tdate.getTime()) {
-              if (today.compareTo(fdate) == 1 && tdate.compareTo(today) == 1) {
-                  System.out.println("BGSERVICE: INSIDE CONDITION");
-
-                  if (isMobileMute.equals("0")) {
-                      am.setRingerMode(AudioManager.RINGER_MODE_VIBRATE);
-
-                      Intent intents = new Intent(this, NotifyActivity.class);
-                      intents.setAction(Intent.ACTION_MAIN);
-                      intents.addCategory(Intent.CATEGORY_LAUNCHER);
-                      intents.setAction(Long.toString(System.currentTimeMillis()));
-                      intents.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                      PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intents, PendingIntent.FLAG_UPDATE_CURRENT);
-
-                      Notification noti = new Notification.Builder(this)
-
-                              .setSmallIcon(R.mipmap.ic_launcher_round)
-                              // .setColor(NotificationCompat.COLOR_DEFAULT)
-                              .setContentTitle("Smart Call Assisstant")
-                              .setContentText("Your Mobile is Mute Now")
-                              .setContentIntent(pendingIntent).build();
-
-                      NotificationManager notificationManager = (NotificationManager) this.getSystemService(this.NOTIFICATION_SERVICE);
-                      // hide the notification after its selected
-                      noti.flags |= Notification.FLAG_AUTO_CANCEL;
-                      noti.defaults |= Notification.DEFAULT_SOUND;
-                      notificationManager.notify(0, noti);
-
-                      //SettingsVO settingsVO = new SettingsVO(getApplicationContext());
-                      settingsVO.ismobilemute = "1";
-                      settingsVO.updateIsmobilemute();
-                      System.out.println("BGSERVICE update 1: " + settingsVO.ismobilemute);
-
-                        boolean isRun = isAppIsInBackground(getApplicationContext());
-
-                          if(isRun == false){
-                              isAppRun = "1";
-                          }
-                          else if(isRun == true){
-                          isAppRun = "0";
-                      }
-
-                      SharedPreferences sharedPref = getApplicationContext().getSharedPreferences("AppRunning", Context.MODE_PRIVATE);
-                      SharedPreferences.Editor editor = sharedPref.edit();
-                      editor.putString("isRun", isAppRun);
-                      editor.commit();
-
-                      SharedPreferences sharedPrefer = context.getSharedPreferences("AppRunning", Context.MODE_PRIVATE);
-                      String isRunApp =  sharedPrefer.getString("isRun", "");
-
-                     System.out.println("RunApp="+isRunApp);
-
-                      if(isRunApp == "0"){
-                          if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-                              startService(new Intent(this, NotifyTransparent.class));
-                          } else if (Settings.canDrawOverlays(this)) {
-                              startService(new Intent(this, NotifyTransparent.class));
-                              }
-                      }
-                  }
-              } else {
-                  System.out.println("BGSERVICE: OUTSIDE CONDITION");
-                  if (isMobileMute.equals("1")) {
-                      //SettingsVO setting = new SettingsVO(getApplicationContext());
-                      settingsVO.ismobilemute = "0";
-                      settingsVO.updateIsmobilemute();
-
-                      am.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
-
-                      NotificationManager notificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
-                      notificationManager.cancelAll();
-                      stopService(new Intent(this, NotifyTransparent.class));
-                  }
-              }
+                NotificationManager notificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+                notificationManager.cancelAll();
+                stopService(new Intent(this, NotifyTransparent.class));
+            }
+        }
     }
 
     private boolean isAppIsInBackground(Context context) {

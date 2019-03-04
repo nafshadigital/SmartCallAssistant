@@ -2,16 +2,9 @@ package com.nafshadigital.smartcallassistant.vo;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.nafshadigital.smartcallassistant.activity.DBHelper;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
+import com.nafshadigital.smartcallassistant.helpers.DBHelper;
 
 public class ContactVO {
     public String id = "";

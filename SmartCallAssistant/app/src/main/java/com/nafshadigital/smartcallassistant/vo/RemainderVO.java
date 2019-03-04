@@ -5,11 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.nafshadigital.smartcallassistant.activity.DBHelper;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.nafshadigital.smartcallassistant.helpers.DBHelper;
 
 import java.util.ArrayList;
 
