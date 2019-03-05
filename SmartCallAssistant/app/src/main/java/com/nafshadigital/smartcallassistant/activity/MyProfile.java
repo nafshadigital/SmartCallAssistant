@@ -8,8 +8,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.telephony.TelephonyManager;
-import android.text.TextUtils;
-import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -126,13 +124,13 @@ public class MyProfile extends AppCompatActivity {
 
     public  boolean isValidate(){
         if(txtname.getText().toString().equals("")){
-            MyToast.show(this,"Enter your name !");
+            MyToast.show(this,"Enter Name");
             return false;
         }
 
-        if (!isValidEmail(txtemail.getText().toString())) {
+        if (!txtemail.getText().toString().matches("[a-zA-Z0-9._-]+@[a-z]+.[a-z]+")) {
           //  txtemail.setError("Invalid Email Address");
-            MyToast.show(this,"Enter valid E-mail address !");
+            MyToast.show(this,"Invalid EmailId");
             return false;
         }
 
@@ -150,10 +148,6 @@ public class MyProfile extends AppCompatActivity {
             return false;
         } */
         return true;
-    }
-
-    public static boolean isValidEmail(String target) {
-        return (!TextUtils.isEmpty(target) && Patterns.EMAIL_ADDRESS.matcher(target).matches());
     }
 
     public boolean onOptionsItemSelected(android.view.MenuItem item){

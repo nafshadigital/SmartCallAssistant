@@ -16,7 +16,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.nafshadigital.smartcallassistant.R;
-import com.nafshadigital.smartcallassistant.helpers.DBHelper;
 import com.nafshadigital.smartcallassistant.interfaces.TransparentWindowEvent;
 import com.nafshadigital.smartcallassistant.vo.RemainderVO;
 import com.nafshadigital.smartcallassistant.vo.SettingsVO;
@@ -150,8 +149,6 @@ public class NotifyActivity extends FrameLayout {
             this.setVisibility(VISIBLE);
         }
 
-        System.out.println("NotifyActivity ---> From Time =" + fromtime);
-        System.out.println("NotifyActivity ---> To Time =" + totime);
         final Date fromdate = DBHelper.strinToDate(fromtime);
         final Date todate = DBHelper.strinToDate(totime);
 
@@ -171,7 +168,7 @@ public class NotifyActivity extends FrameLayout {
 
         Date today = new Date();
 
-        System.out.println("NotifyActivity ---> fromdate=" + fromdate);
+        System.out.println("fromdate=" + fromdate);
         try {
             if(fromdate != null && !fromdate .equals("")) {
                 long mills = today.getTime() - fromdate.getTime();

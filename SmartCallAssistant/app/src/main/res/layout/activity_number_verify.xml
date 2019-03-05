@@ -30,8 +30,12 @@
 
     <Button
         android:id="@+id/btnverifycode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:text="Verify"
-        style="@style/SmartButton"
-        android:onClick="verifycode"/>
-
+        android:onClick="verifycode"
+        android:layout_gravity="center"
+        android:layout_marginBottom="60sp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerInParent="true"/>
 </RelativeLayout>

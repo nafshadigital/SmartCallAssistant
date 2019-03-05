@@ -4,8 +4,14 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Parcelable;
+import android.telecom.Call;
 
-import com.nafshadigital.smartcallassistant.helpers.DBHelper;
+import com.nafshadigital.smartcallassistant.activity.DBHelper;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.Serializable;
 import java.util.ArrayList;

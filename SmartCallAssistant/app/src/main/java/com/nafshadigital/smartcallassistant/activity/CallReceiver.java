@@ -5,10 +5,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.AudioManager;
+import android.os.Bundle;
+import android.telephony.SmsManager;
 import android.telephony.TelephonyManager;
+import android.util.Log;
+import android.widget.Toast;
 
 import com.nafshadigital.smartcallassistant.helpers.AppRunning;
-import com.nafshadigital.smartcallassistant.helpers.DBHelper;
 import com.nafshadigital.smartcallassistant.helpers.MyToast;
 import com.nafshadigital.smartcallassistant.vo.ActivityVO;
 import com.nafshadigital.smartcallassistant.vo.CallLogVO;
@@ -16,6 +19,7 @@ import com.nafshadigital.smartcallassistant.vo.FavoriteVO;
 import com.nafshadigital.smartcallassistant.vo.NotificationVO;
 import com.nafshadigital.smartcallassistant.vo.RemainderVO;
 import com.nafshadigital.smartcallassistant.vo.SettingsVO;
+import com.nafshadigital.smartcallassistant.vo.UsersVO;
 import com.nafshadigital.smartcallassistant.webservice.ActivityService;
 import com.nafshadigital.smartcallassistant.webservice.MyRestAPI;
 
@@ -228,7 +232,7 @@ public class CallReceiver extends BroadcastReceiver {
 
                         try {
                             if(settingsVO.fromtime == null || settingsVO.fromtime.equals("") || settingsVO.totime == null || settingsVO.totime.equals("") ) {
-                                System.out.println("CallReceiver ---> From and to time not set.");
+                                System.out.println("From and to time not set.");
                                 return;
                             }
 

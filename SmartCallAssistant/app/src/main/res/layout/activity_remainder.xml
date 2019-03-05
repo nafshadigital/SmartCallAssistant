@@ -7,22 +7,12 @@
     android:orientation="vertical"
     tools:context="com.nafshadigital.smartcallassistant.activity.Remainder" android:padding="10dp" android:background="@drawable/activity_gradient_bk" >
 
-    <View
-        android:id = "@+id/dummy_view"
-        android:layout_height = "100dip"
-        android:layout_width = "match_parent"
-        android:visibility="invisible"
-        android:layout_alignParentBottom="true"
-        />
-
     <TextView
         android:id="@+id/tvremaintitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="#347DA8"
         android:textStyle="bold"
-        android:textSize="25sp"
-        android:text="Activity Name"/>
+        android:textSize="20sp" android:text="Activity Name"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -34,18 +24,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:textColor="#347DA8"
-            android:text="Date"
-            android:minWidth="30dp"
+            android:text="Date"  android:minWidth="30dp"
             android:textStyle="bold"  />
     <TextView
         android:id="@+id/remdate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textStyle="bold"
-        android:textColor="#347DA8"
-        android:textSize="18sp"
-        android:layout_weight="12"/>
+        android:textSize="18sp" android:layout_weight="12"/>
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
@@ -53,24 +39,21 @@
         android:orientation="horizontal">
 
         <TextView
+
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:textColor="#347DA8"
             android:text="From"
             android:textStyle="bold" />
 
         <EditText
             android:id="@+id/txtremfromdate"
-            android:layout_width="150dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:editable="false"
-            android:textColor="#347DA8"
             android:focusable="false"
-            android:text="11:14 PM"
             android:hint="From Time"
-            android:onClick="remfromdate"
-            android:layout_weight="12" />
+            android:onClick="remfromdate" android:layout_weight="12" />
 
     </LinearLayout>
 
@@ -84,17 +67,14 @@
             android:layout_width="wrap_content" android:minWidth="30dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:textColor="#347DA8"
             android:text="To"
             android:textStyle="bold" />
 
     <EditText
         android:id="@+id/txtremtodate"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:hint="To Time"
-        android:text="11:59 PM"
-        android:layout_width="150dp"
-        android:textColor="#347DA8"
         android:editable="false"
         android:focusable="false"
         android:onClick="remtodate"  android:layout_weight="12" />
@@ -107,7 +87,6 @@
         android:layout_marginTop="10sp"
         android:text="Notification to the Caller"
         android:textSize="18sp"
-        android:textColor="#347DA8"
         android:textStyle="bold" />
 
     <EditText
@@ -115,27 +94,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10sp"
-        android:textColor="#347DA8"
+        android:textColor="#000000"
         style="@style/buttonStyle"
-        android:lines="5"
-        android:background="@drawable/control_border"
-        android:padding="10dp"
-        android:inputType="none"
-        android:enabled="false" />
-
-    <View
-        android:id = "@+id/empty_view"
-        android:layout_height = "20dip"
-        android:layout_width = "match_parent"
-        android:visibility="invisible"
-        android:layout_alignParentBottom="true"
-        />
-
+        android:lines="5" android:background="@drawable/control_border" android:padding="10dp" android:inputType="none" android:enabled="false" />
 
     <Button
         android:id="@+id/btnremsave"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:onClick="remdatesave"
         android:text="Start"
-        style="@style/SmartButton"
-        />
+        android:layout_gravity="center"/>
 </LinearLayout>

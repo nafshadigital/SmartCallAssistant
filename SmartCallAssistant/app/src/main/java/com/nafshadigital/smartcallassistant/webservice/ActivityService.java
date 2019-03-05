@@ -5,7 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.nafshadigital.smartcallassistant.helpers.DBHelper;
+import com.nafshadigital.smartcallassistant.activity.DBHelper;
 import com.nafshadigital.smartcallassistant.vo.ActivityVO;
 
 import java.util.ArrayList;
