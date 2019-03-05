@@ -27,11 +27,23 @@
         android:layout_centerInParent="true"
         android:padding="5sp"
         />
+    <View
+        android:id = "@+id/empty_view"
+        android:layout_height = "20dip"
+        android:layout_below="@id/txtverifycode"
+        android:layout_width = "match_parent"
+        android:visibility="invisible"
+        />
 
     <Button
         android:id="@+id/btnverifycode"
         android:text="Verify"
-        style="@style/SmartButton"
+        android:textColor="#000000"
+        android:padding="50dp"
+        android:layout_centerInParent="true"
+        android:layout_below="@id/empty_view"
+        android:layout_gravity="center"
+        style="@style/GradientButton"
         android:onClick="verifycode"/>
 
 </RelativeLayout>
