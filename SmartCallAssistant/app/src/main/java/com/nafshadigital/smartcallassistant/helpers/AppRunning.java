@@ -13,6 +13,15 @@ public class AppRunning extends Application {
 
     Ringtone ringtone;
     Uri notification = Uri.EMPTY;
+    boolean isBGServiceRunning = false;
+
+    public boolean isBGServiceRunning() {
+        return isBGServiceRunning;
+    }
+
+    public void setBGServiceRunning(boolean BGServiceRunning) {
+        isBGServiceRunning = BGServiceRunning;
+    }
 
     public Ringtone getRingtone() {
         return ringtone;

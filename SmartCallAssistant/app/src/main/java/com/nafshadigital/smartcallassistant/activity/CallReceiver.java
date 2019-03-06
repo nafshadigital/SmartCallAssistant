@@ -101,13 +101,12 @@ public class CallReceiver extends BroadcastReceiver {
             onCallStateChanged(context, state, number);
         }
 
-        if(!AppRunning.isMyServiceRunning(context, BgPCICallService.class)) {
+
+        if(!((AppRunning) context.getApplicationContext()).isBGServiceRunning()) {
             Intent background = new Intent(context, BgPCICallService.class);
             context.startService(background);
-        }else {
-            System.out.println("BgPCICallService: Service is running");
+            ((AppRunning) context.getApplicationContext()).setBGServiceRunning(true);
         }
-        System.out.println("Exiting the CallReceiver.java file" + this.ringtone);
     }
 
     public void onCallStateChanged(Context context, int state, String number){

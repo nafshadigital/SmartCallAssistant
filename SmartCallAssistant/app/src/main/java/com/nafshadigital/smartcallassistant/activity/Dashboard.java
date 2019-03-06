@@ -82,6 +82,7 @@ public class Dashboard extends AppCompatActivity {
         this.context = this;
 
         intent = new Intent(this.context,BgPCICallService.class);
+        ((AppRunning) context.getApplicationContext()).setBGServiceRunning(true);
         startService(intent);
 
         SharedPreferences sharedPreferences = context.getSharedPreferences("LoginDetails", Context.MODE_PRIVATE);
