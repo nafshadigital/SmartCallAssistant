@@ -38,6 +38,8 @@ public class CallReceiver extends BroadcastReceiver {
 
     Uri notification = Uri.EMPTY;
     MediaPlayer mp = null;
+    Ringtone ringtone;
+
 
     public static int laststate = TelephonyManager.CALL_STATE_IDLE;
     public static String savedNumber = "";
@@ -56,12 +58,28 @@ public class CallReceiver extends BroadcastReceiver {
 
         notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
 
+
+        if(((AppRunning) context.getApplicationContext()).getRingtone() == null) {
+            this.ringtone = RingtoneManager.getRingtone(context, notification);
+            ((AppRunning) context.getApplicationContext()).setRingtone(this.ringtone);
+
+        }
+        else {
+            this.ringtone = ((AppRunning) context.getApplicationContext()).getRingtone();
+        }
+
+
         if(mp == null) {
             System.out.println("Waheed creating mediaplayer");
             mp = MediaPlayer.create(context.getApplicationContext(), notification);
         }
         else
-            mp.reset();
+        {
+            if(mp.isPlaying()) {
+                mp.reset();
+            }
+        }
+
 
 
         if(intent.getAction().equals("android.intent.action.NEW_OUTGOING_CALL")){
@@ -89,12 +107,13 @@ public class CallReceiver extends BroadcastReceiver {
         }else {
             System.out.println("BgPCICallService: Service is running");
         }
+        System.out.println("Exiting the CallReceiver.java file" + this.ringtone);
     }
 
     public void onCallStateChanged(Context context, int state, String number){
 
         if(laststate == state){
-            mp.reset();
+            this.ringtone.stop();
             return;
         }
 
@@ -117,7 +136,7 @@ public class CallReceiver extends BroadcastReceiver {
 
                 if(settingsVO.favmute.equals("yes") && res > 0) {
 
-                    mp.start();
+                    this.ringtone.play();
 
                     AudioManager am = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
                     am.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
@@ -140,7 +159,7 @@ public class CallReceiver extends BroadcastReceiver {
                             methodEndCall.invoke(telephonyInterface);
                         } catch (Exception e) {
                             e.printStackTrace();
-                            MyToast.show(context,e.getMessage());
+                            System.out.println("Error = " + e.toString());
                         }
 
                         activity_id =settingsVO.activity_id ;
@@ -217,7 +236,7 @@ public class CallReceiver extends BroadcastReceiver {
 
             case TelephonyManager.CALL_STATE_OFFHOOK:
                 System.out.println("TelephonyManager.CALL_STATE_OFFHOOK");
-                mp.reset();
+                this.ringtone.stop();
                 if(laststate != TelephonyManager.CALL_STATE_RINGING)
                 {
 
@@ -242,7 +261,7 @@ public class CallReceiver extends BroadcastReceiver {
 
             case TelephonyManager.CALL_STATE_IDLE :
                 System.out.println("TelephonyManager.CALL_STATE_OFFHOOK");
-                mp.reset();
+                this.ringtone.stop();
                 if(laststate == TelephonyManager.CALL_STATE_RINGING){
                //     Toast.makeText(context, "Ringing but no pickup" + savedNumber + " Call time " + callStartTime +" Date " + new Date() , Toast.LENGTH_LONG).show();
 
