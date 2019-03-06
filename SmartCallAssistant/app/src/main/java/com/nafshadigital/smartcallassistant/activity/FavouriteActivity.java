@@ -4,39 +4,29 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.LayerDrawable;
-import android.media.Image;
 import android.net.Uri;
+import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.nafshadigital.smartcallassistant.R;
 import com.nafshadigital.smartcallassistant.adapter.ListAdapterViewFavorites;
-import com.nafshadigital.smartcallassistant.adapter.ListAdapterViewRemainder;
 import com.nafshadigital.smartcallassistant.helpers.MyToast;
 import com.nafshadigital.smartcallassistant.vo.FavoriteVO;
-import com.nafshadigital.smartcallassistant.vo.RemainderVO;
 
 import java.util.ArrayList;
 
 import static android.Manifest.permission.READ_CONTACTS;
-import static android.Manifest.permission.READ_PHONE_STATE;
-import static android.Manifest.permission.SEND_SMS;
 
 public class FavouriteActivity extends AppCompatActivity {
 

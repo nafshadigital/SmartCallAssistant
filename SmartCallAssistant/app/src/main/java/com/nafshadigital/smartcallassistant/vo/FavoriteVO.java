@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Build;
 import android.telecom.Call;
 
 import com.nafshadigital.smartcallassistant.activity.DBHelper;
@@ -70,6 +71,7 @@ public class FavoriteVO {
             phnnum = phnnum.substring(phnnum.length()-8, phnnum.length());
         }
         String selectQuery = "select * from " +dbHelper.FAVORITE_TABLE_NAME + " where phnnumber like '%" +  phnnum +"'";
+
 
         SQLiteDatabase db = this.dbHelper.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery,null);

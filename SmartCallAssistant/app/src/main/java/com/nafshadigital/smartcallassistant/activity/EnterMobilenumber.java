@@ -1,13 +1,10 @@
 package com.nafshadigital.smartcallassistant.activity;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.telephony.SmsManager;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.webkit.WebView;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -20,7 +17,6 @@ import com.nafshadigital.smartcallassistant.vo.UsersVO;
 import com.nafshadigital.smartcallassistant.webservice.MyRestAPI;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;

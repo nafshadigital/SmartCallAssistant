@@ -5,6 +5,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.AudioManager;
+import android.media.MediaPlayer;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.telephony.SmsManager;
 import android.telephony.TelephonyManager;
@@ -30,6 +35,10 @@ import java.util.Date;
 
 public class CallReceiver extends BroadcastReceiver {
 
+
+    Uri notification = Uri.EMPTY;
+    MediaPlayer mp = null;
+
     public static int laststate = TelephonyManager.CALL_STATE_IDLE;
     public static String savedNumber = "";
     public static Date callStartTime;
@@ -43,7 +52,17 @@ public class CallReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context , Intent intent){
         System.out.println("Receiver Start");
-      this.intent = intent;
+        this.intent = intent;
+
+        notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
+
+        if(mp == null) {
+            System.out.println("Waheed creating mediaplayer");
+            mp = MediaPlayer.create(context.getApplicationContext(), notification);
+        }
+        else
+            mp.reset();
+
 
         if(intent.getAction().equals("android.intent.action.NEW_OUTGOING_CALL")){
             savedNumber = intent.getExtras().getString("android.intent.extra.PHONE_NUMBER");
@@ -70,12 +89,12 @@ public class CallReceiver extends BroadcastReceiver {
         }else {
             System.out.println("BgPCICallService: Service is running");
         }
-
     }
 
     public void onCallStateChanged(Context context, int state, String number){
 
         if(laststate == state){
+            mp.reset();
             return;
         }
 
@@ -83,6 +102,7 @@ public class CallReceiver extends BroadcastReceiver {
 
         switch (state){
             case  TelephonyManager.CALL_STATE_RINGING:
+                System.out.println("case  TelephonyManager.CALL_STATE_RINGING");
                 savedNumber = number;
 
                 settingsVO = new SettingsVO(context);
@@ -96,6 +116,9 @@ public class CallReceiver extends BroadcastReceiver {
                 int res = favoriteVO.checkFavorites(phoneNo);
 
                 if(settingsVO.favmute.equals("yes") && res > 0) {
+
+                    mp.start();
+
                     AudioManager am = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
                     am.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
                     //Toast.makeText(context, "Ringing RINGER_MODE_NORMAL" + savedNumber + " Call time " + callStartTime +" Date " + new Date() , Toast.LENGTH_LONG).show();
@@ -193,7 +216,11 @@ public class CallReceiver extends BroadcastReceiver {
                 break;
 
             case TelephonyManager.CALL_STATE_OFFHOOK:
-                if(laststate != TelephonyManager.CALL_STATE_RINGING){
+                System.out.println("TelephonyManager.CALL_STATE_OFFHOOK");
+                mp.reset();
+                if(laststate != TelephonyManager.CALL_STATE_RINGING)
+                {
+
                     isIncoming = false;
                     callStartTime = new Date();
                     SimpleDateFormat formatoff = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss a");
@@ -214,6 +241,8 @@ public class CallReceiver extends BroadcastReceiver {
                 break;
 
             case TelephonyManager.CALL_STATE_IDLE :
+                System.out.println("TelephonyManager.CALL_STATE_OFFHOOK");
+                mp.reset();
                 if(laststate == TelephonyManager.CALL_STATE_RINGING){
                //     Toast.makeText(context, "Ringing but no pickup" + savedNumber + " Call time " + callStartTime +" Date " + new Date() , Toast.LENGTH_LONG).show();
 
