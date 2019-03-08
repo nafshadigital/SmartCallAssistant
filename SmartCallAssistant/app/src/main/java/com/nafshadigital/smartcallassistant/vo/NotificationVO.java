@@ -88,6 +88,9 @@ public class NotificationVO implements Serializable {
                 temp.message = jso.getString("message");
             if(!jso.isNull("name"))
                 temp.name = jso.getString("name");
+            else
+                temp.name = "User";
+
             if(!jso.isNull("created_date"))
                 temp.date = jso.getString("created_date");
             pro.add(temp);

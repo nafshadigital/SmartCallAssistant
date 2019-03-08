@@ -260,6 +260,11 @@ SettingsVO settingsVO;
             String maxpostId = jsonObject.getString("maxId");
             System.out.println("maxpostid="+maxpostId);
 
+            if(maxpostId.equals("null"))
+            {
+                maxpostId = null;
+            }
+
             if((maxpostId != null) && (!maxpostId.isEmpty())) {
                 maxid = Integer.parseInt(maxpostId);
             }
@@ -271,6 +276,8 @@ SettingsVO settingsVO;
         {
             e.printStackTrace();
         }
+
+        maxid=50; minid=49;
 
         if(maxid > minid)
         {
@@ -287,7 +294,7 @@ SettingsVO settingsVO;
                     NotificationVO notif = new NotificationVO();
                     notif = NotifAL.get(i);
                     String content = notif.message;
-                    String title = notif.name + " has been sent";
+                    String title = notif.name + " have sent you a message";
 
                     Intent intents = new Intent(this, NotificationDetail.class);
                     intents.putExtra("notifVO",notif);
@@ -296,7 +303,6 @@ SettingsVO settingsVO;
                     intents.setAction(Long.toString(System.currentTimeMillis()));
                     intents.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intents, PendingIntent.FLAG_UPDATE_CURRENT);
-
 
                     Notification notification = new Notification.Builder(this)
 

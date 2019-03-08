@@ -43,6 +43,8 @@ public class TestActivity extends AppCompatActivity {
         String res = performPostCall("http://192.168.1.9/SmartCallAssistantAPI/api/getCountry/", postParam);
         System.out.print("TestActivity: Result = " + res);*/
 
+        System.out.println("GetCountry=" + res);
+
         MyToast.show(this, " Result = " + res);
 
     }

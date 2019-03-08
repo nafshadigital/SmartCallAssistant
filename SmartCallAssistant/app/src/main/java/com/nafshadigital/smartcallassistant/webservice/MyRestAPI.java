@@ -1,7 +1,6 @@
 package com.nafshadigital.smartcallassistant.webservice;
 
 import android.os.StrictMode;
-import android.preference.PreferenceActivity;
 import android.util.Log;
 
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -13,11 +12,13 @@ import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.HashMap;
@@ -28,6 +29,30 @@ import javax.net.ssl.HttpsURLConnection;
 import cz.msebera.android.httpclient.Header;
 public class MyRestAPI implements IWebServiceDeclaration {
 
+    public static void getBaseURL()
+    {
+        try {
+
+            URL url = new URL("http://www.google.com:80/");
+
+            // read text returned by server
+            BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
+
+            String line;
+            while ((line = in.readLine()) != null) {
+                System.out.println(line);
+            }
+            in.close();
+
+        }
+        catch (MalformedURLException e) {
+            System.out.println("Malformed URL: " + e.getMessage());
+        }
+        catch (IOException e) {
+            System.out.println("I/O Error: " + e.getMessage());
+        }
+    }
+
     public static String PostCall(String requestURL, JSONObject jsonObject) {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
@@ -37,12 +62,14 @@ public class MyRestAPI implements IWebServiceDeclaration {
         try {
             url = new URL(BASE_URL + requestURL + "/");
 
+            System.out.println(url.toString());
+
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setReadTimeout(15000);
             conn.setConnectTimeout(15000);
             conn.setRequestMethod("GET");
-            //conn.setRequestProperty("HTTP_ACCEPT", "application/json");
-            conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+            conn.setRequestProperty("HTTP_ACCEPT", "application/json");
+            //conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
             conn.setRequestProperty("Accept", "application/json");
 
             conn.setDoInput(true);

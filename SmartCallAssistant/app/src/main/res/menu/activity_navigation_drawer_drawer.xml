@@ -19,6 +19,16 @@
             android:title="Favourite" />
 
         <item
+            android:id="@+id/heart"
+            android:icon="@drawable/ic_love"
+            android:title="Send ♥" />
+
+        <item
+            android:id="@+id/shareheart"
+            android:icon="@drawable/ic_heart"
+            android:title="Share ♥♥♥" />
+
+        <item
             android:id="@+id/callog"
             android:icon="@mipmap/calllog"
             android:title="Recent Log" />

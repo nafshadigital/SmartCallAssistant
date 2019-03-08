@@ -37,7 +37,6 @@ public class CallReceiver extends BroadcastReceiver {
 
 
     Uri notification = Uri.EMPTY;
-    MediaPlayer mp = null;
     Ringtone ringtone;
 
 
@@ -67,19 +66,6 @@ public class CallReceiver extends BroadcastReceiver {
         else {
             this.ringtone = ((AppRunning) context.getApplicationContext()).getRingtone();
         }
-
-
-        if(mp == null) {
-            System.out.println("Waheed creating mediaplayer");
-            mp = MediaPlayer.create(context.getApplicationContext(), notification);
-        }
-        else
-        {
-            if(mp.isPlaying()) {
-                mp.reset();
-            }
-        }
-
 
 
         if(intent.getAction().equals("android.intent.action.NEW_OUTGOING_CALL")){

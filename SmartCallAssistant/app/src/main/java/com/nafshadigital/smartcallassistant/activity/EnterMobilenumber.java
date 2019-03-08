@@ -64,7 +64,7 @@ public class EnterMobilenumber extends AppCompatActivity {
            // MyToast.show(this,res);
             System.out.println("countryRes="+res);
             CountryAL = new CountryVO().getCountryArrayList(new JSONArray(res));
-            ListAdapterViewCountry adapter = new ListAdapterViewCountry(this,android.R.layout.simple_spinner_item, CountryAL);
+            ListAdapterViewCountry adapter = new ListAdapterViewCountry(this,R.layout.spinner_item, CountryAL);
             spincountry.setAdapter(adapter);
         }catch (Exception e)
         {
