@@ -277,7 +277,7 @@ SettingsVO settingsVO;
             e.printStackTrace();
         }
 
-        maxid=50; minid=49;
+        maxid=50; minid=49; //Todo : Removal
 
         if(maxid > minid)
         {
