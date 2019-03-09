@@ -28,6 +28,7 @@ import com.nafshadigital.smartcallassistant.vo.UsersVO;
 import com.nafshadigital.smartcallassistant.webservice.ActivityService;
 import com.nafshadigital.smartcallassistant.webservice.MyRestAPI;
 
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -38,6 +39,7 @@ public class CallReceiver extends BroadcastReceiver {
 
     Uri notification = Uri.EMPTY;
     Ringtone ringtone;
+    MediaPlayer mediaPlayer;
 
 
     public static int laststate = TelephonyManager.CALL_STATE_IDLE;
@@ -58,12 +60,10 @@ public class CallReceiver extends BroadcastReceiver {
         notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
 
 
-        if(((AppRunning) context.getApplicationContext()).getRingtone() == null) {
+        if (((AppRunning) context.getApplicationContext()).getRingtone() == null) {
             this.ringtone = RingtoneManager.getRingtone(context, notification);
             ((AppRunning) context.getApplicationContext()).setRingtone(this.ringtone);
-
-        }
-        else {
+        } else {
             this.ringtone = ((AppRunning) context.getApplicationContext()).getRingtone();
         }
 
@@ -98,7 +98,7 @@ public class CallReceiver extends BroadcastReceiver {
     public void onCallStateChanged(Context context, int state, String number){
 
         if(laststate == state){
-            this.ringtone.stop();
+                this.ringtone.stop();
             return;
         }
 
@@ -121,11 +121,11 @@ public class CallReceiver extends BroadcastReceiver {
 
                 if(settingsVO.favmute.equals("yes") && res > 0) {
 
-                    this.ringtone.play();
-
                     AudioManager am = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
                     am.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
-                    //Toast.makeText(context, "Ringing RINGER_MODE_NORMAL" + savedNumber + " Call time " + callStartTime +" Date " + new Date() , Toast.LENGTH_LONG).show();
+
+                    this.ringtone.play();
+                    // Toast.makeText(context, "Ringing RINGER_MODE_NORMAL" + savedNumber + " Call time " + callStartTime +" Date " + new Date() , Toast.LENGTH_LONG).show();
                 }else{
                     if(settingsVO.ismobilemute.equals("1")){
                         TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);

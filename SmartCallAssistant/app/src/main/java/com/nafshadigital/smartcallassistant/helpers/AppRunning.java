@@ -3,6 +3,7 @@ package com.nafshadigital.smartcallassistant.helpers;
 import android.app.ActivityManager;
 import android.app.Application;
 import android.content.Context;
+import android.media.MediaPlayer;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -11,7 +12,8 @@ import java.util.List;
 
 public class AppRunning extends Application {
 
-    Ringtone ringtone;
+    Ringtone ringtone; // SDK 26 and Above
+    MediaPlayer mediaPlayer; // SDK 23
     Uri notification = Uri.EMPTY;
     boolean isBGServiceRunning = false;
 
@@ -25,6 +27,14 @@ public class AppRunning extends Application {
 
     public Ringtone getRingtone() {
         return ringtone;
+    }
+
+    public MediaPlayer getMediaPlayer() {
+        return mediaPlayer;
+    }
+
+    public void setMediaPlayer(MediaPlayer mediaPlayer) {
+        this.mediaPlayer = mediaPlayer;
     }
 
     public void setRingtone(Ringtone ringtone) {
