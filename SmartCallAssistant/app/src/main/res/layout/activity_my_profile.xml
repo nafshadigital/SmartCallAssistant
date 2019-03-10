@@ -70,19 +70,29 @@
             android:drawableLeft="@android:drawable/ic_menu_compass"
             android:hint="Code"/>  -->
     </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal">
 
     <Button
         android:id="@+id/btnupdateprofile"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="5sp"
+        style="@style/SmartButton"
+        android:layout_marginTop="20dp"
+        android:layout_marginRight="10dp"
+        android:layout_alignParentTop="false"
+        android:layout_weight="0.5"
         android:text="Update"/>
 
     <Button
         android:id="@+id/btnskipprofile"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="5sp"
+        android:layout_marginTop="20dp"
+        android:layout_alignParentTop="false"
+        android:layout_weight="0.5"
+        style="@style/SmartButton"
         android:onClick="skipprofile"
         android:text="Skip"/>
+    </LinearLayout>
 </LinearLayout>
