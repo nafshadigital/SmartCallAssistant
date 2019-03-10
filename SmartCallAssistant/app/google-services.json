@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "587428147512",
+    "firebase_url": "https://smartcallassistant.firebaseio.com",
+    "project_id": "smartcallassistant",
+    "storage_bucket": "smartcallassistant.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:587428147512:android:95d71293a012fbe8",
+        "android_client_info": {
+          "package_name": "com.nafshadigital.smartcallassistant"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "587428147512-m73v8qepl1q16ocb6asetq3f3m9sc1ov.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCjrNT36aA150Rqcxt7hHzGx1JhvZyK25k"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
