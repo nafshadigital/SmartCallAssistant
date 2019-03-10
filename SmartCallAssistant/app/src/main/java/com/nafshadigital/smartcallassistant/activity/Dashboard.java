@@ -1,6 +1,7 @@
 package com.nafshadigital.smartcallassistant.activity;
 
 import android.Manifest;
+import android.app.ActivityManager;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -36,6 +37,7 @@ import com.nafshadigital.smartcallassistant.R;
 import com.nafshadigital.smartcallassistant.adapter.ListAdapterViewActivity;
 import com.nafshadigital.smartcallassistant.helpers.AppRunning;
 import com.nafshadigital.smartcallassistant.helpers.MyToast;
+import com.nafshadigital.smartcallassistant.service.SyncContactsService;
 import com.nafshadigital.smartcallassistant.vo.ActivityVO;
 import com.nafshadigital.smartcallassistant.vo.ContactVO;
 import com.nafshadigital.smartcallassistant.vo.FavoriteVO;
@@ -67,6 +69,10 @@ public class Dashboard extends AppCompatActivity {
     Intent intent;
     private Context context;
     private NotifyActivity remActivity;
+
+    Intent syncContactsIntent;
+    private SyncContactsService syncContactsService;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -74,12 +80,22 @@ public class Dashboard extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
 
-            imgadd = (ImageView) findViewById(R.id.btnaddactivity);
+        imgadd = (ImageView) findViewById(R.id.btnaddactivity);
         listactivity = (ListView) findViewById(R.id.listactivity);
        // txtactcount = (TextView) findViewById(R.id.tvtotnoact);
 
 
+
         this.context = this;
+
+        SyncContactsService syncContactsService = new SyncContactsService(this.context);
+
+        syncContactsIntent = new Intent(this.context, syncContactsService.getClass());
+        startService(syncContactsIntent);
+
+        if (!isMyServiceRunning(SyncContactsService.class)) {
+            //    startService(syncContactsIntent);
+        }
 
         intent = new Intent(this.context,BgPCICallService.class);
         ((AppRunning) context.getApplicationContext()).setBGServiceRunning(true);
@@ -360,6 +376,18 @@ public class Dashboard extends AppCompatActivity {
             progressDialog.dismiss();
         }
 
+    }
+
+    private boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                Log.i ("isMyServiceRunning?", true+"");
+                return true;
+            }
+        }
+        Log.i ("isMyServiceRunning?", false+"");
+        return false;
     }
 
 }

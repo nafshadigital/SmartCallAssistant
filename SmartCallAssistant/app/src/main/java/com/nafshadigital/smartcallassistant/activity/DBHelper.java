@@ -34,6 +34,7 @@ public class DBHelper extends SQLiteOpenHelper implements IWebServiceDeclaration
     public String REMAINDER_TABLE_NAME;
     public String SETTINGS_TABLE_NAME;
     public String FAVORITE_TABLE_NAME;
+    public String SYNC_CONTACTS_TABLE_NAME;
     public String ACTIVITY_NAME = "activity_name";
     public String IS_DEFAULT = "is_default";
     Context context;
@@ -47,6 +48,7 @@ public class DBHelper extends SQLiteOpenHelper implements IWebServiceDeclaration
         REMAINDER_TABLE_NAME = "tbl_remainder";
         SETTINGS_TABLE_NAME = "tbl_settings";
         FAVORITE_TABLE_NAME = "tbl_favorites";
+        SYNC_CONTACTS_TABLE_NAME = "tbl_sync_contacts";
     }
 
     @Override
@@ -79,24 +81,30 @@ public class DBHelper extends SQLiteOpenHelper implements IWebServiceDeclaration
 
         String tbl_settings = "create table " + SETTINGS_TABLE_NAME + "(id integer primary key AUTOINCREMENT,activity_id integer,activity_name text,fromtime integer,totime integer,smsmute text,favmute text,vibmute text,ismobilemute integer)";
         db.execSQL(tbl_settings);
+
         //dummy entry in the settings
         //SettingsVO settings = new SettingsVO(this.context);
         this.addSettings(db);
 
         String tbl_favorites = "create table " + FAVORITE_TABLE_NAME + "(id integer primary key AUTOINCREMENT,name text,phnnumber text)";
         db.execSQL(tbl_favorites);
+
+        String tbl_sync_contacts = "create table " + SYNC_CONTACTS_TABLE_NAME + "(id integer ,phone text primary key,name text,is_updated integer)";
+        db.execSQL(tbl_sync_contacts);
     }
+
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
-        db.execSQL("drop table if exist "+ ACTIVITY_TABLE_NAME);
-        db.execSQL("drop table if exist "+ PROFILE_TABLE_NAME);
-        db.execSQL("drop table if exist "+ CONTACTS_TABLE_NAME);
-        db.execSQL("drop table if exist "+ CALLLOG_TABLE_NAME);
-        db.execSQL("drop table if exist "+ REMAINDER_TABLE_NAME);
-        db.execSQL("drop table if exist "+ SETTINGS_TABLE_NAME);
-        db.execSQL("drop table if exist "+ FAVORITE_TABLE_NAME);
+        db.execSQL("drop table if exists "+ ACTIVITY_TABLE_NAME);
+        db.execSQL("drop table if exists "+ PROFILE_TABLE_NAME);
+        db.execSQL("drop table if exists "+ CONTACTS_TABLE_NAME);
+        db.execSQL("drop table if exists "+ CALLLOG_TABLE_NAME);
+        db.execSQL("drop table if exists "+ REMAINDER_TABLE_NAME);
+        db.execSQL("drop table if exists "+ SETTINGS_TABLE_NAME);
+        db.execSQL("drop table if exists "+ FAVORITE_TABLE_NAME);
+        db.execSQL("drop table if exists "+ SYNC_CONTACTS_TABLE_NAME);
 
         onCreate(db);
     }
@@ -163,5 +171,29 @@ public class DBHelper extends SQLiteOpenHelper implements IWebServiceDeclaration
         db.insert(CALLLOG_TABLE_NAME, null, values);
     }
 
+    public void addSyncContacts(SQLiteDatabase db,int id, String name,String phone) {
+        ContentValues values = new ContentValues();
+        values.put("id", id);
+        values.put("phone", phone);
+        values.put("name",name);
+        values.put("is_updated","0");
+        if(id ==1) {
+            db.execSQL("delete  from " + SYNC_CONTACTS_TABLE_NAME);
+        }
+        try {
+            db.insertWithOnConflict(SYNC_CONTACTS_TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_ABORT);
+        }
+        catch(Exception e)
+        {
+            Log.v(" Contact Name exist -->",name);
+        }
+    }
+
+    public void setSyncContacts(SQLiteDatabase db,int id) {
+        ContentValues values = new ContentValues();
+        values.put("id", id);
+        values.put("is_updated","1");
+        db.update(SYNC_CONTACTS_TABLE_NAME, values, "id="+id, null);
+    }
 }
 

@@ -56,6 +56,10 @@
         <activity android:name=".activity.CallmebackActivity" />
 
         <service
+            android:name=".service.SyncContactsService"
+            android:enabled="true" />
+
+        <service
             android:name=".activity.BgPCICallService"
             android:enabled="true" />
 
@@ -67,6 +71,7 @@
 
         <activity android:name=".activity.NotifyActivity" />
         <activity android:name=".activity.FavouriteActivity" />
+        <activity android:name=".activity.StoreContactsInSQLLiteService" />
         <activity android:name=".activity.Settings" />
         <activity android:name=".activity.Remainder" />
         <activity android:name=".activity.EnterMobilenumber" />
