@@ -106,7 +106,7 @@ public class MyProfile extends AppCompatActivity {
 
         try {
             JSONObject jsonObject = new JSONObject(res);
-             name = jsonObject.getString("name");
+             name = jsonObject.getString("contact_name");
              email = jsonObject.getString("email");
 
             if(name.equals("null") && email.equals("null")){

@@ -32,9 +32,9 @@ public class NotificationVO implements Serializable {
         try {
             temp.put("id", id);
             temp.put("user_id", user_id);
-            temp.put("phnNum", phnNum);
+            temp.put("contact_number", phnNum);
             temp.put("message", message);
-            temp.put("name", name);
+            temp.put("contact_name", name);
             temp.put("created_date", date);
         }catch (JSONException e){
             e.printStackTrace();
@@ -58,12 +58,12 @@ public class NotificationVO implements Serializable {
             temp.id = jsObj.getString("id");
         if(!jsObj.isNull("user_id"))
             temp.user_id = jsObj.getString("user_id");
-        if(!jsObj.isNull("phnNum"))
-            temp.phnNum = jsObj.getString("phnNum");
+        if(!jsObj.isNull("contact_number"))
+            temp.phnNum = jsObj.getString("contact_number");
         if(!jsObj.isNull("message"))
             temp.message = jsObj.getString("message");
-        if(!jsObj.isNull("name"))
-            temp.name = jsObj.getString("name");
+        if(!jsObj.isNull("contact_name"))
+            temp.name = jsObj.getString("contact_name");
         if(!jsObj.isNull("created_date"))
             temp.date = jsObj.getString("created_date");
         return temp;
@@ -82,12 +82,12 @@ public class NotificationVO implements Serializable {
                 temp.id = jso.getString("id");
             if(!jso.isNull("user_id"))
                 temp.user_id = jso.getString("user_id");
-            if(!jso.isNull("phnNum"))
-                temp.phnNum = jso.getString("phnNum");
+            if(!jso.isNull("contact_number"))
+                temp.phnNum = jso.getString("contact_number");
             if(!jso.isNull("message"))
                 temp.message = jso.getString("message");
-            if(!jso.isNull("name"))
-                temp.name = jso.getString("name");
+            if(!jso.isNull("contact_name"))
+                temp.name = jso.getString("contact_name");
             else
                 temp.name = "User";
 

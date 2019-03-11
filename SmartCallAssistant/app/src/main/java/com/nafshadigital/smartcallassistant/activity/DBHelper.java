@@ -175,7 +175,7 @@ public class DBHelper extends SQLiteOpenHelper implements IWebServiceDeclaration
         ContentValues values = new ContentValues();
         values.put("id", id);
         values.put("phone", phone);
-        values.put("name",name);
+        values.put("contact_name",name);
         values.put("is_updated","0");
         if(id ==1) {
             db.execSQL("delete  from " + SYNC_CONTACTS_TABLE_NAME);

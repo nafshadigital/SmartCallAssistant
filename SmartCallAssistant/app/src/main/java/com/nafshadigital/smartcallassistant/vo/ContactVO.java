@@ -36,7 +36,7 @@ public class ContactVO {
         ContentValues cv = new ContentValues();
 
             cv.put("number", number);
-            cv.put("name", name);
+            cv.put("contact_name", name);
             cv.put("email", email);
             long res = db.insert(dbHelper.CONTACTS_TABLE_NAME, null, cv);
             db.close();

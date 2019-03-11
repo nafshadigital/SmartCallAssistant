@@ -3,6 +3,7 @@ package com.nafshadigital.smartcallassistant.service;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
@@ -12,6 +13,9 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.nafshadigital.smartcallassistant.activity.DBHelper;
+import com.nafshadigital.smartcallassistant.vo.NotificationVO;
+import com.nafshadigital.smartcallassistant.vo.SyncContactVO;
+import com.nafshadigital.smartcallassistant.webservice.MyRestAPI;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -69,6 +73,9 @@ public class SyncContactsService extends Service {
             Log.i("Quit", "Thread finished its job" + contactsCount);
             this.stoptimertask();
         }
+        SharedPreferences sharedPreference = getApplicationContext().getSharedPreferences("LoginDetails",Context.MODE_PRIVATE);
+        String userid = sharedPreference.getString("userID","");
+
         cursor.moveToFirst();
         while (cursor.isAfterLast() == false) {
 
@@ -78,33 +85,38 @@ public class SyncContactsService extends Service {
             Cursor phones = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,
                     ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = " + contactId, null, null);
 
+
             while (phones.moveToNext()) {
                 String number = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
                 String name = cursor.getString(cursor.getColumnIndex(ContactsContract.Data.DISPLAY_NAME));
-                /*
-                number = number.replaceAll("\\D", "").trim();
-                if(number.substring(0,1).equals("00"))
-                {
-                    number = number.substring(2,number.length());
-                }
-                if(number.length() < 9 || number == null) {
-                    Log.v("Phone Number", "Starting " + number + "Phone End");
-                    number = "0000000"+number;
-                }
-                //if(number != null && number.length() > 9)
-                */
 
                 {
                     recordCounter++;
                     if (recordCounter >= recordsProcessed && recordCounter <= processRecords) {
                         System.out.println("Inside Loop Process records reached ----> " + recordsProcessed);
                         System.out.println("Inside Loop Process records reached ----> " + processRecords);
+
                         Log.d(recordCounter + ":" + "Display_Name", cursor.getString(cursor.getColumnIndex(ContactsContract.Data.DISPLAY_NAME)) + " Number" + number);
                         Log.d(recordCounter + ":" + "Phone", number);
 
                         SQLiteDatabase db = this.dbHelper.getWritableDatabase();
                         this.dbHelper.addSyncContacts(db, recordCounter, name, number);
 
+                        number = number.replaceAll("\\D", "").trim();
+                        if (number.substring(0, 1).equals("00")) {
+                            number = number.substring(2, number.length());
+                        }
+                        if (number.length() > 9) {
+
+                            SyncContactVO contacts = new SyncContactVO();
+                            contacts.user_id = userid;
+                            contacts.contact_name = name;
+                            contacts.contact_number = number;
+
+                            String savedId = MyRestAPI.PostCall("savecontact",contacts.toJSONObject());
+                            System.out.println("Save ID Response" + savedId);
+
+                        }
                         db.close();
                     }
 

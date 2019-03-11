@@ -38,7 +38,7 @@ public class ProfileVO {
     public int updateProfile() {
         SQLiteDatabase db = this.dbHelper.getWritableDatabase();
         ContentValues cv = new ContentValues();
-        cv.put("name", name);
+        cv.put("contact_name", name);
         cv.put("email", email);
         cv.put("mobile_no", mobile_no);
         cv.put("code", code);

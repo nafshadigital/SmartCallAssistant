@@ -63,8 +63,8 @@ public class CountryVO implements Serializable {
                 temp.id = i+"";
             if (!jso.isNull("dial_code"))
                 temp.country_code = jso.getString("dial_code");
-            if (!jso.isNull("name"))
-                temp.country = jso.getString("name");
+            if (!jso.isNull("contact_name"))
+                temp.country = jso.getString("contact_name");
 
             if (!jso.isNull("id"))
                 temp.id = jso.getString("id");

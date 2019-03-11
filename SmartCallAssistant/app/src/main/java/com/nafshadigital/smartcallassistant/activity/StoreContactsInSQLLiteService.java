@@ -190,7 +190,7 @@ public class StoreContactsInSQLLiteService extends AppCompatActivity {
             String number = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.Phone.NUMBER));
             String name = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
 
-            // Toast.makeText(this, "id=" + id + "Name="+name  + "Number="+number, Toast.LENGTH_LONG).show();
+            // Toast.makeText(this, "id=" + id + "Name="+contact_name  + "Number="+number, Toast.LENGTH_LONG).show();
 
 
             favoriteVO = new FavoriteVO(getApplicationContext());
