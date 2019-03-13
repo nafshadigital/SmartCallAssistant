@@ -37,9 +37,11 @@ public class FavoriteVO {
         SQLiteDatabase db = this.dbHelper.getWritableDatabase();
         ContentValues cv = new ContentValues();
 
-        cv.put("contact_name", name);
+        cv.put("name", name);
         cv.put("phnnumber", phnnumber);
+        System.out.println("Phone Number to Add --->" + phnnumber + " Contact Name --->" + name);
         long res = db.insert(dbHelper.FAVORITE_TABLE_NAME, null, cv);
+        System.out.println("Phone Number to Add --->" + "Result = " + res);
         db.close();
         return res;
     }

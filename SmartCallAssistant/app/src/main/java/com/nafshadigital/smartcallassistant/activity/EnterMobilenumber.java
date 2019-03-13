@@ -102,7 +102,7 @@ public class EnterMobilenumber extends AppCompatActivity {
             try {
                 JSONObject jsonObject = new JSONObject(res);
                 String status = jsonObject.getString("status");
-                String id = jsonObject.getString("user_id");
+                String id = jsonObject.getString("token");
                 String otp = jsonObject.getString("otp");
              //   MyToast.show(this, "res=" + status);
 

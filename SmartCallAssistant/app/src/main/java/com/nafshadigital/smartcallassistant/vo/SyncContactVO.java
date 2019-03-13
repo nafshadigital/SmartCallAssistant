@@ -1,5 +1,11 @@
 package com.nafshadigital.smartcallassistant.vo;
 
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+
+import com.nafshadigital.smartcallassistant.activity.DBHelper;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -11,24 +17,24 @@ public class SyncContactVO implements Serializable {
 
     public String id = "";
     public String user_id = "";
-    public String contact_number = "";
-    public String contact_name = "";
+    public String phone = "";
+    public String name = "";
+    private DBHelper dbHelper;
 
-
-    public void SyncContactVO(){
+    public SyncContactVO(Context context){
         id = "";
         user_id = "";
-        contact_number = "";
-        contact_name = "";
+        phone = "";
+        name = "";
+        this.dbHelper = new DBHelper(context);
     }
 
     public JSONObject toJSONObject(){
         JSONObject temp = new JSONObject();
         try {
             temp.put("id", id);
-            temp.put("user_id", user_id);
-            temp.put("contact_number", contact_number);
-            temp.put("contact_name", contact_name);
+            temp.put("phone", phone);
+            temp.put("name", name);
         }catch (JSONException e){
             e.printStackTrace();
         }
@@ -45,18 +51,45 @@ public class SyncContactVO implements Serializable {
     }
 
     public SyncContactVO getSyncContactVO(JSONObject jsObj) throws JSONException {
-        SyncContactVO temp = new SyncContactVO();
+        SyncContactVO temp = new SyncContactVO(null);
 
         if(!jsObj.isNull("id"))
             temp.id = jsObj.getString("id");
-        if(!jsObj.isNull("user_id"))
-            temp.user_id = jsObj.getString("user_id");
-        if(!jsObj.isNull("contact_number"))
-            temp.contact_number = jsObj.getString("contact_number");
-        if(!jsObj.isNull("contact_name"))
-            temp.contact_name = jsObj.getString("contact_name");
+        if(!jsObj.isNull("phone"))
+            temp.phone = jsObj.getString("phone");
+        if(!jsObj.isNull("name"))
+            temp.name = jsObj.getString("name");
         return temp;
     }
+
+    public ArrayList<SyncContactVO> getSyncContactVO()
+    {
+        ArrayList<SyncContactVO> arraytp = new ArrayList<SyncContactVO>();
+        String selectQuery = "select * from "+dbHelper.SYNC_CONTACTS_TABLE_NAME;
+        SQLiteDatabase db = this.dbHelper.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery,null);
+
+        int count = 0;
+        if(cursor.moveToFirst())
+        {
+            do{
+                SyncContactVO tp = new SyncContactVO(null);
+                tp.id = cursor.getString(0);
+                tp.name = cursor.getString(1);
+                tp.phone = cursor.getString(2);
+                arraytp.add(tp);
+                count++;
+                if(count > 50)
+                {
+                    break;
+                }
+            }while(cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+        return arraytp;
+    }
+
 
     public ArrayList<SyncContactVO> getNotifyArraylist(JSONArray jsa) throws JSONException{
         ArrayList<SyncContactVO> pro = new ArrayList<SyncContactVO>();
@@ -64,19 +97,17 @@ public class SyncContactVO implements Serializable {
         JSONObject jso;
 
         for(int i=0; i<jsa.length(); i++){
-            temp = new SyncContactVO();
+            temp = new SyncContactVO(null);
             jso = (JSONObject) jsa.get(i);
 
             if(!jso.isNull("id"))
                 temp.id = jso.getString("id");
-            if(!jso.isNull("user_id"))
-                temp.user_id = jso.getString("user_id");
-            if(!jso.isNull("contact_number"))
-                temp.contact_number = jso.getString("contact_number");
-            if(!jso.isNull("contact_name"))
-                temp.contact_name = jso.getString("contact_name");
+            if(!jso.isNull("phone"))
+                temp.phone = jso.getString("phone");
+            if(!jso.isNull("name"))
+                temp.name = jso.getString("name");
             else
-                temp.contact_name = "User";
+                temp.name = "User";
 
             pro.add(temp);
         }

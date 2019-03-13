@@ -45,7 +45,7 @@ public class UsersVO implements Serializable {
             temp.put("mobile", mobile);
             temp.put("is_active", is_active);
             temp.put("verification_code", verification_code);
-            temp.put("user_id", user_id);
+            temp.put("token", user_id);
             temp.put("android_id", android_id);
             temp.put("device_id", device_id);
 
@@ -73,8 +73,8 @@ public class UsersVO implements Serializable {
             temp.is_active = jsObj.getString("is_active");
         if (!jsObj.isNull("verification_code"))
             temp.verification_code = jsObj.getString("verification_code");
-        if (!jsObj.isNull("user_id"))
-            temp.user_id = jsObj.getString("user_id");
+        if (!jsObj.isNull("token"))
+            temp.user_id = jsObj.getString("token");
         if (!jsObj.isNull("android_id"))
             temp.android_id = jsObj.getString("android_id");
         if (!jsObj.isNull("device_id"))
@@ -107,8 +107,8 @@ public class UsersVO implements Serializable {
                 temp.is_active = jso.getString("is_active");
             if (!jso.isNull("verification_code"))
                 temp.verification_code = jso.getString("verification_code");
-            if (!jso.isNull("user_id"))
-                temp.user_id = jso.getString("user_id");
+            if (!jso.isNull("token"))
+                temp.user_id = jso.getString("token");
             if (!jso.isNull("android_id"))
                 temp.android_id = jso.getString("android_id");
             if (!jso.isNull("device_id"))

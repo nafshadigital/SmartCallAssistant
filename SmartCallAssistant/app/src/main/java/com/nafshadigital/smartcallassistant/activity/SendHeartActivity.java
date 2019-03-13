@@ -21,26 +21,28 @@ import android.widget.TextView;
 
 import com.nafshadigital.smartcallassistant.R;
 import com.nafshadigital.smartcallassistant.adapter.ListAdapterViewFavorites;
+import com.nafshadigital.smartcallassistant.adapter.ListAdapterViewSendHeart;
 import com.nafshadigital.smartcallassistant.helpers.MyToast;
 import com.nafshadigital.smartcallassistant.vo.FavoriteVO;
+import com.nafshadigital.smartcallassistant.vo.SyncContactVO;
 
 import java.util.ArrayList;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
-public class FavouriteActivity extends AppCompatActivity {
+public class SendHeartActivity extends AppCompatActivity {
 
     ImageView imgaddcon;
     ListView listfavcon;
     TextView txtempfav;
-    ArrayList<FavoriteVO> FavAL;
-    FavoriteVO favoriteVO;
+    ArrayList<SyncContactVO> FavAL;
+    SyncContactVO favoriteVO;
     public static final int RequestPermissionCode = 1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_favourite);
-        setTitle("Favourites");
+        setContentView(R.layout.activity_sendheart);
+        setTitle("Send Hearts ♥");
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
 
@@ -53,13 +55,10 @@ public class FavouriteActivity extends AppCompatActivity {
 
     public boolean onCreateOptionsMenu(Menu menu)
     {
-        MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.addfavourite,menu);
-        MenuItem item = menu.findItem(R.id.imgaddfavourite);
-        return super.onCreateOptionsMenu(menu);
+        return false;
     }
 
-    public boolean onOptionsItemSelected(android.view.MenuItem item){
+    public boolean onOptionsItemSelected(MenuItem item){
         if(item.getItemId()==R.id.imgaddfavourite)
         {
             Intent contactPickerIntent = new Intent(Intent.ACTION_PICK,
@@ -75,12 +74,10 @@ public class FavouriteActivity extends AppCompatActivity {
     }
 
     public void display(){
-        FavoriteVO favoriteVO = new FavoriteVO(getApplicationContext());
-        FavAL = favoriteVO.getFavorites();
-        ListAdapterViewFavorites adapter = new ListAdapterViewFavorites(this,FavAL);
+        SyncContactVO favoriteVO = new SyncContactVO(getApplicationContext());
+        FavAL = favoriteVO.getSyncContactVO();
+        ListAdapterViewSendHeart adapter = new ListAdapterViewSendHeart(this,FavAL);
         listfavcon.setAdapter(adapter);
-
-        System.out.println("Phone Number to Add --->" + " count = " + FavAL.size());
 
         txtempfav.setVisibility(View.GONE );
         if(FavAL.size() == 0){
@@ -97,7 +94,7 @@ public class FavouriteActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        // TODO Auto-generated method stub
+
         super.onActivityResult(requestCode, resultCode, data);
 
         if (resultCode == RESULT_OK) {
@@ -108,32 +105,14 @@ public class FavouriteActivity extends AppCompatActivity {
             String number = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.Phone.NUMBER));
             String name = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
 
-            // Toast.makeText(this, "id=" + id + "Name="+contact_name  + "Number="+number, Toast.LENGTH_LONG).show();
 
-
-            favoriteVO = new FavoriteVO(getApplicationContext());
+            favoriteVO = new SyncContactVO(getApplicationContext());
             favoriteVO.name = name;
             number = number.replace(" ", "");
             number = number.replace("-", "");
 
-            favoriteVO.phnnumber = number;
-
-            int result = favoriteVO.checkFavorites(number);
-            int favcont = favoriteVO.checkFavcount();
-            if (favcont < 10) {
-                //MyToast.show(this,""+result);
-                if (result == 0) {
-                    long res = favoriteVO.addfavorites();
-                    MyToast.show(this, "SUCCESS");
-                    display();
-                } else {
-                    MyToast.show(this, "Already Exist");
-                }
-
-            } else {
-                MyToast.show(this, "Favorites limits 10 only");
+            favoriteVO.phone = number;
             }
-        }
     }
 
     public void manifestPermission(){
@@ -144,7 +123,7 @@ public class FavouriteActivity extends AppCompatActivity {
         }
     }
     private void requestPermission() {
-        ActivityCompat.requestPermissions(FavouriteActivity.this, new String[]
+        ActivityCompat.requestPermissions(SendHeartActivity.this, new String[]
                 {
                         Manifest.permission.READ_CONTACTS
                 }, RequestPermissionCode);

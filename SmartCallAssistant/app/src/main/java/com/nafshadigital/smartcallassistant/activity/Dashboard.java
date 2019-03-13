@@ -33,6 +33,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 import com.nafshadigital.smartcallassistant.R;
 import com.nafshadigital.smartcallassistant.adapter.ListAdapterViewActivity;
 import com.nafshadigital.smartcallassistant.helpers.AppRunning;
@@ -40,8 +43,10 @@ import com.nafshadigital.smartcallassistant.helpers.MyToast;
 import com.nafshadigital.smartcallassistant.service.SyncContactsService;
 import com.nafshadigital.smartcallassistant.vo.ActivityVO;
 import com.nafshadigital.smartcallassistant.vo.ContactVO;
+import com.nafshadigital.smartcallassistant.vo.FCMNotificationVO;
 import com.nafshadigital.smartcallassistant.vo.FavoriteVO;
 import com.nafshadigital.smartcallassistant.vo.SettingsVO;
+import com.nafshadigital.smartcallassistant.vo.UsersVO;
 import com.nafshadigital.smartcallassistant.webservice.ActivityService;
 import com.nafshadigital.smartcallassistant.webservice.MyRestAPI;
 
@@ -69,6 +74,7 @@ public class Dashboard extends AppCompatActivity {
     Intent intent;
     private Context context;
     private NotifyActivity remActivity;
+    private String fcmToken;
 
     Intent syncContactsIntent;
     private SyncContactsService syncContactsService;
@@ -84,6 +90,30 @@ public class Dashboard extends AppCompatActivity {
         listactivity = (ListView) findViewById(R.id.listactivity);
        // txtactcount = (TextView) findViewById(R.id.tvtotnoact);
 
+        FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener( Dashboard.this,  new OnSuccessListener<InstanceIdResult>() {
+            @Override
+            public void onSuccess(InstanceIdResult instanceIdResult) {
+                String newToken = instanceIdResult.getToken();
+                fcmToken = newToken;
+                Log.e("newToken",newToken);
+
+            }
+        });
+
+        FCMNotificationVO fcmNotificationVO = new FCMNotificationVO();
+
+        fcmNotificationVO.title = "Title";
+        fcmNotificationVO.message = "Message";
+        fcmNotificationVO.token = fcmToken;
+        String res = MyRestAPI.PostCall("send_notification",fcmNotificationVO.toJSONObject());
+        Log.v("newToken","Calling Notification sender PHP ");
+        try {
+            JSONObject json = new JSONObject(res);
+            MyToast.show(getApplicationContext(),json.getString("message"));
+        }catch (JSONException e) {
+
+            Log.v("newToken","Trying to sending notification " + e.toString() + "\n" + e.getMessage());
+        }
 
 
         this.context = this;
@@ -115,7 +145,7 @@ public class Dashboard extends AppCompatActivity {
 
       /*  JSONObject jsonupdate = new JSONObject();
         try {
-            jsonupdate.put("user_id", selectedUserID);
+            jsonupdate.put("token", selectedUserID);
             MyToast.show(getApplicationContext(),selectedUserID);
         }catch (JSONException e) {
 
@@ -231,6 +261,16 @@ public class Dashboard extends AppCompatActivity {
                     case R.id.favourite:
                         Intent fav = new Intent(Dashboard.this, FavouriteActivity.class);
                         startActivity(fav);
+                        break;
+
+                    case R.id.heart:
+                        Intent sendHeart = new Intent(Dashboard.this, SendHeartActivity.class);
+                        startActivity(sendHeart);
+                        break;
+
+                    case R.id.shareheart:
+                        Intent shareHeart = new Intent(Dashboard.this, ShareHeartsActivity.class);
+                        startActivity(shareHeart);
                         break;
 
                     case R.id.help:
@@ -360,7 +400,7 @@ public class Dashboard extends AppCompatActivity {
 
             JSONObject jsonupdate = new JSONObject();
             try {
-                jsonupdate.put("user_id", selectedUserID);
+                jsonupdate.put("token", selectedUserID);
               //  MyToast.show(getApplicationContext(),selectedUserID);
                 System.out.println("userId="+selectedUserID);
             }catch (JSONException e) {

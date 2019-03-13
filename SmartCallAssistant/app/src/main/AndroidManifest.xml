@@ -69,7 +69,9 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name=".activity.NotifyActivity" />
+        <!-- <activity android:name=".activity.NotifyActivity" /> -->
+        <activity android:name=".activity.ShareHeartsActivity" />
+        <activity android:name=".activity.SendHeartActivity" />
         <activity android:name=".activity.FavouriteActivity" />
         <activity android:name=".activity.StoreContactsInSQLLiteService" />
         <activity android:name=".activity.Settings" />
@@ -81,7 +83,13 @@
         <service
             android:name=".activity.NotifyTransparent"
             android:enabled="true" />
-
+        <service
+            android:name=".service.FireBaseMessagingService"
+            android:stopWithTask="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
         <activity android:name=".activity.LoginViaDeviceid" />
         <activity android:name=".activity.CallDetail" />
         <activity android:name=".activity.Help" />

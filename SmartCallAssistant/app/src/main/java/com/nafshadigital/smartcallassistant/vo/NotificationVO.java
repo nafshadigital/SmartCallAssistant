@@ -31,7 +31,7 @@ public class NotificationVO implements Serializable {
         JSONObject temp = new JSONObject();
         try {
             temp.put("id", id);
-            temp.put("user_id", user_id);
+            temp.put("token", user_id);
             temp.put("contact_number", phnNum);
             temp.put("message", message);
             temp.put("contact_name", name);
@@ -56,8 +56,8 @@ public class NotificationVO implements Serializable {
 
         if(!jsObj.isNull("id"))
             temp.id = jsObj.getString("id");
-        if(!jsObj.isNull("user_id"))
-            temp.user_id = jsObj.getString("user_id");
+        if(!jsObj.isNull("token"))
+            temp.user_id = jsObj.getString("token");
         if(!jsObj.isNull("contact_number"))
             temp.phnNum = jsObj.getString("contact_number");
         if(!jsObj.isNull("message"))
@@ -80,8 +80,8 @@ public class NotificationVO implements Serializable {
 
             if(!jso.isNull("id"))
                 temp.id = jso.getString("id");
-            if(!jso.isNull("user_id"))
-                temp.user_id = jso.getString("user_id");
+            if(!jso.isNull("token"))
+                temp.user_id = jso.getString("token");
             if(!jso.isNull("contact_number"))
                 temp.phnNum = jso.getString("contact_number");
             if(!jso.isNull("message"))

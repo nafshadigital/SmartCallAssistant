@@ -101,7 +101,7 @@ public static final int RequestPermissionCode = 1;
         try {
             JSONObject jsonObject = new JSONObject(res);
             String status = jsonObject.getString("status");
-            String id = jsonObject.getString("user_id");
+            String id = jsonObject.getString("token");
             String message = jsonObject.getString("message");
 
             if(status.equals("1")){

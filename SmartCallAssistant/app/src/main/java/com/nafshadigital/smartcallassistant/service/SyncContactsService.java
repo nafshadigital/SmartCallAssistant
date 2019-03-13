@@ -108,10 +108,10 @@ public class SyncContactsService extends Service {
                         }
                         if (number.length() > 9) {
 
-                            SyncContactVO contacts = new SyncContactVO();
+                            SyncContactVO contacts = new SyncContactVO(null);
                             contacts.user_id = userid;
-                            contacts.contact_name = name;
-                            contacts.contact_number = number;
+                            contacts.name = name;
+                            contacts.phone = number;
 
                             String savedId = MyRestAPI.PostCall("savecontact",contacts.toJSONObject());
                             System.out.println("Save ID Response" + savedId);
