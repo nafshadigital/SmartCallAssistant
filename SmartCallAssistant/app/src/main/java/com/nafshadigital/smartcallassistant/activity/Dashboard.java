@@ -8,13 +8,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
-import android.database.Cursor;
-import android.media.AudioManager;
-import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
-import android.os.Handler;
-import android.provider.ContactsContract;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -26,8 +20,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -38,15 +32,15 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
 import com.nafshadigital.smartcallassistant.R;
 import com.nafshadigital.smartcallassistant.adapter.ListAdapterViewActivity;
+import com.nafshadigital.smartcallassistant.floatingAnimation.Direction;
+import com.nafshadigital.smartcallassistant.floatingAnimation.TransparentActivity;
+import com.nafshadigital.smartcallassistant.floatingAnimation.ZeroGravityAnimation;
 import com.nafshadigital.smartcallassistant.helpers.AppRunning;
 import com.nafshadigital.smartcallassistant.helpers.MyToast;
 import com.nafshadigital.smartcallassistant.service.SyncContactsService;
 import com.nafshadigital.smartcallassistant.vo.ActivityVO;
-import com.nafshadigital.smartcallassistant.vo.ContactVO;
 import com.nafshadigital.smartcallassistant.vo.FCMNotificationVO;
-import com.nafshadigital.smartcallassistant.vo.FavoriteVO;
 import com.nafshadigital.smartcallassistant.vo.SettingsVO;
-import com.nafshadigital.smartcallassistant.vo.UsersVO;
 import com.nafshadigital.smartcallassistant.webservice.ActivityService;
 import com.nafshadigital.smartcallassistant.webservice.MyRestAPI;
 
@@ -54,10 +48,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import android.view.animation.Animation;
 
-import static android.Manifest.permission.READ_CONTACTS;
 import static android.Manifest.permission.READ_PHONE_STATE;
-import static android.Manifest.permission.SEND_SMS;
 
 public class Dashboard extends AppCompatActivity {
 
@@ -176,7 +169,6 @@ public class Dashboard extends AppCompatActivity {
         /*AudioManager am =  (AudioManager) getBaseContext().getSystemService(Context.AUDIO_SERVICE);
         am.setRingerMode(AudioManager.RINGER_MODE_VIBRATE); */
 
-
         remActivity = (NotifyActivity) findViewById(R.id.remactivity);
         remActivity.isCompact = true;
         remActivity.init();
@@ -194,7 +186,12 @@ public class Dashboard extends AppCompatActivity {
     }  */
 
     public void addactivty(View view) {
-        Intent i = new Intent(this, AddActivity.class);
+
+    //  emoji_one();
+    //  emoji_two();
+    //  emoji_three();
+    //  Intent i = new Intent(this, AddActivity.class);
+        Intent i = new Intent(this, TransparentActivity.class);
         startActivity(i);
     }
 
@@ -430,6 +427,60 @@ public class Dashboard extends AppCompatActivity {
         return false;
     }
 
+    public void flyEmoji(final int resId) {
+        ZeroGravityAnimation animation = new ZeroGravityAnimation();
+        animation.setCount(1);
+        animation.setScalingFactor(1f);
+        animation.setOriginationDirection(Direction.BOTTOM);
+        animation.setDestinationDirection(Direction.TOP);
+        animation.setImage(resId);
+        animation.setAnimationListener(new Animation.AnimationListener() {
+                                           @Override
+                                           public void onAnimationStart(Animation animation) {
+
+                                           }
+                                           @Override
+                                           public void onAnimationEnd(Animation animation) {
+
+                                           }
+
+                                           @Override
+                                           public void onAnimationRepeat(Animation animation) {
+
+                                           }
+                                       }
+        );
+
+        ViewGroup container = findViewById(R.id.animation_holder);
+        animation.play(this,container);
+
+    }
+
+    public void emoji_one() {
+        // You can change the number of emojis that will be flying on screen
+        for (int i = 0; i < 5; i++) {
+            flyEmoji(R.drawable.ic_heart);
+        }
+    }
+    // You can change the number of emojis that will be flying on screen
+
+    public void emoji_two(){
+        for(int i=0;i<15;i++) {
+            flyEmoji(R.drawable.ic_heart);
+        }
+
+    }
+    // You can change the number of emojis that will be flying on screen
+
+    public void emoji_three(){
+        for(int i=0;i<5;i++) {
+            flyEmoji(R.drawable.ic_heart);
+        }
+
+    }
+
+
 }
+
 
 

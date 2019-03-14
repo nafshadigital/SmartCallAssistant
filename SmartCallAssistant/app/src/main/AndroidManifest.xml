@@ -44,7 +44,8 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name=".activity.Dashboard" />
+        <activity android:name=".activity.Dashboard"/>
+        <activity android:name=".floatingAnimation.TransparentActivity" android:theme="@style/Theme.Transparent"/>
         <activity
             android:name=".activity.NavigationDrawer"
             android:label="@string/title_activity_navigation_drawer"
