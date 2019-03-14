@@ -74,7 +74,7 @@ SettingsVO settingsVO;
         public void run() {
             System.out.println("THE BACKGROUND SERVICE");
             TASK();
-            getNotification();
+            // getNotification();  //Todo: Implement FCM Notification here !
             handler.postDelayed(this, 10000);
         }
 
