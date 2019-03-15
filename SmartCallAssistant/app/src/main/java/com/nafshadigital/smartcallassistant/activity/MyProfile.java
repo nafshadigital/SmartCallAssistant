@@ -21,6 +21,8 @@ import com.nafshadigital.smartcallassistant.webservice.MyRestAPI;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.regex.Pattern;
+
 public class MyProfile extends AppCompatActivity {
     EditText txtname,txtemail,txtmobno,txtcode;
     String android_id,device_id,name,email;
@@ -82,16 +84,26 @@ public class MyProfile extends AppCompatActivity {
                     usersVO.name = txtname.getText().toString();
                     usersVO.email = txtemail.getText().toString();
                     String res = MyRestAPI.PostCall("updateAccount",usersVO.toJSONObject());
+                    System.out.println("Update Account =" + res + usersVO.name);
+
                     try {
                         JSONObject json = new JSONObject(res);
                         MyToast.show(getApplicationContext(),json.getString("message"));
+
+                        if(json.getString("error").equals("0"))
+                        {
+                            Intent in = new Intent(MyProfile.this, Dashboard.class);
+                            in.putExtra("dashuserId", selectedUserID);
+                            startActivity(in);
+                        }
+
                     }catch (JSONException e) {
 
                     }
 
-                    Intent in = new Intent(MyProfile.this,Dashboard.class);
-                    in.putExtra("dashuserId",selectedUserID);
-                    startActivity(in);
+
+
+
                 }
             }
         });
@@ -106,7 +118,7 @@ public class MyProfile extends AppCompatActivity {
 
         try {
             JSONObject jsonObject = new JSONObject(res);
-             name = jsonObject.getString("contact_name");
+             name = jsonObject.getString("name");
              email = jsonObject.getString("email");
 
             if(name.equals("null") && email.equals("null")){
@@ -122,15 +134,27 @@ public class MyProfile extends AppCompatActivity {
 
     }
 
-    public  boolean isValidate(){
+    public  boolean isValidate()
+    {
+        String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\."+
+                "[a-zA-Z0-9_+&*-]+)*@" +
+                "(?:[a-zA-Z0-9-]+\\.)+[a-z" +
+                "A-Z]{2,7}$";
+
+        String email = txtemail.getText().toString();
+
         if(txtname.getText().toString().equals("")){
             MyToast.show(this,"Enter Name");
             return false;
         }
 
-        if (!txtemail.getText().toString().matches("[a-zA-Z0-9._-]+@[a-z]+.[a-z]+")) {
-          //  txtemail.setError("Invalid Email Address");
-            MyToast.show(this,"Invalid EmailId");
+        Pattern pat = Pattern.compile(emailRegex);
+        if (email == null)
+            return false;
+
+        if(!pat.matcher(email).matches())
+        {
+            MyToast.show(this,"Email address is invalid !");
             return false;
         }
 

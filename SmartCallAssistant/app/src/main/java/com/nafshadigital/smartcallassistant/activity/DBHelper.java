@@ -89,7 +89,7 @@ public class DBHelper extends SQLiteOpenHelper implements IWebServiceDeclaration
         String tbl_favorites = "create table " + FAVORITE_TABLE_NAME + "(id integer primary key AUTOINCREMENT,name text,phnnumber text)";
         db.execSQL(tbl_favorites);
 
-        String tbl_sync_contacts = "create table " + SYNC_CONTACTS_TABLE_NAME + "(id integer ,phone text primary key,name text,is_updated integer)";
+        String tbl_sync_contacts = "create table " + SYNC_CONTACTS_TABLE_NAME + "(id integer ,phone text primary key,name text,is_installed integer)";
         db.execSQL(tbl_sync_contacts);
     }
 
@@ -171,12 +171,16 @@ public class DBHelper extends SQLiteOpenHelper implements IWebServiceDeclaration
         db.insert(CALLLOG_TABLE_NAME, null, values);
     }
 
+    public void deleteSyncContacts(SQLiteDatabase db)
+    {
+        db.execSQL("delete  from " + SYNC_CONTACTS_TABLE_NAME);
+    }
     public void addSyncContacts(SQLiteDatabase db,int id, String name,String phone) {
         ContentValues values = new ContentValues();
         values.put("id", id);
         values.put("phone", phone);
         values.put("name",name);
-        values.put("is_updated","0");
+        values.put("is_installed","0");
         if(id ==1) {
             db.execSQL("delete  from " + SYNC_CONTACTS_TABLE_NAME);
         }
@@ -189,11 +193,11 @@ public class DBHelper extends SQLiteOpenHelper implements IWebServiceDeclaration
         }
     }
 
-    public void setSyncContacts(SQLiteDatabase db,int id) {
+    public void setMemberByPhone(SQLiteDatabase db, String phone) {
         ContentValues values = new ContentValues();
-        values.put("id", id);
-        values.put("is_updated","1");
-        db.update(SYNC_CONTACTS_TABLE_NAME, values, "id="+id, null);
+        values.put("phone", phone);
+        values.put("is_installed","1");
+        db.update(SYNC_CONTACTS_TABLE_NAME, values, "phone="+phone, null);
     }
 }
 

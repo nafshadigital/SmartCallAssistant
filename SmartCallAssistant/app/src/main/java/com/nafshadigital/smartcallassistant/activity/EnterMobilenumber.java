@@ -1,7 +1,11 @@
 package com.nafshadigital.smartcallassistant.activity;
 
+import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
@@ -37,6 +41,24 @@ public class EnterMobilenumber extends AppCompatActivity {
         txtcountrycode = (EditText) findViewById(R.id.txtcountrycode);
         txtmobileno = (EditText) findViewById(R.id.txtphnnumberverify);
         btnok = (Button) findViewById(R.id.btnokverify);
+
+        // The request code used in ActivityCompat.requestPermissions()
+        // and returned in the Activity's onRequestPermissionsResult()
+        int PERMISSION_ALL = 1;
+        String[] PERMISSIONS = {
+                android.Manifest.permission.READ_CONTACTS,
+                android.Manifest.permission.WRITE_CONTACTS,
+                android.Manifest.permission.SYSTEM_ALERT_WINDOW,
+                Manifest.permission.READ_PHONE_STATE,
+                Manifest.permission.ACCESS_NOTIFICATION_POLICY,
+                Manifest.permission.VIBRATE,
+                android.Manifest.permission.INTERNET
+        };
+
+        if(!hasPermissions(this, PERMISSIONS)){
+            ActivityCompat.requestPermissions(this, PERMISSIONS, PERMISSION_ALL);
+        }
+
 
         getcountry();
         spincountry.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -97,13 +119,15 @@ public class EnterMobilenumber extends AppCompatActivity {
             usersVO.mobile = txtmobileno.getText().toString();
 
             String res = MyRestAPI.PostCall("signUp", usersVO.toJSONObject());
+            System.out.println("Results from Signup" + res);
           //  MyToast.show(this, res);
             btnok.setEnabled(false);
             try {
                 JSONObject jsonObject = new JSONObject(res);
                 String status = jsonObject.getString("status");
-                String id = jsonObject.getString("token");
+                String id = jsonObject.getString("user_id");
                 String otp = jsonObject.getString("otp");
+                System.out.println("OTP ---" + otp);
              //   MyToast.show(this, "res=" + status);
 
                 if (status.equals("1")) {
@@ -125,5 +149,16 @@ public class EnterMobilenumber extends AppCompatActivity {
                 btnok.setEnabled(true);
             }
         }
+    }
+
+    public static boolean hasPermissions(Context context, String... permissions) {
+        if (context != null && permissions != null) {
+            for (String permission : permissions) {
+                if (ActivityCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 }

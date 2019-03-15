@@ -1,24 +1,32 @@
 package com.nafshadigital.smartcallassistant.service;
 
+import android.Manifest;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.IBinder;
 import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 import com.nafshadigital.smartcallassistant.activity.DBHelper;
-import com.nafshadigital.smartcallassistant.vo.NotificationVO;
+import com.nafshadigital.smartcallassistant.activity.FavouriteActivity;
 import com.nafshadigital.smartcallassistant.vo.SyncContactVO;
 import com.nafshadigital.smartcallassistant.webservice.MyRestAPI;
 
 import java.util.Timer;
 import java.util.TimerTask;
+
+import static android.Manifest.permission.READ_CONTACTS;
+import static com.nafshadigital.smartcallassistant.activity.EnterMobilenumber.hasPermissions;
+import static com.nafshadigital.smartcallassistant.activity.FavouriteActivity.RequestPermissionCode;
 
 public class SyncContactsService extends Service {
     public int counter = 0;
@@ -36,9 +44,23 @@ public class SyncContactsService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        super.onStartCommand(intent, flags, startId);
-        startTimer();
-        printContactList();
+
+        int PERMISSION_ALL = 1;
+        String[] PERMISSIONS = {
+                android.Manifest.permission.READ_CONTACTS,
+                android.Manifest.permission.WRITE_CONTACTS
+        };
+
+        if(hasPermissions(this, PERMISSIONS)) {
+
+            super.onStartCommand(intent, flags, startId);
+            startTimer();
+            printContactList();
+        }
+        else
+        {
+            System.out.println("System is coming up and not Permission granted yet !");
+        }
         return START_NOT_STICKY;
     }
 
@@ -100,6 +122,7 @@ public class SyncContactsService extends Service {
                         Log.d(recordCounter + ":" + "Phone", number);
 
                         SQLiteDatabase db = this.dbHelper.getWritableDatabase();
+                        this.dbHelper.deleteSyncContacts(db);
                         this.dbHelper.addSyncContacts(db, recordCounter, name, number);
 
                         number = number.replaceAll("\\D", "").trim();
@@ -114,6 +137,12 @@ public class SyncContactsService extends Service {
                             contacts.phone = number;
 
                             String savedId = MyRestAPI.PostCall("savecontact",contacts.toJSONObject());
+                            if(savedId.contains("PartnerTrueByPhone"))
+                            {
+                                // Set the Contact is a member of SmartCall Assistant Network
+                                this.dbHelper.setMemberByPhone(db,number);
+                            }
+
                             System.out.println("Save ID Response" + savedId);
 
                         }
@@ -142,6 +171,14 @@ public class SyncContactsService extends Service {
             this.stoptimertask();
         }
         System.out.println("Total Records in the Phone " + this.getActivityCount(3));
+
+        // Todo: Purpose to check what is there is no Single contact in the
+        // The member. Send Hearts to random member all over the world.
+        // Send hearts to unknown One-at-time
+        SQLiteDatabase db = this.dbHelper.getWritableDatabase();
+        this.dbHelper.deleteSyncContacts(db);
+        db.close();
+        // Todo : Remove this code in production
     }
 
     private Cursor getContacts() {
@@ -206,6 +243,5 @@ public class SyncContactsService extends Service {
             timer = null;
         }
     }
-
 
 }

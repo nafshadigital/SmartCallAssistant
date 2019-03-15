@@ -39,13 +39,13 @@ public class UsersVO implements Serializable {
         JSONObject temp = new JSONObject();
         try {
             temp.put("id", id);
-            temp.put("contact_name", name);
+            temp.put("name", name);
             temp.put("email", email);
             temp.put("country_code", country_code);
             temp.put("mobile", mobile);
             temp.put("is_active", is_active);
             temp.put("verification_code", verification_code);
-            temp.put("token", user_id);
+            temp.put("user_id", user_id);
             temp.put("android_id", android_id);
             temp.put("device_id", device_id);
 
@@ -61,8 +61,8 @@ public class UsersVO implements Serializable {
 
         if (!jsObj.isNull("id"))
             temp.id = jsObj.getString("id");
-        if (!jsObj.isNull("contact_name"))
-            temp.name = jsObj.getString("contact_name");
+        if (!jsObj.isNull("name"))
+            temp.name = jsObj.getString("name");
         if (!jsObj.isNull("email"))
             temp.email = jsObj.getString("email");
         if (!jsObj.isNull("country_code"))
@@ -95,8 +95,8 @@ public class UsersVO implements Serializable {
 
             if (!jso.isNull("id"))
                 temp.id = jso.getString("id");
-            if (!jso.isNull("contact_name"))
-                temp.name = jso.getString("contact_name");
+            if (!jso.isNull("name"))
+                temp.name = jso.getString("name");
             if (!jso.isNull("email"))
                 temp.email = jso.getString("email");
             if (!jso.isNull("country_code"))

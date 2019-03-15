@@ -46,6 +46,7 @@ EditText txtverifycode;
 
         String res = MyRestAPI.PostCall("checkOTP",  usersVO.toJSONObject());
         //MyToast.show(this,res);
+        System.out.println("Result = " + res);
 
         try {
             JSONObject jsonObject = new JSONObject(res);

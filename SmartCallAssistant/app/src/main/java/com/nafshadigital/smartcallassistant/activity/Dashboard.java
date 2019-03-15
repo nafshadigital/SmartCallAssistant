@@ -50,7 +50,9 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import android.view.animation.Animation;
 
+import static android.Manifest.permission.READ_CONTACTS;
 import static android.Manifest.permission.READ_PHONE_STATE;
+import static com.nafshadigital.smartcallassistant.activity.FavouriteActivity.RequestPermissionCode;
 
 public class Dashboard extends AppCompatActivity {
 
@@ -107,6 +109,7 @@ public class Dashboard extends AppCompatActivity {
 
             Log.v("newToken","Trying to sending notification " + e.toString() + "\n" + e.getMessage());
         }
+
 
 
         this.context = this;
@@ -341,7 +344,15 @@ public class Dashboard extends AppCompatActivity {
                         READ_PHONE_STATE
                 }, RequestPermissionCode);
 
+
+        ActivityCompat.requestPermissions(Dashboard.this, new String[]
+                {
+                        Manifest.permission.READ_CONTACTS
+                }, RequestPermissionCode);
+
+
     }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         switch (requestCode) {
