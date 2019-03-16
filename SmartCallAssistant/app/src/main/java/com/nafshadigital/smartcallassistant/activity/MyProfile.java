@@ -79,12 +79,12 @@ public class MyProfile extends AppCompatActivity {
 
                     UsersVO usersVO = new UsersVO();
                     usersVO.id = selectedUserID;
-                    //usersVO.android_id = android_id;
-                   // usersVO.device_id = device_id;
+                    usersVO.android_id = android_id;
+                    usersVO.device_id = device_id;
                     usersVO.name = txtname.getText().toString();
                     usersVO.email = txtemail.getText().toString();
                     String res = MyRestAPI.PostCall("updateAccount",usersVO.toJSONObject());
-                    System.out.println("Update Account =" + res + usersVO.name);
+                    System.out.println("Update Account =" + res + usersVO.name  + "Android ID " + android_id + " Device ID " + device_id);
 
                     try {
                         JSONObject json = new JSONObject(res);

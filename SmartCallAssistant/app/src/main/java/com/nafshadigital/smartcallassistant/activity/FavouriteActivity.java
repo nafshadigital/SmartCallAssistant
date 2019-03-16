@@ -170,4 +170,5 @@ public class FavouriteActivity extends AppCompatActivity {
 
         return FirstPermissionResult == PackageManager.PERMISSION_GRANTED ;
     }
+
 }

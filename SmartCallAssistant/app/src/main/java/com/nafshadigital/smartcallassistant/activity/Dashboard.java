@@ -41,6 +41,7 @@ import com.nafshadigital.smartcallassistant.service.SyncContactsService;
 import com.nafshadigital.smartcallassistant.vo.ActivityVO;
 import com.nafshadigital.smartcallassistant.vo.FCMNotificationVO;
 import com.nafshadigital.smartcallassistant.vo.SettingsVO;
+import com.nafshadigital.smartcallassistant.vo.SyncContactVO;
 import com.nafshadigital.smartcallassistant.webservice.ActivityService;
 import com.nafshadigital.smartcallassistant.webservice.MyRestAPI;
 
@@ -50,9 +51,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import android.view.animation.Animation;
 
-import static android.Manifest.permission.READ_CONTACTS;
 import static android.Manifest.permission.READ_PHONE_STATE;
-import static com.nafshadigital.smartcallassistant.activity.FavouriteActivity.RequestPermissionCode;
 
 public class Dashboard extends AppCompatActivity {
 
@@ -69,7 +68,7 @@ public class Dashboard extends AppCompatActivity {
     Intent intent;
     private Context context;
     private NotifyActivity remActivity;
-    private String fcmToken;
+    private String fcm_Token;
 
     Intent syncContactsIntent;
     private SyncContactsService syncContactsService;
@@ -85,21 +84,39 @@ public class Dashboard extends AppCompatActivity {
         listactivity = (ListView) findViewById(R.id.listactivity);
        // txtactcount = (TextView) findViewById(R.id.tvtotnoact);
 
+        SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("LoginDetails", Context.MODE_PRIVATE);
+
         FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener( Dashboard.this,  new OnSuccessListener<InstanceIdResult>() {
             @Override
             public void onSuccess(InstanceIdResult instanceIdResult) {
                 String newToken = instanceIdResult.getToken();
-                fcmToken = newToken;
+                fcm_Token = newToken;
                 Log.e("newToken",newToken);
 
+                // Save FCM Token into the context
+                SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("LoginDetails", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putString("fcmtoken", fcm_Token);
+                editor.commit();
+
+                String userid = sharedPreferences.getString("userID","");
+
+                SyncContactVO users = new SyncContactVO(null);
+                users.fcmtoken = fcm_Token;
+                users.id = userid;
+                String updateFCM = MyRestAPI.PostCall("updateFCM",users.toJSONObject());
+                System.out.println("FCM Update =" + updateFCM + " JSON OBJECT =" +users.toJSONObject());
             }
         });
+
+
+
 
         FCMNotificationVO fcmNotificationVO = new FCMNotificationVO();
 
         fcmNotificationVO.title = "Title";
         fcmNotificationVO.message = "Message";
-        fcmNotificationVO.token = fcmToken;
+        fcmNotificationVO.token = fcm_Token;
         String res = MyRestAPI.PostCall("send_notification",fcmNotificationVO.toJSONObject());
         Log.v("newToken","Calling Notification sender PHP ");
         try {
@@ -127,7 +144,7 @@ public class Dashboard extends AppCompatActivity {
         ((AppRunning) context.getApplicationContext()).setBGServiceRunning(true);
         startService(intent);
 
-        SharedPreferences sharedPreferences = context.getSharedPreferences("LoginDetails", Context.MODE_PRIVATE);
+        sharedPreferences = context.getSharedPreferences("LoginDetails", Context.MODE_PRIVATE);
         selectedUserID =  sharedPreferences.getString("userID", "");
 
         Bundle bundle = getIntent().getExtras();

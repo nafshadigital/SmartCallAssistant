@@ -45,22 +45,10 @@ public class SyncContactsService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        int PERMISSION_ALL = 1;
-        String[] PERMISSIONS = {
-                android.Manifest.permission.READ_CONTACTS,
-                android.Manifest.permission.WRITE_CONTACTS
-        };
 
-        if(hasPermissions(this, PERMISSIONS)) {
+        super.onStartCommand(intent, flags, startId);
+        startTimer();
 
-            super.onStartCommand(intent, flags, startId);
-            startTimer();
-            printContactList();
-        }
-        else
-        {
-            System.out.println("System is coming up and not Permission granted yet !");
-        }
         return START_NOT_STICKY;
     }
 
@@ -81,6 +69,7 @@ public class SyncContactsService extends Service {
     }
 
     private void printContactList() {
+
         this.dbHelper = new DBHelper(this);
         int recordCounter = 0;
         int processRecords = recordsProcessed + 10;
@@ -122,7 +111,6 @@ public class SyncContactsService extends Service {
                         Log.d(recordCounter + ":" + "Phone", number);
 
                         SQLiteDatabase db = this.dbHelper.getWritableDatabase();
-                        this.dbHelper.deleteSyncContacts(db);
                         this.dbHelper.addSyncContacts(db, recordCounter, name, number);
 
                         number = number.replaceAll("\\D", "").trim();
@@ -176,7 +164,7 @@ public class SyncContactsService extends Service {
         // The member. Send Hearts to random member all over the world.
         // Send hearts to unknown One-at-time
         SQLiteDatabase db = this.dbHelper.getWritableDatabase();
-        this.dbHelper.deleteSyncContacts(db);
+        //this.dbHelper.deleteSyncContacts(db);
         db.close();
         // Todo : Remove this code in production
     }
@@ -229,6 +217,23 @@ public class SyncContactsService extends Service {
     public void initializeTimerTask() {
         timerTask = new TimerTask() {
             public void run() {
+
+                int PERMISSION_ALL = 1;
+                String[] PERMISSIONS = {
+                        android.Manifest.permission.READ_CONTACTS,
+                        android.Manifest.permission.WRITE_CONTACTS
+                };
+
+                if(hasPermissions(SyncContactsService.this, PERMISSIONS)) {
+
+                    printContactList();
+                    System.out.println("System started the Sync Process....");
+                }
+                else
+                {
+                    System.out.println("System is coming up and not Permission granted yet !");
+                }
+
                 printContactList(recordsProcessed);
             }
         };
@@ -242,6 +247,17 @@ public class SyncContactsService extends Service {
             timer.cancel();
             timer = null;
         }
+    }
+
+    public static boolean hasPermissions(Context context, String... permissions) {
+        if (context != null && permissions != null) {
+            for (String permission : permissions) {
+                if (ActivityCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
 }

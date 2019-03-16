@@ -1,7 +1,9 @@
 package com.nafshadigital.smartcallassistant.activity;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
@@ -19,12 +21,15 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.nafshadigital.smartcallassistant.R;
 import com.nafshadigital.smartcallassistant.adapter.ListAdapterViewFavorites;
 import com.nafshadigital.smartcallassistant.adapter.ListAdapterViewSendHeart;
 import com.nafshadigital.smartcallassistant.helpers.MyToast;
 import com.nafshadigital.smartcallassistant.vo.FavoriteVO;
 import com.nafshadigital.smartcallassistant.vo.SyncContactVO;
+import com.nafshadigital.smartcallassistant.vo.UsersVO;
+import com.nafshadigital.smartcallassistant.webservice.MyRestAPI;
 
 import java.util.ArrayList;
 
@@ -37,6 +42,7 @@ public class SendHeartActivity extends AppCompatActivity {
     TextView txtempfav;
     ArrayList<SyncContactVO> FavAL;
     SyncContactVO favoriteVO;
+    LottieAnimationView lottieAnimationView;
     public static final int RequestPermissionCode = 1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +54,7 @@ public class SendHeartActivity extends AppCompatActivity {
 
         txtempfav = (TextView) findViewById(R.id.tvempfavo);
         listfavcon = (ListView) findViewById(R.id.listviewfavcont);
+        lottieAnimationView = (LottieAnimationView) findViewById(R.id.animation_view);
 
         display();
 
@@ -80,8 +87,10 @@ public class SendHeartActivity extends AppCompatActivity {
         listfavcon.setAdapter(adapter);
 
         txtempfav.setVisibility(View.GONE );
+        lottieAnimationView.setVisibility(View.GONE);
         if(FavAL.size() == 0){
-            txtempfav.setVisibility(View.VISIBLE);
+            txtempfav.setVisibility(View.GONE);
+            lottieAnimationView.setVisibility(View.VISIBLE);
         }
     }
 
@@ -149,4 +158,28 @@ public class SendHeartActivity extends AppCompatActivity {
 
         return FirstPermissionResult == PackageManager.PERMISSION_GRANTED ;
     }
+
+    public void animate(View v) {
+        if (lottieAnimationView.isAnimating()) {
+            lottieAnimationView.cancelAnimation();
+            //button.setText(getString(R.string.play));
+        } else {
+            lottieAnimationView.playAnimation();
+            //button.setText(getString(R.string.pause));
+        }
+    }
+
+    public void sendRandomHearts(View view)
+    {
+        SharedPreferences sharedPreference = getApplicationContext().getSharedPreferences("LoginDetails", Context.MODE_PRIVATE);
+        String userid = sharedPreference.getString("userID","");
+
+        SyncContactVO users = new SyncContactVO(null);
+        users.id = userid;
+
+        String savedId = MyRestAPI.PostCall("sendRandomHeart",users.toJSONObject());
+        System.out.println("Send Heart Result = " + savedId + users.toJSONObject());
+
+    }
+
 }

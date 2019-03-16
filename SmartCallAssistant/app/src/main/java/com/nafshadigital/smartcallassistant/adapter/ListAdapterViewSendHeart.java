@@ -2,7 +2,9 @@ package com.nafshadigital.smartcallassistant.adapter;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,10 +14,11 @@ import android.widget.TextView;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.nafshadigital.smartcallassistant.R;
-import com.nafshadigital.smartcallassistant.activity.FavouriteActivity;
 import com.nafshadigital.smartcallassistant.helpers.MyToast;
+import com.nafshadigital.smartcallassistant.vo.FavoriteVO;
+import com.nafshadigital.smartcallassistant.vo.SendHeartVO;
 import com.nafshadigital.smartcallassistant.vo.SyncContactVO;
-import com.nafshadigital.smartcallassistant.vo.SyncContactVO;
+import com.nafshadigital.smartcallassistant.webservice.MyRestAPI;
 
 import java.util.ArrayList;
 
@@ -63,7 +66,6 @@ public class ListAdapterViewSendHeart extends ArrayAdapter<SyncContactVO> {
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface arg0, int arg1) {
-
                             }
                         });
 
@@ -72,8 +74,13 @@ public class ListAdapterViewSendHeart extends ArrayAdapter<SyncContactVO> {
                     public void onClick(DialogInterface dialog, int which) {
 
 
+                        rv = remCollection.get(position);
+                        FavoriteVO favoriteVO = new FavoriteVO(getContext());
+                        int id = Integer.parseInt(rv.id);
+                        MyToast.show(getContext(),"Success");
 
-                        lottieAnimationView.playAnimation();
+                        sendRandomHearts(id);
+
                         /*
                         rv = remCollection.get(position);
                         SyncContactVO SyncContactVO = new SyncContactVO(getContext());
@@ -93,6 +100,20 @@ public class ListAdapterViewSendHeart extends ArrayAdapter<SyncContactVO> {
         });
 
         return  convertView;
+    }
+
+    public void sendRandomHearts(int id)
+    {
+        SharedPreferences sharedPreference = context.getSharedPreferences("LoginDetails", Context.MODE_PRIVATE);
+        String userid = sharedPreference.getString("userID","");
+
+        SendHeartVO users = new SendHeartVO();
+        users.sender_id = userid;          // From User ID
+        users.receiver_id = id +"";     // To User ID
+
+        String savedId = MyRestAPI.PostCall("sendHeart",users.toJSONObject());
+        System.out.println("Send Heart Result = " + savedId + users.toJSONObject());
+
     }
 
 }

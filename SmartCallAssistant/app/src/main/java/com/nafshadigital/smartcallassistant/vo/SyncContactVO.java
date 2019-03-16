@@ -19,6 +19,7 @@ public class SyncContactVO implements Serializable {
     public String user_id = "";
     public String phone = "";
     public String name = "";
+    public String fcmtoken = "";
     private DBHelper dbHelper;
 
     public SyncContactVO(Context context){
@@ -26,6 +27,7 @@ public class SyncContactVO implements Serializable {
         user_id = "";
         phone = "";
         name = "";
+        fcmtoken = "";
         this.dbHelper = new DBHelper(context);
     }
 
@@ -35,8 +37,10 @@ public class SyncContactVO implements Serializable {
             temp.put("id", id);
             temp.put("phone", phone);
             temp.put("name", name);
+            temp.put("fcmtoken", fcmtoken);
         }catch (JSONException e){
             e.printStackTrace();
+            System.out.println("Error in JSON" + e.toString());
         }
         return temp;
     }
@@ -51,6 +55,7 @@ public class SyncContactVO implements Serializable {
     }
 
     public SyncContactVO getSyncContactVO(JSONObject jsObj) throws JSONException {
+
         SyncContactVO temp = new SyncContactVO(null);
 
         if(!jsObj.isNull("id"))
@@ -59,6 +64,9 @@ public class SyncContactVO implements Serializable {
             temp.phone = jsObj.getString("phone");
         if(!jsObj.isNull("name"))
             temp.name = jsObj.getString("name");
+        if(!jsObj.isNull("fcmtoken"))
+            temp.fcmtoken = jsObj.getString("fcmtoken");
+
         return temp;
     }
 

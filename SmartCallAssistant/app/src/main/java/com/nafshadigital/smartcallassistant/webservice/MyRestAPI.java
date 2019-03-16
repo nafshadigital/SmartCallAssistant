@@ -62,7 +62,7 @@ public class MyRestAPI implements IWebServiceDeclaration {
         try {
             url = new URL(BASE_URL + requestURL + "/");
 
-            System.out.println(url.toString());
+            System.out.println("URL = " + url.toString() + jsonObject);
 
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setReadTimeout(15000);
