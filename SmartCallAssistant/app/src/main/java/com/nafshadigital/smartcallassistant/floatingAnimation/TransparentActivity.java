@@ -11,6 +11,7 @@ import com.nafshadigital.smartcallassistant.R;
 
 public class TransparentActivity extends Activity {
     Context context;
+    int touchCount = 0;
 
     public void flyEmoji(final int resId) {
         ZeroGravityAnimation animation = new ZeroGravityAnimation();
@@ -73,14 +74,16 @@ public class TransparentActivity extends Activity {
         emoji_one();
         emoji_two();
         emoji_three();
-
-
-
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        finish();
+
+        touchCount++;
+
+        if(touchCount > 5) {
+            finish();
+        }
         return true;
     }
 }

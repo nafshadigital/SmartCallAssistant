@@ -34,6 +34,7 @@ public class SyncContactVO implements Serializable {
     public JSONObject toJSONObject(){
         JSONObject temp = new JSONObject();
         try {
+            temp.put("user_id", user_id);
             temp.put("id", id);
             temp.put("phone", phone);
             temp.put("name", name);
@@ -73,7 +74,8 @@ public class SyncContactVO implements Serializable {
     public ArrayList<SyncContactVO> getSyncContactVO()
     {
         ArrayList<SyncContactVO> arraytp = new ArrayList<SyncContactVO>();
-        String selectQuery = "select * from "+dbHelper.SYNC_CONTACTS_TABLE_NAME;
+        String selectQuery = "select * from "+dbHelper.SYNC_CONTACTS_TABLE_NAME + " WHERE is_installed=1";
+        System.out.println(selectQuery);
         SQLiteDatabase db = this.dbHelper.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery,null);
 
@@ -83,8 +85,9 @@ public class SyncContactVO implements Serializable {
             do{
                 SyncContactVO tp = new SyncContactVO(null);
                 tp.id = cursor.getString(0);
-                tp.name = cursor.getString(1);
-                tp.phone = cursor.getString(2);
+                tp.phone = cursor.getString(1);
+                tp.name = cursor.getString(2);
+
                 arraytp.add(tp);
                 count++;
                 if(count > 50)

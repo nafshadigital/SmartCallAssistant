@@ -150,7 +150,7 @@ public class Dashboard extends AppCompatActivity {
         Bundle bundle = getIntent().getExtras();
         if(bundle !=null && bundle.get("dashuserId")!=null) {
             selectedUserID = bundle.getString("dashuserId");
-          //  MyToast.show(this,"dashuserid="+ selectedUserID);
+            MyToast.show(this,"dashuserid="+ selectedUserID);
         }
 
         MyAsyncTasks runner = new MyAsyncTasks();
@@ -207,10 +207,12 @@ public class Dashboard extends AppCompatActivity {
 
     public void addactivty(View view) {
 
-    //  emoji_one();
-    //  emoji_two();
-    //  emoji_three();
-    //  Intent i = new Intent(this, AddActivity.class);
+        Intent i = new Intent(this, AddActivity.class);
+        startActivity(i);
+    }
+
+    public void flowHearts()
+    {
         Intent i = new Intent(this, TransparentActivity.class);
         startActivity(i);
     }
@@ -484,30 +486,21 @@ public class Dashboard extends AppCompatActivity {
 
     }
 
-    public void emoji_one() {
-        // You can change the number of emojis that will be flying on screen
-        for (int i = 0; i < 5; i++) {
-            flyEmoji(R.drawable.ic_heart);
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        SharedPreferences sharedPreferences = this.getSharedPreferences("LoginDetails", Context.MODE_PRIVATE);
+        String message =  sharedPreferences.getString("message", "");
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("message", "0");
+        editor.commit();
+
+        if(message.equals("1"))
+        {
+            flowHearts();
         }
     }
-    // You can change the number of emojis that will be flying on screen
-
-    public void emoji_two(){
-        for(int i=0;i<15;i++) {
-            flyEmoji(R.drawable.ic_heart);
-        }
-
-    }
-    // You can change the number of emojis that will be flying on screen
-
-    public void emoji_three(){
-        for(int i=0;i<5;i++) {
-            flyEmoji(R.drawable.ic_heart);
-        }
-
-    }
-
-
 }
 
 
