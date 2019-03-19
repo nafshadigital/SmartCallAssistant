@@ -13,7 +13,9 @@
     android:orientation="vertical"
     tools:context=".Dashboard" android:background="@drawable/activity_gradient_bk">
 
-<LinearLayout
+
+
+    <LinearLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
@@ -62,6 +64,11 @@
             android:layout_marginTop="5sp"
            >
         </ListView>
+    <FrameLayout
+        android:id="@+id/animation_holder"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        />
 </LinearLayout>
     <android.support.design.widget.NavigationView
         android:id="@+id/navigation_view"
