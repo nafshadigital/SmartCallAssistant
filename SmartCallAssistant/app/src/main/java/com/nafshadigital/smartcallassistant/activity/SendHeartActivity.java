@@ -14,7 +14,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -23,12 +22,9 @@ import android.widget.TextView;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.nafshadigital.smartcallassistant.R;
-import com.nafshadigital.smartcallassistant.adapter.ListAdapterViewFavorites;
 import com.nafshadigital.smartcallassistant.adapter.ListAdapterViewSendHeart;
-import com.nafshadigital.smartcallassistant.helpers.MyToast;
-import com.nafshadigital.smartcallassistant.vo.FavoriteVO;
+import com.nafshadigital.smartcallassistant.vo.SendHeartVO;
 import com.nafshadigital.smartcallassistant.vo.SyncContactVO;
-import com.nafshadigital.smartcallassistant.vo.UsersVO;
 import com.nafshadigital.smartcallassistant.webservice.MyRestAPI;
 
 import java.util.ArrayList;
@@ -174,11 +170,12 @@ public class SendHeartActivity extends AppCompatActivity {
         SharedPreferences sharedPreference = getApplicationContext().getSharedPreferences("LoginDetails", Context.MODE_PRIVATE);
         String userid = sharedPreference.getString("userID","");
 
-        SyncContactVO users = new SyncContactVO(null);
-        users.id = userid;
+        SendHeartVO users = new SendHeartVO();
+        users.sender_id     = userid;               // From User ID
+        users.receiver_phone = "";                  // Send to Random Phone Number
 
-        String savedId = MyRestAPI.PostCall("sendRandomHeart",users.toJSONObject());
-        System.out.println("Send Heart Result = " + savedId + users.toJSONObject());
+        String results = MyRestAPI.PostCall("sendRandomHeart",users.toJSONObject());
+        System.out.println("Send Heart Result = " + results + users.toJSONObject());
 
     }
 

@@ -51,7 +51,7 @@ public class ListAdapterViewSendHeart extends ArrayAdapter<SyncContactVO> {
         rv = getItem(position);
 
         //tvname.setText(rv.name);
-        tvphnnum.setText(rv.phone);
+        tvphnnum.setText(rv.name);
 
         imgdel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -59,7 +59,7 @@ public class ListAdapterViewSendHeart extends ArrayAdapter<SyncContactVO> {
                 AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
                 rv = remCollection.get(position);
                 SyncContactVO SyncContactVO = new SyncContactVO(getContext());
-                String name = rv.phone;
+                String name = rv.name;
                 alertDialogBuilder.setMessage("Do you want to Send a Heart(♥) to ? " + name);
 
                 alertDialogBuilder.setPositiveButton("No",
@@ -77,9 +77,11 @@ public class ListAdapterViewSendHeart extends ArrayAdapter<SyncContactVO> {
                         rv = remCollection.get(position);
                         FavoriteVO favoriteVO = new FavoriteVO(getContext());
                         int id = Integer.parseInt(rv.id);
+
+                        System.out.println("OK-->" + rv.phone + " " + rv.name);
                         MyToast.show(getContext(),"Success");
 
-                        sendRandomHearts(id);
+                        sendRandomHearts(rv.phone,rv.name);
 
                         /*
                         rv = remCollection.get(position);
@@ -102,18 +104,17 @@ public class ListAdapterViewSendHeart extends ArrayAdapter<SyncContactVO> {
         return  convertView;
     }
 
-    public void sendRandomHearts(int id)
+    public void sendRandomHearts(String receiver_phone,String receiver_name)
     {
         SharedPreferences sharedPreference = context.getSharedPreferences("LoginDetails", Context.MODE_PRIVATE);
         String userid = sharedPreference.getString("userID","");
 
         SendHeartVO users = new SendHeartVO();
-        users.sender_id = userid;          // From User ID
-        users.receiver_id = id +"";     // To User ID
+        users.sender_id = userid;               // From User ID
+        users.receiver_phone = receiver_phone;  // To Reeiver Phone Number, as we will not know the User ID of the
+                                                // Phone Number associated
 
-        String savedId = MyRestAPI.PostCall("sendHeart",users.toJSONObject());
-        System.out.println("Send Heart Result = " + savedId + users.toJSONObject());
-
+        String results = MyRestAPI.PostCall("sendHeart",users.toJSONObject());
+        System.out.println("Send Heart Result = "+ receiver_name + " Result=" + results + users.toJSONObject());
     }
-
 }
