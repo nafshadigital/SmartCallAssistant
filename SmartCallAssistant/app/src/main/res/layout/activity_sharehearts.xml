@@ -8,24 +8,23 @@
 
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/animation_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_gravity="center"
             app:lottie_autoPlay="true"
             app:lottie_colorFilter="@color/colorAccent"
             app:lottie_fileName="heart.json"
             app:lottie_loop="true"/>
 
-
     <TextView
-        android:id="@+id/button"
-        android:layout_width="match_parent"
+        android:id="@+id/heart_count"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:layout_margin="16dp"
-        android:background="@color/colorPrimary"
+        android:layout_gravity="center"
+        android:layout_margin="120dp"
+        android:layout_marginBottom="450dp"
         android:onClick="animate"
-        android:text="1000 ♥s"
-        android:textColor="@android:color/white"
-        android:textSize="16sp"/>
+        android:text=""
+        android:textColor="#DFEEFF"
+        android:textSize="16sp" />
 </FrameLayout>

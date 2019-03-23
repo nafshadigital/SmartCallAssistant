@@ -8,9 +8,11 @@ import android.provider.Settings;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.telephony.TelephonyManager;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.nafshadigital.smartcallassistant.R;
@@ -23,9 +25,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class ShareHeartsActivity extends AppCompatActivity {
-    EditText txtname,txtemail,txtmobno,txtcode;
-    String android_id,device_id,name,email;
+    String android_id,device_id;
     LottieAnimationView lottieAnimationView;
+    TextView HeartCount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +47,28 @@ public class ShareHeartsActivity extends AppCompatActivity {
 
         }
         lottieAnimationView = (LottieAnimationView) findViewById(R.id.animation_view);
+        HeartCount = (TextView) findViewById(R.id.heart_count);
 
+        SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("LoginDetails", Context.MODE_PRIVATE);
+        String selectedUserID =  sharedPreferences.getString("userID", "");
+
+        UsersVO usersVO = new UsersVO();
+        usersVO.id = selectedUserID;
+        usersVO.android_id = android_id;
+        usersVO.device_id = device_id;
+
+        String res = MyRestAPI.PostCall("getprofile", usersVO.toJSONObject());
+
+        String heartCount = "0";
+        try {
+            JSONObject jsonObject = new JSONObject(res);
+            heartCount = jsonObject.getJSONArray("user_record").getJSONObject(0).getString("heart");
+            HeartCount.setText(heartCount);
+            if(heartCount.length() > 2) {
+                HeartCount.setGravity(Gravity.TOP);
+            }
+        }catch (Exception e){
+        }
     }
 
     public void animate(View v) {

@@ -8,6 +8,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -110,16 +111,15 @@ public class MyProfile extends AppCompatActivity {
 
         UsersVO usersVO = new UsersVO();
         usersVO.id = selectedUserID;
-       // usersVO.android_id = android_id;
-        //usersVO.device_id = device_id;
-
+        usersVO.android_id = android_id;
+        usersVO.device_id = device_id;
 
         String res = MyRestAPI.PostCall("getprofile", usersVO.toJSONObject());
 
         try {
-            JSONObject jsonObject = new JSONObject(res);
-             name = jsonObject.getString("name");
-             email = jsonObject.getString("email");
+             JSONObject jsonObject = new JSONObject(res);
+             name = jsonObject.getJSONArray("user_record").getJSONObject(0).getString("name");
+             email = jsonObject.getJSONArray("user_record").getJSONObject(0).getString("email");
 
             if(name.equals("null") && email.equals("null")){
                 txtname.setText("");
@@ -129,7 +129,6 @@ public class MyProfile extends AppCompatActivity {
                 txtemail.setText(email);
             }
         }catch (Exception e){
-
         }
 
     }

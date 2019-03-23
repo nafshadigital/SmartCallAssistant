@@ -109,9 +109,6 @@ public class Dashboard extends AppCompatActivity {
             }
         });
 
-
-
-
         FCMNotificationVO fcmNotificationVO = new FCMNotificationVO();
 
         fcmNotificationVO.title = "Title";
