@@ -15,14 +15,25 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.nafshadigital.smartcallassistant.activity.DBHelper;
 import com.nafshadigital.smartcallassistant.activity.FavouriteActivity;
+import com.nafshadigital.smartcallassistant.helpers.SmartCallAssistantApiResponse;
+import com.nafshadigital.smartcallassistant.network.SaveContactsResponse;
+import com.nafshadigital.smartcallassistant.network.SmartCallAssistantApiClient;
+import com.nafshadigital.smartcallassistant.network.SmartCallAssistantApiInterface;
 import com.nafshadigital.smartcallassistant.vo.SyncContactVO;
 import com.nafshadigital.smartcallassistant.webservice.MyRestAPI;
 
+import org.json.JSONObject;
+
 import java.util.Timer;
 import java.util.TimerTask;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import static android.Manifest.permission.READ_CONTACTS;
 import static com.nafshadigital.smartcallassistant.activity.EnterMobilenumber.hasPermissions;
@@ -33,7 +44,7 @@ public class SyncContactsService extends Service {
     public int recordsProcessed = 0;
     private DBHelper dbHelper;
     private Boolean stopThread = false;
-    private int syncSeconds = 25; // Every n 25 seconds the contacts will be synched
+    private int syncSeconds = 59; // Every n 25 seconds the contacts will be synched
 
     public SyncContactsService(Context applicationContext) {
         super();
@@ -124,15 +135,20 @@ public class SyncContactsService extends Service {
                             contacts.name = name;
                             contacts.phone = number;
 
-                            String savedId = MyRestAPI.PostCall("savecontact",contacts.toJSONObject());
-                            if(savedId.contains("PartnerTrueByPhone"))
-                            {
-                                // Set the Contact is a member of SmartCall Assistant Network
-                                this.dbHelper.setMemberByPhone(db,number);
+                            String res = MyRestAPI.PostCall("savecontact",contacts.toJSONObject());
+
+                            try {
+                                JSONObject jsonObject = new JSONObject(res);
+                                name = jsonObject.getString("PartnerTrueByPhone");
+
+                                if(name.equals("true")) {
+                                    // Set the Contact is a member of SmartCall Assistant Network
+                                    this.dbHelper.setMemberByPhone(db, number);
+                                }
+
+                            }catch (Exception e){
                             }
-
-                            System.out.println("Save ID Response" + savedId);
-
+                            System.out.println("Save ID Response" + res);
                         }
                         db.close();
                     }
@@ -259,5 +275,7 @@ public class SyncContactsService extends Service {
         }
         return true;
     }
+
+
 
 }

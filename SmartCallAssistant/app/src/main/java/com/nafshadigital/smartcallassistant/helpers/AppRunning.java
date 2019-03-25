@@ -17,6 +17,12 @@ public class AppRunning extends Application {
     Uri notification = Uri.EMPTY;
     boolean isBGServiceRunning = false;
 
+    private static Context appContext;
+
+    public static Context getAppContext() {
+        return appContext;
+    }
+
     public boolean isBGServiceRunning() {
         return isBGServiceRunning;
     }

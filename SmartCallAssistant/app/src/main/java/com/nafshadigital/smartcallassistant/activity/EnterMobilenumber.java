@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -113,10 +114,16 @@ public class EnterMobilenumber extends AppCompatActivity {
     }
     public void okverify(View view)
     {
-        if(isValidation()) {
+        if(isValidation())
+        {
+            String android_id = android.provider.Settings.Secure.getString(getApplicationContext().getContentResolver(),
+                    Settings.Secure.ANDROID_ID);
+
             UsersVO usersVO = new UsersVO();
             usersVO.country_code = txtcountrycode.getText().toString();
             usersVO.mobile = txtmobileno.getText().toString();
+            usersVO.android_id = android_id;
+
 
             String res = MyRestAPI.PostCall("signUp", usersVO.toJSONObject());
             System.out.println("Results from Signup" + res);
