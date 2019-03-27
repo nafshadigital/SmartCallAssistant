@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -17,14 +18,19 @@ import android.widget.Spinner;
 import com.nafshadigital.smartcallassistant.R;
 import com.nafshadigital.smartcallassistant.adapter.ListAdapterViewCountry;
 import com.nafshadigital.smartcallassistant.helpers.MyToast;
+import com.nafshadigital.smartcallassistant.network.ApiInterface;
+import com.nafshadigital.smartcallassistant.network.SmartCallAssistantApiClient;
 import com.nafshadigital.smartcallassistant.vo.CountryVO;
+import com.nafshadigital.smartcallassistant.vo.EmptyRequestVO;
+import com.nafshadigital.smartcallassistant.vo.SignUpResponse;
 import com.nafshadigital.smartcallassistant.vo.UsersVO;
-import com.nafshadigital.smartcallassistant.webservice.MyRestAPI;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class EnterMobilenumber extends AppCompatActivity {
     Spinner spincountry;
@@ -32,16 +38,17 @@ public class EnterMobilenumber extends AppCompatActivity {
     Button btnok;
     ArrayList<CountryVO> CountryAL;
     String country_code;
+    private static final String TAG = "EnterMobilenumber";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_verify_mobile);
 
-        spincountry = (Spinner) findViewById(R.id.spincountry);
-        txtcountrycode = (EditText) findViewById(R.id.txtcountrycode);
-        txtmobileno = (EditText) findViewById(R.id.txtphnnumberverify);
-        btnok = (Button) findViewById(R.id.btnokverify);
+        spincountry = findViewById(R.id.spincountry);
+        txtcountrycode = findViewById(R.id.txtcountrycode);
+        txtmobileno = findViewById(R.id.txtphnnumberverify);
+        btnok = findViewById(R.id.btnokverify);
 
         // The request code used in ActivityCompat.requestPermissions()
         // and returned in the Activity's onRequestPermissionsResult()
@@ -80,15 +87,35 @@ public class EnterMobilenumber extends AppCompatActivity {
 
     }
 
+
+
     public void getcountry() {
         try {
-            JSONObject jsonObject = new JSONObject();
-            String res = MyRestAPI.PostCall("getCountry", jsonObject);
-           // MyToast.show(this,res);
-            System.out.println("countryRes="+res);
-            CountryAL = new CountryVO().getCountryArrayList(new JSONArray(res));
-            ListAdapterViewCountry adapter = new ListAdapterViewCountry(this,R.layout.spinner_item, CountryAL);
-            spincountry.setAdapter(adapter);
+            Log.d(TAG, "getcountry: ");
+            Call<List<CountryVO>> responseBodyCall=SmartCallAssistantApiClient.getClient()
+                    .create(ApiInterface.class).getCountry(new EmptyRequestVO());
+            responseBodyCall.enqueue(new Callback<List<CountryVO>>() {
+                @Override
+                public void onResponse(Call<List<CountryVO>> call, Response<List<CountryVO>> response) {
+                    Log.d(TAG, "onResponse: ");
+                    if (response.body() != null && response.body().size()>0) {
+                        try {
+                            CountryAL = new ArrayList<>(response.body());
+                            ListAdapterViewCountry adapter = new ListAdapterViewCountry(EnterMobilenumber.this,R.layout.spinner_item, CountryAL);
+                            spincountry.setAdapter(adapter);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+             
+                }
+
+                @Override
+                public void onFailure(Call<List<CountryVO>> call, Throwable t) {
+                    Log.d(TAG, "onFailure: ");
+                }
+            });
+            
         }catch (Exception e)
         {
             e.printStackTrace();
@@ -112,10 +139,13 @@ public class EnterMobilenumber extends AppCompatActivity {
 
         return true;
     }
+
+
     public void okverify(View view)
     {
         if(isValidation())
         {
+            btnok.setEnabled(false);
             String android_id = android.provider.Settings.Secure.getString(getApplicationContext().getContentResolver(),
                     Settings.Secure.ANDROID_ID);
 
@@ -124,20 +154,23 @@ public class EnterMobilenumber extends AppCompatActivity {
             usersVO.mobile = txtmobileno.getText().toString();
             usersVO.android_id = android_id;
 
+            Call<SignUpResponse> call=SmartCallAssistantApiClient.getClient()
+                    .create(ApiInterface.class).signUp(usersVO);
+            call.enqueue(new Callback<SignUpResponse>() {
+                @Override
+                public void onResponse(Call<SignUpResponse> call, Response<SignUpResponse> response) {
 
-            String res = MyRestAPI.PostCall("signUp", usersVO.toJSONObject());
-            System.out.println("Results from Signup" + res);
-          //  MyToast.show(this, res);
-            btnok.setEnabled(false);
-            try {
-                JSONObject jsonObject = new JSONObject(res);
-                String status = jsonObject.getString("status");
-                String id = jsonObject.getString("user_id");
-                String otp = jsonObject.getString("otp");
-                System.out.println("OTP ---" + otp);
-             //   MyToast.show(this, "res=" + status);
+                    try {
 
-                if (status.equals("1")) {
+                        SignUpResponse signUpResponse=response.body();
+                        if(signUpResponse!=null){
+                        String status = signUpResponse.getStatus();
+                        String id = signUpResponse.getUser_id();
+                        String otp = signUpResponse.getOtp();
+                        System.out.println("OTP ---" + otp);
+                        //   MyToast.show(this, "res=" + status);
+
+                        if (status.equals("1")) {
               /*  String phnnum = txtmobileno.getText().toString();
                     try {
                         SmsManager smsManager = SmsManager.getDefault();
@@ -147,14 +180,24 @@ public class EnterMobilenumber extends AppCompatActivity {
                         //  Toast.makeText(context, "SMS failed, please try again later!", Toast.LENGTH_LONG).show();
                         e.printStackTrace();
                     } */
-                    Intent in = new Intent(this, NumberVerify.class);
-                 //   MyToast.show(this, usersVO.id);
-                    in.putExtra("userVO", id);
-                    startActivity(in);
+                            Intent in = new Intent(EnterMobilenumber.this, NumberVerify.class);
+                            //   MyToast.show(this, usersVO.id);
+                            in.putExtra("userVO", id);
+                            startActivity(in);
+                        }
+                        }
+                    } catch (Exception e) {
+                        btnok.setEnabled(true);
+                    }
                 }
-            } catch (Exception e) {
-                btnok.setEnabled(true);
-            }
+
+                @Override
+                public void onFailure(Call<SignUpResponse> call, Throwable t) {
+
+                }
+            });
+
+
         }
     }
 

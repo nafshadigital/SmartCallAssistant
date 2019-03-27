@@ -44,8 +44,8 @@ public class FavouriteActivity extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
 
-        txtempfav = (TextView) findViewById(R.id.tvempfavo);
-        listfavcon = (ListView) findViewById(R.id.listviewfavcont);
+        txtempfav = findViewById(R.id.tvempfavo);
+        listfavcon = findViewById(R.id.listviewfavcont);
 
         display();
 

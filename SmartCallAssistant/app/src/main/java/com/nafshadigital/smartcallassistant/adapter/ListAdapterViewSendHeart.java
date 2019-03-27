@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,18 +16,25 @@ import android.widget.TextView;
 import com.airbnb.lottie.LottieAnimationView;
 import com.nafshadigital.smartcallassistant.R;
 import com.nafshadigital.smartcallassistant.helpers.MyToast;
+import com.nafshadigital.smartcallassistant.network.ApiInterface;
+import com.nafshadigital.smartcallassistant.network.SmartCallAssistantApiClient;
 import com.nafshadigital.smartcallassistant.vo.FavoriteVO;
 import com.nafshadigital.smartcallassistant.vo.SendHeartVO;
 import com.nafshadigital.smartcallassistant.vo.SyncContactVO;
-import com.nafshadigital.smartcallassistant.webservice.MyRestAPI;
 
+import java.io.IOException;
 import java.util.ArrayList;
+
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class ListAdapterViewSendHeart extends ArrayAdapter<SyncContactVO> {
     private final Activity context;
     protected ArrayList<SyncContactVO> remCollection;
     SyncContactVO rv;
-
+    private static final String TAG = "ListAdapterViewSendHear";
     public ListAdapterViewSendHeart(Activity context, ArrayList<SyncContactVO> arrayList) {
         super(context, 0, arrayList);
         this.context = context;
@@ -42,11 +50,11 @@ public class ListAdapterViewSendHeart extends ArrayAdapter<SyncContactVO> {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.row_view_sendheart, parent, false);
         }
 
-        TextView tvname = (TextView) convertView.findViewById(R.id.tvnamecon);
-        TextView tvphnnum = (TextView) convertView.findViewById(R.id.tvphnnumcon);
-        ImageView imgdel = (ImageView) convertView.findViewById(R.id.sendheart);
+        TextView tvname = convertView.findViewById(R.id.tvnamecon);
+        TextView tvphnnum = convertView.findViewById(R.id.tvphnnumcon);
+        ImageView imgdel = convertView.findViewById(R.id.sendheart);
 
-        this.lottieAnimationView = (LottieAnimationView) convertView.findViewById(R.id.animation_view);
+        this.lottieAnimationView = convertView.findViewById(R.id.animation_view);
 
         rv = getItem(position);
 
@@ -114,7 +122,26 @@ public class ListAdapterViewSendHeart extends ArrayAdapter<SyncContactVO> {
         users.receiver_phone = receiver_phone;  // To Reeiver Phone Number, as we will not know the User ID of the
                                                 // Phone Number associated
 
-        String results = MyRestAPI.PostCall("sendHeart",users.toJSONObject());
-        System.out.println("Send Heart Result = "+ receiver_name + " Result=" + results + users.toJSONObject());
+        Call<ResponseBody> call= SmartCallAssistantApiClient.getClient()
+                .create(ApiInterface.class).sendHeart(users);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+             ResponseBody responseBody=response.body();
+             if(responseBody!=null) {
+                 try {
+                     Log.d(TAG, "onResponse: "+responseBody.string());
+                 } catch (IOException e) {
+                     e.printStackTrace();
+                 }
+             }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.e(TAG, "onFailure: ",t );
+            }
+        });
+
     }
 }

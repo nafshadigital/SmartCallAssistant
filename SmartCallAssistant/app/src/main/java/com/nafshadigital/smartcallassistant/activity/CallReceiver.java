@@ -9,31 +9,29 @@ import android.media.MediaPlayer;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
-import android.os.Build;
-import android.os.Bundle;
-import android.telephony.SmsManager;
 import android.telephony.TelephonyManager;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.nafshadigital.smartcallassistant.helpers.AppRunning;
-import com.nafshadigital.smartcallassistant.helpers.MyToast;
-import com.nafshadigital.smartcallassistant.interfaces.ITelephony1;
+import com.nafshadigital.smartcallassistant.network.ApiInterface;
+import com.nafshadigital.smartcallassistant.network.SmartCallAssistantApiClient;
 import com.nafshadigital.smartcallassistant.vo.ActivityVO;
 import com.nafshadigital.smartcallassistant.vo.CallLogVO;
 import com.nafshadigital.smartcallassistant.vo.FavoriteVO;
 import com.nafshadigital.smartcallassistant.vo.NotificationVO;
 import com.nafshadigital.smartcallassistant.vo.RemainderVO;
+import com.nafshadigital.smartcallassistant.vo.SendNotificationResponse;
 import com.nafshadigital.smartcallassistant.vo.SettingsVO;
-import com.nafshadigital.smartcallassistant.vo.UsersVO;
 import com.nafshadigital.smartcallassistant.webservice.ActivityService;
-import com.nafshadigital.smartcallassistant.webservice.MyRestAPI;
 
-import java.io.IOException;
 import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class CallReceiver extends BroadcastReceiver {
 
@@ -41,7 +39,7 @@ public class CallReceiver extends BroadcastReceiver {
     Uri notification = Uri.EMPTY;
     Ringtone ringtone;
     MediaPlayer mediaPlayer;
-
+    private static final String TAG = "CallReceiver";
 
     public static int laststate = TelephonyManager.CALL_STATE_IDLE;
     public static String savedNumber = "";
@@ -192,10 +190,21 @@ public class CallReceiver extends BroadcastReceiver {
                                 noti.phnNum = phoneNo;
                                 noti.user_id = userId;
                                 noti.message = sms;
+                            Call<SendNotificationResponse> call= SmartCallAssistantApiClient.getClient()
+                                    .create(ApiInterface.class).sendNotify(noti);
+                            call.enqueue(new Callback<SendNotificationResponse>() {
+                                @Override
+                                public void onResponse(Call<SendNotificationResponse> call, Response<SendNotificationResponse> response) {
+                                    Log.d(TAG, "onResponse: success");
+                                }
 
-                                String result = MyRestAPI.PostCall("sendNotify",noti.toJSONObject());
-                                //MyToast.show(context,result);
-                                System.out.println("result="+noti.toJSONObject().toString()+" phoneno="+phoneNo);
+                                @Override
+                                public void onFailure(Call<SendNotificationResponse> call, Throwable t) {
+                                    Log.e(TAG, "onFailure: " );
+                                }
+                            });
+
+
 
                         } catch (Exception e) {
                             //  Toast.makeText(context, "SMS failed, please try again later!", Toast.LENGTH_LONG).show();

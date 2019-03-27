@@ -1,24 +1,17 @@
 package com.nafshadigital.smartcallassistant.activity;
 
-import android.Manifest;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.NotificationManager;
 import android.app.TimePickerDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
-import android.provider.CalendarContract;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.View;
@@ -28,20 +21,15 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
-
 import com.nafshadigital.smartcallassistant.R;
 import com.nafshadigital.smartcallassistant.helpers.MyToast;
 import com.nafshadigital.smartcallassistant.vo.ActivityVO;
 import com.nafshadigital.smartcallassistant.vo.SettingsVO;
 import com.nafshadigital.smartcallassistant.webservice.ActivityService;
 
-import java.sql.Time;
-import java.text.Format;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 
 public class Remainder extends AppCompatActivity {
     static EditText txtfromtime,txttotime;
@@ -58,13 +46,13 @@ public class Remainder extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_remainder);
 
-        tvremaintitle = (TextView) findViewById(R.id.tvremaintitle);
-        tvremdate = (TextView) findViewById(R.id.remdate);
-        txtfromtime = (EditText) findViewById(R.id.txtremfromdate);
-        txttotime = (EditText) findViewById(R.id.txtremtodate);
-        txtrplymsg = (EditText) findViewById(R.id.rplymsgact);
+        tvremaintitle = findViewById(R.id.tvremaintitle);
+        tvremdate = findViewById(R.id.remdate);
+        txtfromtime = findViewById(R.id.txtremfromdate);
+        txttotime = findViewById(R.id.txtremtodate);
+        txtrplymsg = findViewById(R.id.rplymsgact);
 
-        btnsave = (Button) findViewById(R.id.btnremsave);
+        btnsave = findViewById(R.id.btnremsave);
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);

@@ -4,19 +4,10 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.Build;
-import android.telecom.Call;
 
 import com.nafshadigital.smartcallassistant.activity.DBHelper;
-import com.nafshadigital.smartcallassistant.helpers.MyToast;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
-
-import static android.provider.BlockedNumberContract.BlockedNumbers.COLUMN_ID;
 
 public class FavoriteVO {
     public String id = "";
@@ -70,7 +61,7 @@ public class FavoriteVO {
 
     public int checkFavorites(String phnnum){
         if(phnnum.length() > 8) {
-            phnnum = phnnum.substring(phnnum.length()-8, phnnum.length());
+            phnnum = phnnum.substring(phnnum.length()-8);
         }
         String selectQuery = "select * from " +dbHelper.FAVORITE_TABLE_NAME + " where phnnumber like '%" +  phnnum +"'";
 

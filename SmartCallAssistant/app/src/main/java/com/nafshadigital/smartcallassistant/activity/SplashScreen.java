@@ -3,12 +3,11 @@ package com.nafshadigital.smartcallassistant.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 
 import com.nafshadigital.smartcallassistant.R;
-import com.nafshadigital.smartcallassistant.helpers.MyToast;
 
 public class SplashScreen extends AppCompatActivity {
     private static int SPLASH_TIME_OUT = 500;

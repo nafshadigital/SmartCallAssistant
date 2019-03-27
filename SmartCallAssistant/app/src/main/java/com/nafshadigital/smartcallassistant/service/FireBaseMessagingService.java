@@ -45,7 +45,7 @@ public class FireBaseMessagingService extends FirebaseMessagingService {
                 .setContentText(remoteMessage.getNotification().getBody())
                 .setContentIntent(pendingIntent).build();
 
-        NotificationManager notificationManager = (NotificationManager) this.getSystemService(this.NOTIFICATION_SERVICE);
+        NotificationManager notificationManager = (NotificationManager) this.getSystemService(NOTIFICATION_SERVICE);
 
         // hide the notification after its selected
         notification.flags |= Notification.FLAG_AUTO_CANCEL;

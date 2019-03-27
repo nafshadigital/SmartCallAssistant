@@ -1,29 +1,22 @@
 package com.nafshadigital.smartcallassistant.activity;
 
-import android.app.TimePickerDialog;
 import android.content.Intent;
-import android.database.Cursor;
+import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.TimePicker;
 
 import com.nafshadigital.smartcallassistant.R;
 import com.nafshadigital.smartcallassistant.helpers.MyToast;
 import com.nafshadigital.smartcallassistant.vo.RemainderVO;
 import com.nafshadigital.smartcallassistant.vo.SettingsVO;
-import com.nafshadigital.smartcallassistant.webservice.ActivityService;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -43,14 +36,14 @@ public class Settings extends AppCompatActivity {
         setContentView(R.layout.activity_settings);
         settingsVO = new SettingsVO(getApplicationContext());
 
-        tvactivityname = (TextView) findViewById(R.id.tvactivityname);
-        txtfromtime = (EditText) findViewById(R.id.txtfromsch);
-        txttotime = (EditText) findViewById(R.id.txttosch);
-        switchsendsms = (Switch) findViewById(R.id.switchsmsmute);
-        switchfavmute = (Switch) findViewById(R.id.switchfavmute);
-        switchvibratemute = (Switch) findViewById(R.id.switchvibratemute);
-        linearschedule = (LinearLayout) findViewById(R.id.linearschedule);
-        linearfavorites = (LinearLayout) findViewById(R.id.linearfavorites);
+        tvactivityname = findViewById(R.id.tvactivityname);
+        txtfromtime = findViewById(R.id.txtfromsch);
+        txttotime = findViewById(R.id.txttosch);
+        switchsendsms = findViewById(R.id.switchsmsmute);
+        switchfavmute = findViewById(R.id.switchfavmute);
+        switchvibratemute = findViewById(R.id.switchvibratemute);
+        linearschedule = findViewById(R.id.linearschedule);
+        linearfavorites = findViewById(R.id.linearfavorites);
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);

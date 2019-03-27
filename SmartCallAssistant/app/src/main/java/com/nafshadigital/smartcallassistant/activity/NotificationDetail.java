@@ -1,10 +1,9 @@
 package com.nafshadigital.smartcallassistant.activity;
 
 import android.content.Intent;
-import android.database.DatabaseErrorHandler;
+import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
@@ -20,9 +19,9 @@ TextView tvdate,tvname,tvmessage;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notification_detail);
 
-        tvdate = (TextView) findViewById(R.id.tvdatenotif);
-        tvname = (TextView) findViewById(R.id.tvnamenotif);
-        tvmessage = (TextView) findViewById(R.id.tvmesgnotif);
+        tvdate = findViewById(R.id.tvdatenotif);
+        tvname = findViewById(R.id.tvnamenotif);
+        tvmessage = findViewById(R.id.tvmesgnotif);
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);

@@ -8,19 +8,19 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
-import android.os.AsyncTask;
+import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -37,19 +37,26 @@ import com.nafshadigital.smartcallassistant.floatingAnimation.TransparentActivit
 import com.nafshadigital.smartcallassistant.floatingAnimation.ZeroGravityAnimation;
 import com.nafshadigital.smartcallassistant.helpers.AppRunning;
 import com.nafshadigital.smartcallassistant.helpers.MyToast;
+import com.nafshadigital.smartcallassistant.network.ApiInterface;
+import com.nafshadigital.smartcallassistant.network.SmartCallAssistantApiClient;
 import com.nafshadigital.smartcallassistant.service.SyncContactsService;
 import com.nafshadigital.smartcallassistant.vo.ActivityVO;
 import com.nafshadigital.smartcallassistant.vo.FCMNotificationVO;
+import com.nafshadigital.smartcallassistant.vo.LastSeenVO;
+import com.nafshadigital.smartcallassistant.vo.SendNotificationResponse;
 import com.nafshadigital.smartcallassistant.vo.SettingsVO;
 import com.nafshadigital.smartcallassistant.vo.SyncContactVO;
+import com.nafshadigital.smartcallassistant.vo.UpdateFcmTokenResponse;
+import com.nafshadigital.smartcallassistant.vo.UpdateLastSeenResponse;
 import com.nafshadigital.smartcallassistant.webservice.ActivityService;
-import com.nafshadigital.smartcallassistant.webservice.MyRestAPI;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import android.view.animation.Animation;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import static android.Manifest.permission.READ_PHONE_STATE;
 
@@ -69,7 +76,7 @@ public class Dashboard extends AppCompatActivity {
     private Context context;
     private NotifyActivity remActivity;
     private String fcm_Token;
-
+    private static final String TAG = "Dashboard";
     Intent syncContactsIntent;
     private SyncContactsService syncContactsService;
 
@@ -80,8 +87,8 @@ public class Dashboard extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
 
-        imgadd = (ImageView) findViewById(R.id.btnaddactivity);
-        listactivity = (ListView) findViewById(R.id.listactivity);
+        imgadd = findViewById(R.id.btnaddactivity);
+        listactivity = findViewById(R.id.listactivity);
        // txtactcount = (TextView) findViewById(R.id.tvtotnoact);
 
         SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("LoginDetails", Context.MODE_PRIVATE);
@@ -104,8 +111,23 @@ public class Dashboard extends AppCompatActivity {
                 SyncContactVO users = new SyncContactVO(null);
                 users.fcmtoken = fcm_Token;
                 users.id = userid;
-                String updateFCM = MyRestAPI.PostCall("updateFCM",users.toJSONObject());
-                System.out.println("FCM Update =" + updateFCM + " JSON OBJECT =" +users.toJSONObject());
+
+                Call<UpdateFcmTokenResponse> call= SmartCallAssistantApiClient.getClient()
+                        .create(ApiInterface.class).updateFCM(users);
+                call.enqueue(new Callback<UpdateFcmTokenResponse>() {
+                    @Override
+                    public void onResponse(Call<UpdateFcmTokenResponse> call, Response<UpdateFcmTokenResponse> response) {
+                        UpdateFcmTokenResponse updateFcmTokenResponse=response.body();
+                        if(updateFcmTokenResponse!=null )
+                        Log.d(TAG, "onResponse: "+updateFcmTokenResponse.getMessage());
+                    }
+
+                    @Override
+                    public void onFailure(Call<UpdateFcmTokenResponse> call, Throwable t) {
+
+                    }
+                });
+
             }
         });
 
@@ -114,15 +136,30 @@ public class Dashboard extends AppCompatActivity {
         fcmNotificationVO.title = "Title";
         fcmNotificationVO.message = "Message";
         fcmNotificationVO.token = fcm_Token;
-        String res = MyRestAPI.PostCall("send_notification",fcmNotificationVO.toJSONObject());
-        Log.v("newToken","Calling Notification sender PHP ");
-        try {
-            JSONObject json = new JSONObject(res);
-            MyToast.show(getApplicationContext(),json.getString("message"));
-        }catch (JSONException e) {
 
-            Log.v("newToken","Trying to sending notification " + e.toString() + "\n" + e.getMessage());
-        }
+
+        Call<SendNotificationResponse> call= SmartCallAssistantApiClient.getClient()
+                .create(ApiInterface.class).sendNotification(fcmNotificationVO);
+        call.enqueue(new Callback<SendNotificationResponse>() {
+            @Override
+            public void onResponse(Call<SendNotificationResponse> call, Response<SendNotificationResponse> response) {
+                Log.v("newToken","Calling Notification sender PHP ");
+                try {
+                    SendNotificationResponse sendNotificationResponse=response.body();
+                    if(sendNotificationResponse!=null && sendNotificationResponse.getMessage()!=null)
+                    MyToast.show(getApplicationContext(),sendNotificationResponse.getMessage());
+                }catch (Exception e) {
+                    Log.v("newToken","Trying to sending notification " + e.toString() + "\n" + e.getMessage());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<SendNotificationResponse> call, Throwable t) {
+
+            }
+        });
+
+
 
 
 
@@ -150,8 +187,7 @@ public class Dashboard extends AppCompatActivity {
             MyToast.show(this,"dashuserid="+ selectedUserID);
         }
 
-        MyAsyncTasks runner = new MyAsyncTasks();
-        runner.execute();
+        updateLastSeen();
 
       /*  JSONObject jsonupdate = new JSONObject();
         try {
@@ -169,7 +205,7 @@ public class Dashboard extends AppCompatActivity {
        // txtactcount.setText(""+actcount);
        // MyToast.show(this,""+actcount);
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.navigation_view);
+        NavigationView navigationView = findViewById(R.id.navigation_view);
         initInstances();
         displayActivity();
 
@@ -186,7 +222,7 @@ public class Dashboard extends AppCompatActivity {
         /*AudioManager am =  (AudioManager) getBaseContext().getSystemService(Context.AUDIO_SERVICE);
         am.setRingerMode(AudioManager.RINGER_MODE_VIBRATE); */
 
-        remActivity = (NotifyActivity) findViewById(R.id.remactivity);
+        remActivity = findViewById(R.id.remactivity);
         remActivity.isCompact = true;
         remActivity.init();
 
@@ -238,11 +274,11 @@ public class Dashboard extends AppCompatActivity {
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
+        drawerLayout = findViewById(R.id.drawerLayout);
         drawerToggle = new ActionBarDrawerToggle(Dashboard.this, drawerLayout, R.string.hello_world, R.string.hello_world);
         drawerLayout.setDrawerListener(drawerToggle);
 
-        navigation = (NavigationView) findViewById(R.id.navigation_view);
+        navigation = findViewById(R.id.navigation_view);
 
         View hView = navigation.getHeaderView(0);
 
@@ -405,42 +441,28 @@ public class Dashboard extends AppCompatActivity {
         }
     }
 
-
-    public class MyAsyncTasks extends AsyncTask<String, String, String> {
-        ProgressDialog progressDialog;
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-
-            progressDialog = new ProgressDialog(Dashboard.this);
-            progressDialog.setMessage("Please Wait");
-            progressDialog.setCancelable(false);
-            progressDialog.show();
-        }
-
-        @Override
-        protected String doInBackground(String... params) {
-
-            JSONObject jsonupdate = new JSONObject();
-            try {
-                jsonupdate.put("token", selectedUserID);
-              //  MyToast.show(getApplicationContext(),selectedUserID);
-                System.out.println("userId="+selectedUserID);
-            }catch (JSONException e) {
-
+    private void updateLastSeen(){
+        final ProgressDialog progressDialog;
+        progressDialog = new ProgressDialog(Dashboard.this);
+        progressDialog.setMessage("Please Wait");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+        Call<UpdateLastSeenResponse> call= SmartCallAssistantApiClient.getClient()
+                .create(ApiInterface.class).updateLastSeen(new LastSeenVO(selectedUserID));
+        call.enqueue(new Callback<UpdateLastSeenResponse>() {
+            @Override
+            public void onResponse(Call<UpdateLastSeenResponse> call, Response<UpdateLastSeenResponse> response) {
+                progressDialog.dismiss();
             }
-            String res = MyRestAPI.PostCall("updateLastSeen/",jsonupdate);
 
-            return res;
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            progressDialog.dismiss();
-        }
-
+            @Override
+            public void onFailure(Call<UpdateLastSeenResponse> call, Throwable t) {
+                progressDialog.dismiss();
+            }
+        });
     }
+
+
 
     private boolean isMyServiceRunning(Class<?> serviceClass) {
         ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);

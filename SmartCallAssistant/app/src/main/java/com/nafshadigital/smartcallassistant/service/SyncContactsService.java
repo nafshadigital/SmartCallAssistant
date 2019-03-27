@@ -1,6 +1,5 @@
 package com.nafshadigital.smartcallassistant.service;
 
-import android.Manifest;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -13,20 +12,13 @@ import android.os.IBinder;
 import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.nafshadigital.smartcallassistant.activity.DBHelper;
-import com.nafshadigital.smartcallassistant.activity.FavouriteActivity;
-import com.nafshadigital.smartcallassistant.helpers.SmartCallAssistantApiResponse;
-import com.nafshadigital.smartcallassistant.network.SaveContactsResponse;
+import com.nafshadigital.smartcallassistant.network.ApiInterface;
 import com.nafshadigital.smartcallassistant.network.SmartCallAssistantApiClient;
-import com.nafshadigital.smartcallassistant.network.SmartCallAssistantApiInterface;
+import com.nafshadigital.smartcallassistant.vo.SaveContactResponse;
 import com.nafshadigital.smartcallassistant.vo.SyncContactVO;
-import com.nafshadigital.smartcallassistant.webservice.MyRestAPI;
-
-import org.json.JSONObject;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -35,17 +27,13 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import static android.Manifest.permission.READ_CONTACTS;
-import static com.nafshadigital.smartcallassistant.activity.EnterMobilenumber.hasPermissions;
-import static com.nafshadigital.smartcallassistant.activity.FavouriteActivity.RequestPermissionCode;
-
 public class SyncContactsService extends Service {
     public int counter = 0;
     public int recordsProcessed = 0;
     private DBHelper dbHelper;
     private Boolean stopThread = false;
     private int syncSeconds = 59; // Every n 25 seconds the contacts will be synched
-
+    private static final String TAG = "SyncContactsService";
     public SyncContactsService(Context applicationContext) {
         super();
     }
@@ -99,9 +87,10 @@ public class SyncContactsService extends Service {
         String userid = sharedPreference.getString("userID","");
 
         cursor.moveToFirst();
+
         while (cursor.isAfterLast() == false) {
 
-            String contactId =
+            final String contactId =
                     cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID));
 
             Cursor phones = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,
@@ -110,7 +99,7 @@ public class SyncContactsService extends Service {
 
             while (phones.moveToNext()) {
                 String number = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-                String name = cursor.getString(cursor.getColumnIndex(ContactsContract.Data.DISPLAY_NAME));
+                final String name = cursor.getString(cursor.getColumnIndex(ContactsContract.Data.DISPLAY_NAME));
 
                 {
                     recordCounter++;
@@ -121,12 +110,12 @@ public class SyncContactsService extends Service {
                         Log.d(recordCounter + ":" + "Display_Name", cursor.getString(cursor.getColumnIndex(ContactsContract.Data.DISPLAY_NAME)) + " Number" + number);
                         Log.d(recordCounter + ":" + "Phone", number);
 
-                        SQLiteDatabase db = this.dbHelper.getWritableDatabase();
+                        final SQLiteDatabase db = this.dbHelper.getWritableDatabase();
                         this.dbHelper.addSyncContacts(db, recordCounter, name, number);
 
                         number = number.replaceAll("\\D", "").trim();
                         if (number.substring(0, 1).equals("00")) {
-                            number = number.substring(2, number.length());
+                            number = number.substring(2);
                         }
                         if (number.length() > 9) {
 
@@ -135,22 +124,41 @@ public class SyncContactsService extends Service {
                             contacts.name = name;
                             contacts.phone = number;
 
-                            String res = MyRestAPI.PostCall("savecontact",contacts.toJSONObject());
 
-                            try {
-                                JSONObject jsonObject = new JSONObject(res);
-                                name = jsonObject.getString("PartnerTrueByPhone");
+                            Call<SaveContactResponse> call= SmartCallAssistantApiClient.getClient()
+                                    .create(ApiInterface.class).saveContact(contacts);
+                            final String finalNumber = number;
+                            call.enqueue(new Callback<SaveContactResponse>() {
+                                @Override
+                                public void onResponse(Call<SaveContactResponse> call, Response<SaveContactResponse> response) {
+                                    try {
 
-                                if(name.equals("true")) {
-                                    // Set the Contact is a member of SmartCall Assistant Network
-                                    this.dbHelper.setMemberByPhone(db, number);
+                                        SaveContactResponse contactResponse=response.body();
+                                        if(contactResponse!=null) {
+                                            String isNewContact = contactResponse.getPartnerTrueByPhone();
+                                            Log.d(TAG, "onResponse: isNewContact "+isNewContact);
+                                            if (isNewContact.equals("true")) {
+                                                // Set the Contact is a member of SmartCall Assistant Network
+                                                dbHelper.setMemberByPhone(db, finalNumber);
+                                            }
+                                        }
+                                        db.close();
+
+                                    }catch (Exception e){
+                                        Log.e(TAG, "onResponse: ",e );
+                                    }
                                 }
 
-                            }catch (Exception e){
-                            }
-                            System.out.println("Save ID Response" + res);
+                                @Override
+                                public void onFailure(Call<SaveContactResponse> call, Throwable t) {
+
+                                }
+                            });
+
+
+
                         }
-                        db.close();
+
                     }
 
                 }
@@ -198,7 +206,7 @@ public class SyncContactsService extends Service {
         return getContentResolver().query(uri, projection, null, selectionArgs, sortOrder);
     }
 
-    public int getActivityCount(int is_updated) {
+    public synchronized int getActivityCount(int is_updated) {
         String countQuery = "";
         if (is_updated > 1) // 0 means notupdate l means updated more than means both records
         {

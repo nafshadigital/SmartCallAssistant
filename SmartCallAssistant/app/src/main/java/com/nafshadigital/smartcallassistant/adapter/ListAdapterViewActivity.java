@@ -6,19 +6,14 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.view.LayoutInflater;
-import android.widget.ArrayAdapter;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.nafshadigital.smartcallassistant.R;
-import com.nafshadigital.smartcallassistant.activity.CallmebackActivity;
 import com.nafshadigital.smartcallassistant.activity.Dashboard;
 import com.nafshadigital.smartcallassistant.activity.Remainder;
 import com.nafshadigital.smartcallassistant.helpers.MyToast;
@@ -47,12 +42,12 @@ public class ListAdapterViewActivity extends ArrayAdapter<ActivityVO> {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.row_view_activity, parent, false);
         }
 
-        final RadioButton chkactivity = (RadioButton) convertView.findViewById(R.id.chkactivity);
-        ImageView imgremain = (ImageView) convertView.findViewById(R.id.imgremainder);
-        ImageView imgright = (ImageView) convertView.findViewById(R.id.imgrightarrow);
-        ImageView imgdelete = (ImageView) convertView.findViewById(R.id.imgstatact);
+        final RadioButton chkactivity = convertView.findViewById(R.id.chkactivity);
+        ImageView imgremain = convertView.findViewById(R.id.imgremainder);
+        ImageView imgright = convertView.findViewById(R.id.imgrightarrow);
+        ImageView imgdelete = convertView.findViewById(R.id.imgstatact);
 
-        LinearLayout layoutactivity = (LinearLayout) convertView.findViewById(R.id.layoutactivity);
+        LinearLayout layoutactivity = convertView.findViewById(R.id.layoutactivity);
 
 
         rv = getItem(position);

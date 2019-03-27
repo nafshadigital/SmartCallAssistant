@@ -1,6 +1,7 @@
 package com.nafshadigital.smartcallassistant.floatingAnimation;
 
 import android.app.Activity;
+
 import java.util.Random;
 public class DirectionGenerator {
 

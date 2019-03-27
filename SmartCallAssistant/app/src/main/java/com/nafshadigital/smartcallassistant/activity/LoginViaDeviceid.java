@@ -5,24 +5,30 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.telephony.TelephonyManager;
-import android.widget.Toast;
+import android.util.Log;
 
 import com.nafshadigital.smartcallassistant.R;
 import com.nafshadigital.smartcallassistant.helpers.MyToast;
+import com.nafshadigital.smartcallassistant.network.ApiInterface;
+import com.nafshadigital.smartcallassistant.network.SmartCallAssistantApiClient;
+import com.nafshadigital.smartcallassistant.vo.SignUpResponse;
 import com.nafshadigital.smartcallassistant.vo.UsersVO;
-import com.nafshadigital.smartcallassistant.webservice.MyRestAPI;
-import org.json.JSONObject;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import static android.Manifest.permission.READ_PHONE_STATE;
 
 public class LoginViaDeviceid extends AppCompatActivity {
 String device_id,android_id;
+    private static final String TAG = "LoginViaDeviceid";
 public static final int RequestPermissionCode = 1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,30 +102,48 @@ public static final int RequestPermissionCode = 1;
         usersVO.device_id = device_id;
 
 
-        String res = MyRestAPI.PostCall("signUp", usersVO.toJSONObject());
+
 
         try {
-            JSONObject jsonObject = new JSONObject(res);
-            String status = jsonObject.getString("status");
-            String id = jsonObject.getString("token");
-            String message = jsonObject.getString("message");
+            Call<SignUpResponse> call= SmartCallAssistantApiClient.getClient()
+                    .create(ApiInterface.class).signUp(usersVO);
 
-            if(status.equals("1")){
-                Intent in = new Intent(this,MyProfile.class);
-                in.putExtra("userid",id);
-                startActivity(in);
-                MyToast.show(this,message);
+            call.enqueue(new Callback<SignUpResponse>() {
+                @Override
+                public void onResponse(Call<SignUpResponse> call, Response<SignUpResponse> response) {
 
-                SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("LoginDetails", Context.MODE_PRIVATE);
-                SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putString("userID", id);
-                editor.commit();
+                    SignUpResponse signUpResponse=response.body();
+                    if(signUpResponse!=null) {
+                        String status = signUpResponse.getStatus();
+                        String id = signUpResponse.getUser_id();
+                        String message = signUpResponse.getMessage();
+                        if (status.equals("1")) {
+                            Intent in = new Intent(LoginViaDeviceid.this, MyProfile.class);
+                            in.putExtra("userid", id);
+                            startActivity(in);
+                            MyToast.show(LoginViaDeviceid.this, message);
 
-            }else{
+                            SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("LoginDetails", Context.MODE_PRIVATE);
+                            SharedPreferences.Editor editor = sharedPreferences.edit();
+                            editor.putString("userID", id);
+                            editor.commit();
 
-            }
+                        } else {
+
+                        }
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<SignUpResponse> call, Throwable t) {
+
+                }
+            });
+
+
+
         }catch (Exception e){
-
+            Log.e(TAG, "signup: ",e );
         }
     }
 

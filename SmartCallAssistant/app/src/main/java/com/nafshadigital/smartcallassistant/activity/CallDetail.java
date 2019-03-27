@@ -1,20 +1,16 @@
 package com.nafshadigital.smartcallassistant.activity;
 
-import android.annotation.SuppressLint;
+import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.view.View;
 import android.widget.TextView;
 
 import com.nafshadigital.smartcallassistant.R;
-import com.nafshadigital.smartcallassistant.helpers.MyToast;
 import com.nafshadigital.smartcallassistant.vo.CallLogVO;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
 
 public class CallDetail extends AppCompatActivity {
 CallLogVO callLogVO;
@@ -29,9 +25,9 @@ CallLogVO callLogVO;
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
 
-        TextView txtnum = (TextView) findViewById(R.id.tvphnnumberdet);
-        txtdate = (TextView) findViewById(R.id.tvphncalldatedet);
-        txttime = (TextView) findViewById(R.id.tvphncalltimedet);
+        TextView txtnum = findViewById(R.id.tvphnnumberdet);
+        txtdate = findViewById(R.id.tvphncalldatedet);
+        txttime = findViewById(R.id.tvphncalltimedet);
 
         Bundle bundle = getIntent().getExtras();
 

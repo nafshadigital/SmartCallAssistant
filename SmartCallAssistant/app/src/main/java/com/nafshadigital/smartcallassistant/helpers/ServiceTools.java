@@ -1,7 +1,6 @@
 package com.nafshadigital.smartcallassistant.helpers;
 
 import android.app.ActivityManager;
-import android.app.Application;
 import android.content.Context;
 
 import java.util.List;

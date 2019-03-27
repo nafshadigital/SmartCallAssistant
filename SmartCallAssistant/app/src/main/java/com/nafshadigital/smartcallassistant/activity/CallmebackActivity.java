@@ -1,9 +1,9 @@
 package com.nafshadigital.smartcallassistant.activity;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -11,7 +11,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.nafshadigital.smartcallassistant.R;
-import com.nafshadigital.smartcallassistant.adapter.ListAdapterViewRemainder;
 import com.nafshadigital.smartcallassistant.helpers.MyToast;
 import com.nafshadigital.smartcallassistant.vo.ActivityVO;
 import com.nafshadigital.smartcallassistant.vo.RemainderVO;
@@ -35,10 +34,10 @@ public class CallmebackActivity extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
 
-        txtactname = (TextView) findViewById(R.id.tvactivname);
-        txtrplymsg = (EditText) findViewById(R.id.rplymsgact);
-        btnsave = (Button) findViewById(R.id.btnsaveremain);
-        listremainder = (ListView) findViewById(R.id.listremainder);
+        txtactname = findViewById(R.id.tvactivname);
+        txtrplymsg = findViewById(R.id.rplymsgact);
+        btnsave = findViewById(R.id.btnsaveremain);
+        listremainder = findViewById(R.id.listremainder);
 
         Bundle bundle = getIntent().getExtras();
         if(bundle != null && bundle.get("actvityVO") != null){

@@ -1,15 +1,11 @@
 package com.nafshadigital.smartcallassistant.activity;
 
-import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
-import android.provider.ContactsContract;
+import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.CompoundButton;
@@ -17,7 +13,6 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.ToggleButton;
 
 import com.nafshadigital.smartcallassistant.R;
 import com.nafshadigital.smartcallassistant.adapter.ListAdapterViewCalllog;
@@ -41,10 +36,10 @@ public class CallLogs extends AppCompatActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayShowTitleEnabled(true);
 
-        listcalllog = (ListView) findViewById(R.id.listviewcalllog);
-        tvcalltype = (TextView) findViewById(R.id.tvcalltype);
-        tvempcalllog = (TextView) findViewById(R.id.tvempcalllog);
-        linearCalllog = (LinearLayout) findViewById(R.id.linearcalllog);
+        listcalllog = findViewById(R.id.listviewcalllog);
+        tvcalltype = findViewById(R.id.tvcalltype);
+        tvempcalllog = findViewById(R.id.tvempcalllog);
+        linearCalllog = findViewById(R.id.linearcalllog);
 
         tvcalltype.setText("Incoming Calls");
         displayIncomingcall();
@@ -57,7 +52,7 @@ public class CallLogs extends AppCompatActivity {
        // menuInflater.inflate(R.menu.calllogswitch,menu);
 
         getMenuInflater().inflate(R.menu.calllogswitch, menu);
-        MenuItem item = (MenuItem) menu.findItem(R.id.switchId);
+        MenuItem item = menu.findItem(R.id.switchId);
         item.setActionView(R.layout.calllogswitchlayout);
         final Switch switchcall = item
                 .getActionView().findViewById(R.id.switchcalllogmenu);

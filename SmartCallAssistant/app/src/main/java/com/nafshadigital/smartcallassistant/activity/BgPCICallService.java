@@ -9,33 +9,32 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
-import android.graphics.PixelFormat;
 import android.media.AudioManager;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.provider.Settings;
 import android.support.v4.app.NotificationCompat;
-import android.view.WindowManager;
-import android.widget.LinearLayout;
+import android.util.Log;
 
 import com.nafshadigital.smartcallassistant.R;
-import com.nafshadigital.smartcallassistant.helpers.AppRunning;
-import com.nafshadigital.smartcallassistant.helpers.MyToast;
+import com.nafshadigital.smartcallassistant.network.ApiInterface;
+import com.nafshadigital.smartcallassistant.network.SmartCallAssistantApiClient;
+import com.nafshadigital.smartcallassistant.service.MaxIdResponse;
 import com.nafshadigital.smartcallassistant.vo.NotificationVO;
 import com.nafshadigital.smartcallassistant.vo.RemainderVO;
 import com.nafshadigital.smartcallassistant.vo.SettingsVO;
-import com.nafshadigital.smartcallassistant.webservice.MyRestAPI;
 
 import org.json.JSONArray;
-import org.json.JSONObject;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 public class BgPCICallService extends Service {
@@ -48,16 +47,14 @@ public class BgPCICallService extends Service {
     AudioManager am;
     int showTransAct = 0;
     int maxid = 0;
-SettingsVO settingsVO;
-    private WindowManager wm;
-    private static LinearLayout ly1;
-    private WindowManager.LayoutParams params1;
+    SettingsVO settingsVO;
+
     String isAppRun;
     String userid;
-
+    private static final String TAG = "BgPCICallService";
     public static final String MyPREFERENCES = "MyPrefs";
     public static final String notificationKey = "notificationKey";
-    SharedPreferences sharedpreferences;
+
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -159,7 +156,7 @@ SettingsVO settingsVO;
                               .setContentText("Your Mobile is Mute Now")
                               .setContentIntent(pendingIntent).build();
 
-                      NotificationManager notificationManager = (NotificationManager) this.getSystemService(this.NOTIFICATION_SERVICE);
+                      NotificationManager notificationManager = (NotificationManager) this.getSystemService(NOTIFICATION_SERVICE);
                       // hide the notification after its selected
                       noti.flags |= Notification.FLAG_AUTO_CANCEL;
                       noti.defaults |= Notification.DEFAULT_SOUND;
@@ -240,7 +237,7 @@ SettingsVO settingsVO;
 
     public void getNotification(){
 
-        SharedPreferences sharedPreferences = getSharedPreferences(MyPREFERENCES,this.MODE_PRIVATE);
+        final SharedPreferences sharedPreferences = getSharedPreferences(MyPREFERENCES, MODE_PRIVATE);
         String min = sharedPreferences.getString(notificationKey,"");
         Integer minid = 0;
         if((min != null) && (!min.isEmpty())){
@@ -253,25 +250,42 @@ SettingsVO settingsVO;
 
             NotificationVO noti = new NotificationVO();
             noti.user_id = userid;
-            String maxId = MyRestAPI.PostCall("getmaxid",noti.toJSONObject());
 
+            Call<MaxIdResponse> call= SmartCallAssistantApiClient.getClient()
+                    .create(ApiInterface.class).getMaxId(noti);
 
-            JSONObject jsonObject = new JSONObject(maxId);
-            String maxpostId = jsonObject.getString("maxId");
-            System.out.println("maxpostid="+maxpostId);
+            call.enqueue(new Callback<MaxIdResponse>() {
+                @Override
+                public void onResponse(Call<MaxIdResponse> call, Response<MaxIdResponse> response) {
+                    try {
+                        MaxIdResponse maxIdResponse = response.body();
+                        if (maxIdResponse != null) {
+                            String maxpostId = maxIdResponse.getMaxId();
+                            System.out.println("maxpostid=" + maxpostId);
 
-            if(maxpostId.equals("null"))
-            {
-                maxpostId = null;
-            }
+                            if (maxpostId != null && maxpostId.equals("null")) {
+                                maxpostId = null;
+                            }
 
-            if((maxpostId != null) && (!maxpostId.isEmpty())) {
-                maxid = Integer.parseInt(maxpostId);
-            }
+                            if ((maxpostId != null) && (!maxpostId.isEmpty())) {
+                                maxid = Integer.parseInt(maxpostId);
+                            }
 
-            SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.putString(notificationKey,""+ maxid);
-            editor.commit();
+                            SharedPreferences.Editor editor = sharedPreferences.edit();
+                            editor.putString(notificationKey, "" + maxid);
+                            editor.apply();
+                        }
+                    }catch (Exception e){
+                        Log.e(TAG, "onResponse: ",e );
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<MaxIdResponse> call, Throwable t) {
+
+                }
+            });
+
         }catch (Exception e)
         {
             e.printStackTrace();
@@ -287,38 +301,57 @@ SettingsVO settingsVO;
                 noti.user_id = userid;
                 noti.id = minid.toString();
 
-                String result = MyRestAPI.PostCall("getnotifyafter",noti.toJSONObject());
-                System.out.println("notifyafter="+noti.toJSONObject().toString()+result);
-                ArrayList<NotificationVO> NotifAL = new NotificationVO().getNotifyArraylist(new JSONArray(new NotificationVO().stringToJSONObject(result).getString("notifications")));
-                for(int i=0; i<NotifAL.size(); i++){
-                    NotificationVO notif = new NotificationVO();
-                    notif = NotifAL.get(i);
-                    String content = notif.message;
-                    String title = notif.name + " have sent you a message";
+                Call<ResponseBody> call= SmartCallAssistantApiClient.getClient()
+                        .create(ApiInterface.class).getnotifyafter(noti);
+                call.enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        ResponseBody responseBody=response.body();
+                        if(responseBody!=null){
+                            try{
+                                String result= responseBody.string();
+                                Log.d(TAG, "onResponse: "+result);
+                                ArrayList<NotificationVO> NotifAL = new NotificationVO().getNotifyArraylist(new JSONArray(new NotificationVO().stringToJSONObject(result).getString("notifications")));
+                                for(int i=0; i<NotifAL.size(); i++){
+                                    NotificationVO notif = new NotificationVO();
+                                    notif = NotifAL.get(i);
+                                    String content = notif.message;
+                                    String title = notif.name + " have sent you a message";
 
-                    Intent intents = new Intent(this, NotificationDetail.class);
-                    intents.putExtra("notifVO",notif);
-                    intents.setAction(Intent.ACTION_MAIN);
-                    intents.addCategory(Intent.CATEGORY_LAUNCHER);
-                    intents.setAction(Long.toString(System.currentTimeMillis()));
-                    intents.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intents, PendingIntent.FLAG_UPDATE_CURRENT);
+                                    Intent intents = new Intent(BgPCICallService.this, NotificationDetail.class);
+                                    intents.putExtra("notifVO",notif);
+                                    intents.setAction(Intent.ACTION_MAIN);
+                                    intents.addCategory(Intent.CATEGORY_LAUNCHER);
+                                    intents.setAction(Long.toString(System.currentTimeMillis()));
+                                    intents.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                    PendingIntent pendingIntent = PendingIntent.getActivity(BgPCICallService.this, 0, intents, PendingIntent.FLAG_UPDATE_CURRENT);
 
-                    Notification notification = new Notification.Builder(this)
+                                    Notification notification = new Notification.Builder(BgPCICallService.this)
 
-                            .setSmallIcon(R.mipmap.appicon)
-                            .setColor(NotificationCompat.COLOR_DEFAULT)
-                            .setContentTitle(title)
-                            .setContentText(content)
-                            .setContentIntent(pendingIntent).build();
+                                            .setSmallIcon(R.mipmap.appicon)
+                                            .setColor(NotificationCompat.COLOR_DEFAULT)
+                                            .setContentTitle(title)
+                                            .setContentText(content)
+                                            .setContentIntent(pendingIntent).build();
 
-                    NotificationManager notificationManager = (NotificationManager) this.getSystemService(this.NOTIFICATION_SERVICE);
-                    // hide the notification after its selected
-                    notification.flags |= Notification.FLAG_AUTO_CANCEL;
-                    notification.defaults |= Notification.DEFAULT_SOUND;
-                    notificationManager.notify(0, notification);
-                }
+                                    NotificationManager notificationManager = (NotificationManager) BgPCICallService.this.getSystemService(NOTIFICATION_SERVICE);
+                                    // hide the notification after its selected
+                                    notification.flags |= Notification.FLAG_AUTO_CANCEL;
+                                    notification.defaults |= Notification.DEFAULT_SOUND;
+                                    notificationManager.notify(0, notification);
+                                }
+                            }
+                            catch (Exception e){
+                                Log.e(TAG, "onResponse: ",e );
+                            }
+                        }
+                    }
 
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        Log.e(TAG, "onFailure: ",t );
+                    }
+                });
             }catch (Exception e)
             {
                 e.printStackTrace();

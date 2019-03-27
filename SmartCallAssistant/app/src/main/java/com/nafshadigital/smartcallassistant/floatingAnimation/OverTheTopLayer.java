@@ -139,7 +139,7 @@ public class OverTheTopLayer {
             if (mWeakRootView != null && mWeakRootView.get() != null) {
                 attachingView = mWeakRootView.get();
             } else {
-                attachingView = (ViewGroup) activity.findViewById(android.R.id.content);
+                attachingView = activity.findViewById(android.R.id.content);
             }
 
 
@@ -215,7 +215,7 @@ public class OverTheTopLayer {
             if (mWeakRootView != null && mWeakRootView.get() != null) {
                 attachingView = mWeakRootView.get();
             } else {
-                attachingView = (ViewGroup) activity.findViewById(android.R.id.content);
+                attachingView = activity.findViewById(android.R.id.content);
             }
 
             if (mCreatedOttLayer != null) {

@@ -7,20 +7,17 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.widget.ArrayAdapter;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.nafshadigital.smartcallassistant.R;
 import com.nafshadigital.smartcallassistant.activity.CallDetail;
 import com.nafshadigital.smartcallassistant.activity.CallLogs;
-import com.nafshadigital.smartcallassistant.activity.FavouriteActivity;
 import com.nafshadigital.smartcallassistant.helpers.MyToast;
-import com.nafshadigital.smartcallassistant.vo.ActivityVO;
 import com.nafshadigital.smartcallassistant.vo.CallLogVO;
-import com.nafshadigital.smartcallassistant.vo.FavoriteVO;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -63,12 +60,12 @@ public class ListAdapterViewCalllog extends ArrayAdapter<CallLogVO> {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.row_view_calllog, parent, false);
         }
 
-        ImageView imgincome = (ImageView) convertView.findViewById(R.id.imgincomelog);
-        ImageView imgoutgoing = (ImageView) convertView.findViewById(R.id.imgoutgolog);
-        ImageView imgdelcall = (ImageView) convertView.findViewById(R.id.imgcallogdel);
-        ImageView imgcalldet = (ImageView) convertView.findViewById(R.id.imgreclogrigarrow);
-        TextView txtbusname = (TextView) convertView.findViewById(R.id.tvcalllognumber);
-        TextView txtcalldate = (TextView) convertView.findViewById(R.id.txtcalllogdate);
+        ImageView imgincome = convertView.findViewById(R.id.imgincomelog);
+        ImageView imgoutgoing = convertView.findViewById(R.id.imgoutgolog);
+        ImageView imgdelcall = convertView.findViewById(R.id.imgcallogdel);
+        ImageView imgcalldet = convertView.findViewById(R.id.imgreclogrigarrow);
+        TextView txtbusname = convertView.findViewById(R.id.tvcalllognumber);
+        TextView txtcalldate = convertView.findViewById(R.id.txtcalllogdate);
 
 
 

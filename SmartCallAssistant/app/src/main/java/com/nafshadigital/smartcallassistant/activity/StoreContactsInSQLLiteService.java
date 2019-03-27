@@ -49,8 +49,8 @@ public class StoreContactsInSQLLiteService extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
 
-        txtempfav = (TextView) findViewById(R.id.tvempfavo);
-        listfavcon = (ListView) findViewById(R.id.listviewfavcont);
+        txtempfav = findViewById(R.id.tvempfavo);
+        listfavcon = findViewById(R.id.listviewfavcont);
 
         //display();
         this.dbHelper = new DBHelper(this);
@@ -99,7 +99,7 @@ public class StoreContactsInSQLLiteService extends AppCompatActivity {
                 number = number.replaceAll("\\D", "").trim();
                 if(number.substring(0,1).equals("00"))
                 {
-                    number = number.substring(2,number.length());
+                    number = number.substring(2);
                 }
                 if(number != null && number.length() > 9) {
 

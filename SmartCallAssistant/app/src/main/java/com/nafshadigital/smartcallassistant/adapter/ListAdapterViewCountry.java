@@ -1,16 +1,10 @@
 package com.nafshadigital.smartcallassistant.adapter;
 
 import android.app.Activity;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
-import android.widget.ArrayAdapter;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
+import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.nafshadigital.smartcallassistant.R;
@@ -47,7 +41,7 @@ public class ListAdapterViewCountry extends ArrayAdapter<CountryVO> {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.row_view_country, parent, false);
         }
 
-        TextView txtconname = (TextView) convertView.findViewById(R.id.txtcountryname);
+        TextView txtconname = convertView.findViewById(R.id.txtcountryname);
 
         rv = getItem(position);
 

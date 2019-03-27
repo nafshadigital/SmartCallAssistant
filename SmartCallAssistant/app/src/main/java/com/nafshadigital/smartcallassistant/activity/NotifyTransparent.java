@@ -7,10 +7,7 @@ import android.graphics.PixelFormat;
 import android.graphics.Typeface;
 import android.media.AudioManager;
 import android.os.Build;
-import android.os.Handler;
 import android.os.IBinder;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -20,13 +17,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.nafshadigital.smartcallassistant.R;
-import com.nafshadigital.smartcallassistant.helpers.AppRunning;
 import com.nafshadigital.smartcallassistant.interfaces.TransparentWindowEvent;
-import com.nafshadigital.smartcallassistant.vo.RemainderVO;
-import com.nafshadigital.smartcallassistant.vo.SettingsVO;
-
-import java.util.ArrayList;
-import java.util.Date;
 
 public class NotifyTransparent extends Service implements View.OnClickListener {
 
@@ -66,7 +57,7 @@ public class NotifyTransparent extends Service implements View.OnClickListener {
 
        // btnoff = (Button) mFloatingView.findViewById(R.id.btnoffmutetrans);
      //   btncancel = (Button) mFloatingView.findViewById(R.id.btncancelnotiftrans);
-        imgcancel = (ImageView) mFloatingView.findViewById(R.id.buttonClose);
+        imgcancel = mFloatingView.findViewById(R.id.buttonClose);
         am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 
         WindowManager.LayoutParams params1;
@@ -153,7 +144,7 @@ public class NotifyTransparent extends Service implements View.OnClickListener {
         if(!this.isRunning){
             //this.isRunning=true;
            // this.backgroundThread.start();
-            remActivitytrans = (NotifyActivity) mFloatingView.findViewById(R.id.remactivitytrans);
+            remActivitytrans = mFloatingView.findViewById(R.id.remactivitytrans);
             remActivitytrans.SetOnCancelActivityHandlerListener(new TransparentWindowEvent() {
                 @Override
                 public void onCancelActivityHandler() {

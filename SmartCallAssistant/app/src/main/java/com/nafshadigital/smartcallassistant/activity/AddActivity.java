@@ -1,13 +1,12 @@
 package com.nafshadigital.smartcallassistant.activity;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import com.nafshadigital.smartcallassistant.R;
 import com.nafshadigital.smartcallassistant.helpers.MyToast;
@@ -26,8 +25,8 @@ public class AddActivity extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
 
-        txtaddact = (EditText) findViewById(R.id.txtaddactivity);
-        btnsave = (Button) findViewById(R.id.btnsaveactivity);
+        txtaddact = findViewById(R.id.txtaddactivity);
+        btnsave = findViewById(R.id.btnsaveactivity);
 
     }
 

@@ -2,7 +2,7 @@ package com.nafshadigital.smartcallassistant.webservice;
 
 public interface IWebServiceDeclaration {
     //public static final String BASE_URL = "http://192.168.0.102/SmartCallAssistantAPI/api/";
-    public static final String BASE_URL = "http://134.209.117.226/SmartCallAssistantAPI/api/";
+    String BASE_URL = "http://134.209.117.226/SmartCallAssistantAPI/api/";
     String DATABASE_NAME = "dbprecallindicator";
     int DATABASE_VERSION = 1;
     /*

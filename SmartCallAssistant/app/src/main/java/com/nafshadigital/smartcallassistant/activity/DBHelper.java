@@ -2,23 +2,15 @@ package com.nafshadigital.smartcallassistant.activity;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
-import android.database.DatabaseUtils;
-import android.database.MatrixCursor;
-import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import com.nafshadigital.smartcallassistant.vo.ActivityVO;
-import com.nafshadigital.smartcallassistant.vo.SettingsVO;
 import com.nafshadigital.smartcallassistant.webservice.IWebServiceDeclaration;
 
-import java.io.Serializable;
 import java.sql.Time;
 import java.text.Format;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 

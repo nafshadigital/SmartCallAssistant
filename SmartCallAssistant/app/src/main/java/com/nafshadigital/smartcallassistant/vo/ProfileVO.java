@@ -7,12 +7,6 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.nafshadigital.smartcallassistant.activity.DBHelper;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
-
 /**
  * Created by Malaris on 3/31/2018.
  */

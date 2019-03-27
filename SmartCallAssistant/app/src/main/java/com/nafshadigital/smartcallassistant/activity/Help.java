@@ -2,19 +2,15 @@ package com.nafshadigital.smartcallassistant.activity;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.view.MenuItem;
-import android.view.SubMenu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
 import com.nafshadigital.smartcallassistant.R;
 import com.nafshadigital.smartcallassistant.helpers.MyToast;
-
-import javax.security.auth.Subject;
 
 public class Help extends AppCompatActivity {
     Button btnmail;
@@ -29,9 +25,9 @@ public class Help extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
 
-        txttomail = (EditText) findViewById(R.id.txttomailhelp);
-        txtmessage = (EditText) findViewById(R.id.txtmessagehelp);
-        btnmail = (Button) findViewById(R.id.btnhelpemail);
+        txttomail = findViewById(R.id.txttomailhelp);
+        txtmessage = findViewById(R.id.txtmessagehelp);
+        btnmail = findViewById(R.id.btnhelpemail);
 
         txttomail.setText("nafshadigital@gmail.com");
         txttomail.setEnabled(false);

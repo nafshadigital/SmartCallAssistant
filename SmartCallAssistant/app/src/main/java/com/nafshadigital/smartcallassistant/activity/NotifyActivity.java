@@ -48,14 +48,14 @@ public class NotifyActivity extends FrameLayout {
 
     public void init(){
         Typeface tf = Typeface.createFromAsset(getContext().getAssets(),"fonts/alarm-clock.otf");
-        txtduration = (TextView) findViewById(R.id.tvdurationmute);
-        txtduration1 = (TextView) findViewById(R.id.tvdurationmute1);
-        txtdurcompat = (TextView) findViewById(R.id.tvdurationmutecompat);
-        tvdurationmute2compat = (TextView) findViewById(R.id.tvdurationmute2compat);
-        imgnottrans = (ImageView) findViewById(R.id.imgarrowtrans);
+        txtduration = findViewById(R.id.tvdurationmute);
+        txtduration1 = findViewById(R.id.tvdurationmute1);
+        txtdurcompat = findViewById(R.id.tvdurationmutecompat);
+        tvdurationmute2compat = findViewById(R.id.tvdurationmute2compat);
+        imgnottrans = findViewById(R.id.imgarrowtrans);
 
-        linearnotify = (LinearLayout) findViewById(R.id.linearnotify);
-        linearcompat = (LinearLayout) findViewById(R.id.linearnotifcompat);
+        linearnotify = findViewById(R.id.linearnotify);
+        linearcompat = findViewById(R.id.linearnotifcompat);
 
 
         if(isCompact == true){
@@ -84,12 +84,12 @@ public class NotifyActivity extends FrameLayout {
         txtduration1.setTypeface(tf);
         tvdurationmute2compat.setTypeface(tf);
 
-        tvfromtime = (TextView) findViewById(R.id.fromtimeact);
-        tvtotime = (TextView) findViewById(R.id.totimeact);
-        tvactname = (TextView) findViewById(R.id.tvnotifactname);
-        tvdatenot = (TextView) findViewById(R.id.tvdateactnoti);
+        tvfromtime = findViewById(R.id.fromtimeact);
+        tvtotime = findViewById(R.id.totimeact);
+        tvactname = findViewById(R.id.tvnotifactname);
+        tvdatenot = findViewById(R.id.tvdateactnoti);
 
-        btnoff = (Button) findViewById(R.id.btnoffmute);
+        btnoff = findViewById(R.id.btnoffmute);
      //   btncancel = (Button) findViewById(R.id.btncancelnotif);
         am = (AudioManager) getContext().getSystemService(Context.AUDIO_SERVICE);
 

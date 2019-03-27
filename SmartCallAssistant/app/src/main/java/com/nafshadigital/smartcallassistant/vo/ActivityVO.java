@@ -1,18 +1,6 @@
 package com.nafshadigital.smartcallassistant.vo;
 
-import android.content.ContentValues;
-import android.content.Context;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.os.Parcelable;
-
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.Serializable;
-import java.util.ArrayList;
 
 /**
  * Created by Malaris on 3/31/2018.

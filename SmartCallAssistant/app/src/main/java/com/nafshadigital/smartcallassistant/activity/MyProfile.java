@@ -3,10 +3,10 @@ package com.nafshadigital.smartcallassistant.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.View;
@@ -15,20 +15,25 @@ import android.widget.EditText;
 
 import com.nafshadigital.smartcallassistant.R;
 import com.nafshadigital.smartcallassistant.helpers.MyToast;
+import com.nafshadigital.smartcallassistant.network.ApiInterface;
+import com.nafshadigital.smartcallassistant.network.SmartCallAssistantApiClient;
+import com.nafshadigital.smartcallassistant.vo.MyProfileResponse;
 import com.nafshadigital.smartcallassistant.vo.ProfileVO;
+import com.nafshadigital.smartcallassistant.vo.UpdateAccountResponse;
 import com.nafshadigital.smartcallassistant.vo.UsersVO;
-import com.nafshadigital.smartcallassistant.webservice.MyRestAPI;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.regex.Pattern;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MyProfile extends AppCompatActivity {
     EditText txtname,txtemail,txtmobno,txtcode;
     String android_id,device_id,name,email;
     Button btnupdate;
     String selectedUserID;
+    private static final String TAG = "MyProfile";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,11 +53,11 @@ public class MyProfile extends AppCompatActivity {
         }
 
 
-        txtname = (EditText) findViewById(R.id.txtnameprofile);
-        txtemail = (EditText) findViewById(R.id.txtemailprofile);
+        txtname = findViewById(R.id.txtnameprofile);
+        txtemail = findViewById(R.id.txtemailprofile);
       //  txtmobno = (EditText) findViewById(R.id.txtmobilenoprofile);
      //   txtcode = (EditText) findViewById(R.id.txtcodeprofile);
-        btnupdate = (Button) findViewById(R.id.btnupdateprofile);
+        btnupdate = findViewById(R.id.btnupdateprofile);
 
         Bundle bundle = getIntent().getExtras();
         if(bundle !=null && bundle.get("userid")!=null) {
@@ -84,23 +89,39 @@ public class MyProfile extends AppCompatActivity {
                     usersVO.device_id = device_id;
                     usersVO.name = txtname.getText().toString();
                     usersVO.email = txtemail.getText().toString();
-                    String res = MyRestAPI.PostCall("updateAccount",usersVO.toJSONObject());
-                    System.out.println("Update Account =" + res + usersVO.name  + "Android ID " + android_id + " Device ID " + device_id);
 
-                    try {
-                        JSONObject json = new JSONObject(res);
-                        MyToast.show(getApplicationContext(),json.getString("message"));
+                    Call<UpdateAccountResponse> call= SmartCallAssistantApiClient.getClient()
+                            .create(ApiInterface.class).updateAccount(usersVO);
+                    call.enqueue(new Callback<UpdateAccountResponse>() {
+                        @Override
+                        public void onResponse(Call<UpdateAccountResponse> call, Response<UpdateAccountResponse> response) {
+                            try {
 
-                        if(json.getString("error").equals("0"))
-                        {
-                            Intent in = new Intent(MyProfile.this, Dashboard.class);
-                            in.putExtra("dashuserId", selectedUserID);
-                            startActivity(in);
+                                UpdateAccountResponse updateAccountResponse=response.body();
+                                if(updateAccountResponse!=null) {
+                                    if(updateAccountResponse.getMessage()!=null)
+                                    MyToast.show(getApplicationContext(), updateAccountResponse.getMessage());
+
+                                    if (updateAccountResponse.getError().equals("0")) {
+                                        Intent in = new Intent(MyProfile.this, Dashboard.class);
+                                        in.putExtra("dashuserId", selectedUserID);
+                                        startActivity(in);
+                                        finish();
+                                    }
+                                }
+
+                            }catch (Exception e) {
+                                Log.e(TAG, "onResponse: ", e);
+                            }
                         }
 
-                    }catch (JSONException e) {
+                        @Override
+                        public void onFailure(Call<UpdateAccountResponse> call, Throwable t) {
 
-                    }
+                        }
+                    });
+
+
 
 
 
@@ -114,22 +135,42 @@ public class MyProfile extends AppCompatActivity {
         usersVO.android_id = android_id;
         usersVO.device_id = device_id;
 
-        String res = MyRestAPI.PostCall("getprofile", usersVO.toJSONObject());
 
-        try {
-             JSONObject jsonObject = new JSONObject(res);
-             name = jsonObject.getJSONArray("user_record").getJSONObject(0).getString("name");
-             email = jsonObject.getJSONArray("user_record").getJSONObject(0).getString("email");
+        Call<MyProfileResponse> call= SmartCallAssistantApiClient.getClient()
+                .create(ApiInterface.class).getProfile(usersVO);
 
-            if(name.equals("null") && email.equals("null")){
-                txtname.setText("");
-                txtemail.setText("");
-            }else{
-                txtname.setText(name);
-                txtemail.setText(email);
+        call.enqueue(new Callback<MyProfileResponse>() {
+            @Override
+            public void onResponse(Call<MyProfileResponse> call, Response<MyProfileResponse> response) {
+                try {
+                    MyProfileResponse myProfileResponse=response.body();
+                    if(myProfileResponse!=null && myProfileResponse.getUserRecord()!=null){
+                        if(myProfileResponse.getUserRecord().size()>0){
+                            name=myProfileResponse.getUserRecord().get(0).getName();
+                            email=myProfileResponse.getUserRecord().get(0).getEmail();
+                            if(name.equals("null") && email.equals("null")){
+                                txtname.setText("");
+                                txtemail.setText("");
+                            }else{
+                                txtname.setText(name);
+                                txtemail.setText(email);
+                            }
+                        }
+                    }
+
+
+
+                }catch (Exception e){
+                }
             }
-        }catch (Exception e){
-        }
+
+            @Override
+            public void onFailure(Call<MyProfileResponse> call, Throwable t) {
+
+            }
+        });
+
+
 
     }
 
@@ -181,5 +222,6 @@ public class MyProfile extends AppCompatActivity {
     public void skipprofile(View view){
         Intent in = new Intent(this,Dashboard.class);
         startActivity(in);
+        finish();
     }
 }

@@ -13,6 +13,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,11 +24,17 @@ import android.widget.TextView;
 import com.airbnb.lottie.LottieAnimationView;
 import com.nafshadigital.smartcallassistant.R;
 import com.nafshadigital.smartcallassistant.adapter.ListAdapterViewSendHeart;
+import com.nafshadigital.smartcallassistant.network.ApiInterface;
+import com.nafshadigital.smartcallassistant.network.SmartCallAssistantApiClient;
 import com.nafshadigital.smartcallassistant.vo.SendHeartVO;
 import com.nafshadigital.smartcallassistant.vo.SyncContactVO;
-import com.nafshadigital.smartcallassistant.webservice.MyRestAPI;
 
 import java.util.ArrayList;
+
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
@@ -40,6 +47,7 @@ public class SendHeartActivity extends AppCompatActivity {
     SyncContactVO favoriteVO;
     LottieAnimationView lottieAnimationView;
     public static final int RequestPermissionCode = 1;
+    private static final String TAG = "SendHeartActivity";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,9 +56,9 @@ public class SendHeartActivity extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
 
-        txtempfav = (TextView) findViewById(R.id.tvempfavo);
-        listfavcon = (ListView) findViewById(R.id.listviewfavcont);
-        lottieAnimationView = (LottieAnimationView) findViewById(R.id.animation_view);
+        txtempfav = findViewById(R.id.tvempfavo);
+        listfavcon = findViewById(R.id.listviewfavcont);
+        lottieAnimationView = findViewById(R.id.animation_view);
 
         display();
 
@@ -174,8 +182,29 @@ public class SendHeartActivity extends AppCompatActivity {
         users.sender_id     = userid;               // From User ID
         users.receiver_phone = "";                  // Send to Random Phone Number
 
-        String results = MyRestAPI.PostCall("sendRandomHeart",users.toJSONObject());
-        System.out.println("Send Heart Result = " + results + users.toJSONObject());
+        Call<ResponseBody> call = SmartCallAssistantApiClient.getClient()
+                .create(ApiInterface.class).sendRandomHeart(users);
+
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                ResponseBody responseBody=response.body();
+                try {
+                    System.out.println("Send Heart Result = " + responseBody.string());
+                }
+                catch (Exception e){
+                    Log.e(TAG, "onResponse: ",e );
+                }
+                }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+            }
+        });
+
+
+
 
     }
 
