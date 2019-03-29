@@ -2,12 +2,14 @@ package com.nafshadigital.smartcallassistant.network;
 
 
 import com.nafshadigital.smartcallassistant.service.MaxIdResponse;
+import com.nafshadigital.smartcallassistant.vo.AvailableContactsResponse;
 import com.nafshadigital.smartcallassistant.vo.CountryVO;
 import com.nafshadigital.smartcallassistant.vo.EmptyRequestVO;
 import com.nafshadigital.smartcallassistant.vo.FCMNotificationVO;
 import com.nafshadigital.smartcallassistant.vo.LastSeenVO;
 import com.nafshadigital.smartcallassistant.vo.MyProfileResponse;
 import com.nafshadigital.smartcallassistant.vo.NotificationVO;
+import com.nafshadigital.smartcallassistant.vo.SaveAllContactVO;
 import com.nafshadigital.smartcallassistant.vo.SaveContactResponse;
 import com.nafshadigital.smartcallassistant.vo.SendHeartVO;
 import com.nafshadigital.smartcallassistant.vo.SendNotificationResponse;
@@ -59,6 +61,12 @@ public interface ApiInterface {
     @POST("savecontact/")
     Call<SaveContactResponse> saveContact(@Body SyncContactVO syncContactVO);
 
+
+    @POST("addMultiContacts/")
+    Call<AvailableContactsResponse> saveAllContacts(@Body SaveAllContactVO saveAllContactVO);
+
+    @POST("getRegisteredContacts/")
+    Call<AvailableContactsResponse> getRegisteredContacts(@Body UsersVO usersVO);
 
 
     @POST("updateFCM/")

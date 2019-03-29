@@ -30,7 +30,7 @@ public class FireBaseMessagingService extends FirebaseMessagingService {
         String userID =  sharedPreferences.getString("userID", "");
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString("message", "1");
-        editor.commit();
+        editor.apply();
 
 
         super.onMessageReceived(remoteMessage);

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.nafshadigital.smartcallassistant.activity.MyProfile" android:padding="10dp" android:background="@drawable/activity_gradient_bk">
+    tools:context="com.nafshadigital.smartcallassistant.activity.MyProfile" android:padding="10dp" android:background="@drawable/activity_gradient_new">
 
     <TableRow
         android:layout_height="wrap_content"
@@ -14,7 +14,8 @@
         <ImageView
             android:id="@+id/imgprofilecon"
             android:layout_width="match_parent"
-            android:layout_height="80sp"
+            android:layout_height="@dimen/_70sdp"
+            android:layout_marginTop="@dimen/_10sdp"
             app:srcCompat = "@mipmap/appicon"/>
 
         <LinearLayout
@@ -45,7 +46,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textNoSuggestions"
-            android:drawableLeft="@android:drawable/ic_menu_my_calendar"
+            android:padding="@dimen/_10sdp"
+            android:drawablePadding="@dimen/_10sdp"
+            android:textColor="@color/white_color"
+            android:textColorHint="@color/white_color"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:drawableStart="@android:drawable/ic_menu_my_calendar"
             android:hint="Name"/>
 
         <EditText
@@ -53,7 +59,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textNoSuggestions"
-            android:drawableLeft="@android:drawable/ic_dialog_email"
+            android:padding="@dimen/_10sdp"
+            android:drawablePadding="@dimen/_10sdp"
+            android:textColor="@color/white_color"
+            android:textColorHint="@color/white_color"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:drawableStart="@android:drawable/ic_dialog_email"
             android:hint="Email"/>
 
      <!--   <EditText
@@ -81,7 +92,7 @@
         android:id="@+id/btnupdateprofile"
         style="@style/SmartButton"
         android:layout_marginTop="20dp"
-        android:layout_marginRight="10dp"
+        android:layout_marginEnd="10dp"
         android:layout_alignParentTop="false"
         android:layout_weight="0.5"
         android:text="Update"/>
@@ -92,6 +103,7 @@
         android:layout_alignParentTop="false"
         android:layout_weight="0.5"
         style="@style/SmartButton"
+        android:layout_marginStart="@dimen/_10sdp"
         android:onClick="skipprofile"
         android:text="Skip"/>
     </LinearLayout>

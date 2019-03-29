@@ -24,12 +24,18 @@ import android.widget.TextView;
 import com.airbnb.lottie.LottieAnimationView;
 import com.nafshadigital.smartcallassistant.R;
 import com.nafshadigital.smartcallassistant.adapter.ListAdapterViewSendHeart;
+import com.nafshadigital.smartcallassistant.helpers.NetworkUtils;
+import com.nafshadigital.smartcallassistant.helpers.PrefUtils;
 import com.nafshadigital.smartcallassistant.network.ApiInterface;
 import com.nafshadigital.smartcallassistant.network.SmartCallAssistantApiClient;
+import com.nafshadigital.smartcallassistant.vo.AvailableContact;
+import com.nafshadigital.smartcallassistant.vo.AvailableContactsResponse;
 import com.nafshadigital.smartcallassistant.vo.SendHeartVO;
 import com.nafshadigital.smartcallassistant.vo.SyncContactVO;
+import com.nafshadigital.smartcallassistant.vo.UsersVO;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -60,6 +66,10 @@ public class SendHeartActivity extends AppCompatActivity {
         listfavcon = findViewById(R.id.listviewfavcont);
         lottieAnimationView = findViewById(R.id.animation_view);
 
+        if(NetworkUtils.isInternetOn(this)){
+            displayFromServer();
+        }
+        else
         display();
 
     }
@@ -87,6 +97,9 @@ public class SendHeartActivity extends AppCompatActivity {
     public void display(){
         SyncContactVO favoriteVO = new SyncContactVO(getApplicationContext());
         FavAL = favoriteVO.getSyncContactVO();
+        setListAdapter();
+    }
+    private void setListAdapter(){
         ListAdapterViewSendHeart adapter = new ListAdapterViewSendHeart(this,FavAL);
         listfavcon.setAdapter(adapter);
 
@@ -96,6 +109,52 @@ public class SendHeartActivity extends AppCompatActivity {
             txtempfav.setVisibility(View.GONE);
             lottieAnimationView.setVisibility(View.VISIBLE);
         }
+    }
+
+    public void displayFromServer(){
+      //  SyncContactVO favoriteVO = new SyncContactVO(getApplicationContext());
+        //FavAL = favoriteVO.getSyncContactVO();
+         UsersVO usersVO=new UsersVO();
+         usersVO.user_id= PrefUtils.getUserId(getApplicationContext());
+        Call<AvailableContactsResponse> call= SmartCallAssistantApiClient.getClient().create(ApiInterface.class)
+                .getRegisteredContacts(usersVO);
+
+        call.enqueue(new Callback<AvailableContactsResponse>() {
+            @Override
+            public void onResponse(Call<AvailableContactsResponse> call, Response<AvailableContactsResponse> response) {
+
+                    AvailableContactsResponse availableContactsResponse=response.body();
+
+                    if(availableContactsResponse!=null && availableContactsResponse.getList()!=null
+                            ){
+
+                        FavAL=new ArrayList<>();
+                        try {
+                            List<AvailableContact> contactList = availableContactsResponse.getList();
+                            if (contactList != null) {
+                                for (int i = 0; i < contactList.size(); i++) {
+                                    SyncContactVO syncContactVO = new SyncContactVO(SendHeartActivity.this);
+                                    syncContactVO.name = contactList.get(i).getName();
+                                    syncContactVO.phone = contactList.get(i).getPhone();
+                                    syncContactVO.user_id = contactList.get(i).getUser_id();
+                                    FavAL.add(syncContactVO);
+                                }
+                                if (FavAL.size() > 0)
+                                    setListAdapter();
+                            }
+                        }catch (Exception e){
+                            Log.e(TAG, "onResponse: ",e );
+                        }
+                    }
+            }
+
+            @Override
+            public void onFailure(Call<AvailableContactsResponse> call, Throwable t) {
+
+            }
+        });
+
+
     }
 
   /*  public boolean onOptionsItemSelected(android.view.MenuItem item){
@@ -175,8 +234,7 @@ public class SendHeartActivity extends AppCompatActivity {
 
     public void sendRandomHearts(View view)
     {
-        SharedPreferences sharedPreference = getApplicationContext().getSharedPreferences("LoginDetails", Context.MODE_PRIVATE);
-        String userid = sharedPreference.getString("userID","");
+        String userid = PrefUtils.getUserId(this);
 
         SendHeartVO users = new SendHeartVO();
         users.sender_id     = userid;               // From User ID

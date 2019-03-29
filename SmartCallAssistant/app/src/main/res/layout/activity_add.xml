@@ -12,18 +12,27 @@
         android:id="@+id/tvaddactivity"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Activity Name:"/>
+        android:text="Activity Name:"
+        android:textSize="@dimen/_15sdp"
+        android:textColor="@color/black"
+        android:layout_marginTop="@dimen/_10sdp"
+        />
 
     <EditText
         android:id="@+id/txtaddactivity"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_5sdp"
         android:hint="Enter Activity"/>
 
     <Button
         android:id="@+id/btnsaveactivity"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_11sdp"
+        android:background="@color/colorAccent"
+        android:textColor="@color/white_color"
+        android:textSize="@dimen/_14sdp"
         android:onClick="saveact"
         android:text="Save"/>
 </LinearLayout>

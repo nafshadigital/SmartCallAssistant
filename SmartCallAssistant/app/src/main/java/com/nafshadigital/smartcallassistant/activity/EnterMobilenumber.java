@@ -53,7 +53,7 @@ public class EnterMobilenumber extends AppCompatActivity {
         // The request code used in ActivityCompat.requestPermissions()
         // and returned in the Activity's onRequestPermissionsResult()
         int PERMISSION_ALL = 1;
-        String[] PERMISSIONS = {
+                String[] PERMISSIONS = {
                 android.Manifest.permission.READ_CONTACTS,
                 android.Manifest.permission.WRITE_CONTACTS,
                 android.Manifest.permission.SYSTEM_ALERT_WINDOW,
@@ -143,6 +143,7 @@ public class EnterMobilenumber extends AppCompatActivity {
 
     public void okverify(View view)
     {
+        Log.d(TAG, "okverify: ");
         if(isValidation())
         {
             btnok.setEnabled(false);
@@ -193,7 +194,7 @@ public class EnterMobilenumber extends AppCompatActivity {
 
                 @Override
                 public void onFailure(Call<SignUpResponse> call, Throwable t) {
-
+                    btnok.setEnabled(true);
                 }
             });
 

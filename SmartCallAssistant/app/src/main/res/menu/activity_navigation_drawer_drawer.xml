@@ -15,7 +15,7 @@
 
         <item
             android:id="@+id/favourite"
-            android:icon="@mipmap/favourite"
+            android:icon="@drawable/ic_fav"
             android:title="Favourite" />
 
         <item
@@ -30,12 +30,12 @@
 
         <item
             android:id="@+id/callog"
-            android:icon="@mipmap/calllog"
+            android:icon="@drawable/ic_call"
             android:title="Recent Log" />
 
         <item
             android:id="@+id/help"
-            android:icon="@mipmap/info"
+            android:icon="@drawable/ic_info"
             android:title="Help/Feedback" />
     </group>
 

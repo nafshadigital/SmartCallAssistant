@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorPrimary">#F3983E</color>
+    <color name="colorPrimaryDark">#F17C3A</color>
+    <color name="colorAccent">#EF6C38</color>
+    <color name="white_color">#fff</color>
+    <color name="black">#000</color>
+    <color name="transparent">@android:color/transparent</color>
+    <color name="nav_icon_color">#ff1b6bae</color>
+    <color name="nav_title_color">#333</color>
 </resources>

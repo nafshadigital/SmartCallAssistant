@@ -16,6 +16,7 @@ import android.widget.TextView;
 import com.airbnb.lottie.LottieAnimationView;
 import com.nafshadigital.smartcallassistant.R;
 import com.nafshadigital.smartcallassistant.helpers.MyToast;
+import com.nafshadigital.smartcallassistant.helpers.PrefUtils;
 import com.nafshadigital.smartcallassistant.network.ApiInterface;
 import com.nafshadigital.smartcallassistant.network.SmartCallAssistantApiClient;
 import com.nafshadigital.smartcallassistant.vo.FavoriteVO;
@@ -84,7 +85,7 @@ public class ListAdapterViewSendHeart extends ArrayAdapter<SyncContactVO> {
 
                         rv = remCollection.get(position);
                         FavoriteVO favoriteVO = new FavoriteVO(getContext());
-                        int id = Integer.parseInt(rv.id);
+
 
                         System.out.println("OK-->" + rv.phone + " " + rv.name);
                         MyToast.show(getContext(),"Success");
@@ -114,8 +115,8 @@ public class ListAdapterViewSendHeart extends ArrayAdapter<SyncContactVO> {
 
     public void sendRandomHearts(String receiver_phone,String receiver_name)
     {
-        SharedPreferences sharedPreference = context.getSharedPreferences("LoginDetails", Context.MODE_PRIVATE);
-        String userid = sharedPreference.getString("userID","");
+
+        String userid = PrefUtils.getUserId(context);
 
         SendHeartVO users = new SendHeartVO();
         users.sender_id = userid;               // From User ID

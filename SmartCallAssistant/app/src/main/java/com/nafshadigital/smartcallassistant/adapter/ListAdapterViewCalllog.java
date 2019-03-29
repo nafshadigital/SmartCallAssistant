@@ -29,7 +29,7 @@ import java.util.Locale;
 
 public class ListAdapterViewCalllog extends ArrayAdapter<CallLogVO> {
     private final Activity context;
-    protected java.util.ArrayList<CallLogVO> actCollection;
+    private java.util.ArrayList<CallLogVO> actCollection;
     CallLogVO rv;
     public static String month_name;
     public static String date;

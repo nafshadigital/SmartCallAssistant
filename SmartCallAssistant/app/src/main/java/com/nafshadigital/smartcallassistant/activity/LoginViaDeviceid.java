@@ -15,6 +15,7 @@ import android.util.Log;
 
 import com.nafshadigital.smartcallassistant.R;
 import com.nafshadigital.smartcallassistant.helpers.MyToast;
+import com.nafshadigital.smartcallassistant.helpers.PrefUtils;
 import com.nafshadigital.smartcallassistant.network.ApiInterface;
 import com.nafshadigital.smartcallassistant.network.SmartCallAssistantApiClient;
 import com.nafshadigital.smartcallassistant.vo.SignUpResponse;
@@ -123,10 +124,7 @@ public static final int RequestPermissionCode = 1;
                             startActivity(in);
                             MyToast.show(LoginViaDeviceid.this, message);
 
-                            SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("LoginDetails", Context.MODE_PRIVATE);
-                            SharedPreferences.Editor editor = sharedPreferences.edit();
-                            editor.putString("userID", id);
-                            editor.commit();
+                            PrefUtils.setUserId(id,LoginViaDeviceid.this);
 
                         } else {
 

@@ -18,6 +18,7 @@
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:src = "@mipmap/appicon"
+        android:tint="@color/colorPrimary"
         android:layout_marginTop="10dp" android:layout_marginBottom="10dp"
         android:layout_gravity="center" />
     <TextView

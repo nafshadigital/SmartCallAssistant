@@ -5,6 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -19,7 +22,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:background="#f3dcba" >
+    android:background="#f3dcba"
+        android:visibility="gone"
+        >
         <TextView
             android:id="@+id/tvdashboard"
             android:text="My Activity"
@@ -44,6 +49,7 @@
             android:layout_gravity="right"
             android:onClick="addactivty"
             android:paddingTop="5sp"
+            android:visibility="gone"
             android:paddingBottom="5sp" android:paddingRight="5sp"
             />
 </LinearLayout>
@@ -59,9 +65,10 @@
             android:id="@+id/listactivity"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:dividerHeight="10sp"
-            android:padding="4sp"
-            android:layout_marginTop="5sp"
+            android:dividerHeight="@dimen/_3sdp"
+            android:padding="@dimen/_8sdp"
+            android:background="#11666666"
+            android:layout_marginTop="@dimen/_10sdp"
            >
         </ListView>
     <FrameLayout
@@ -70,13 +77,25 @@
         android:layout_height="fill_parent"
         />
 </LinearLayout>
+<android.support.design.widget.FloatingActionButton
+    android:id="@+id/fab_add_activity"
+    android:layout_alignParentEnd="true"
+    android:layout_alignParentBottom="true"
+    android:onClick="addactivty"
+    android:src="@drawable/plus"
+    android:tint="@color/white_color"
+    android:layout_margin="@dimen/_15sdp"
+    android:layout_width="@dimen/_60sdp"
+    android:layout_height="@dimen/_60sdp" />
+    </RelativeLayout>
     <android.support.design.widget.NavigationView
         android:id="@+id/navigation_view"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
         app:headerLayout="@layout/nav_header_navigation_drawer"
-        app:itemIconTint="#ff1b6bae"
-        app:itemTextColor="#333"
+        app:itemIconTint="@color/nav_icon_color"
+        app:itemTextColor="@color/nav_title_color"
+
         app:menu="@menu/activity_navigation_drawer_drawer" />
 </android.support.v4.widget.DrawerLayout>

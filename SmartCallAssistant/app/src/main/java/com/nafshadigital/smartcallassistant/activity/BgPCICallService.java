@@ -18,6 +18,7 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.nafshadigital.smartcallassistant.R;
+import com.nafshadigital.smartcallassistant.helpers.PrefUtils;
 import com.nafshadigital.smartcallassistant.network.ApiInterface;
 import com.nafshadigital.smartcallassistant.network.SmartCallAssistantApiClient;
 import com.nafshadigital.smartcallassistant.service.MaxIdResponse;
@@ -245,8 +246,7 @@ public class BgPCICallService extends Service {
         }
 
         try {
-            SharedPreferences sharedPreference = getApplicationContext().getSharedPreferences("LoginDetails",Context.MODE_PRIVATE);
-            userid = sharedPreference.getString("userID","");
+            userid = PrefUtils.getUserId(this);
 
             NotificationVO noti = new NotificationVO();
             noti.user_id = userid;

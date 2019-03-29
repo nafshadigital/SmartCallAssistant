@@ -15,22 +15,23 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textStyle="bold"
-        android:textSize="20sp"/>
+        android:padding="@dimen/_8sdp"
+        android:textSize="@dimen/_16sdp"/>
 
     <ListView
         android:id="@+id/listviewcalllog"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"></ListView>
+        android:layout_height="wrap_content" />
 
     <TextView
         android:id="@+id/tvempcalllog"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="No Call Logs"
-        android:textSize="20sp"
+        android:textSize="@dimen/_20sdp"
         android:textStyle="bold"
         android:textAlignment="center"
         android:layout_gravity="center"
         android:visibility="gone"
-        android:layout_marginTop="60sp"/>
+        android:layout_marginTop="@dimen/_70sdp"/>
 </LinearLayout>

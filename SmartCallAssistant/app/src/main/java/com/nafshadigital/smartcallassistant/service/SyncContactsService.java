@@ -15,24 +15,34 @@ import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 
 import com.nafshadigital.smartcallassistant.activity.DBHelper;
+import com.nafshadigital.smartcallassistant.helpers.NetworkUtils;
+import com.nafshadigital.smartcallassistant.helpers.PrefUtils;
 import com.nafshadigital.smartcallassistant.network.ApiInterface;
 import com.nafshadigital.smartcallassistant.network.SmartCallAssistantApiClient;
+import com.nafshadigital.smartcallassistant.vo.AvailableContact;
+import com.nafshadigital.smartcallassistant.vo.AvailableContactsResponse;
+import com.nafshadigital.smartcallassistant.vo.SaveAllContactVO;
+import com.nafshadigital.smartcallassistant.vo.SaveContact;
 import com.nafshadigital.smartcallassistant.vo.SaveContactResponse;
 import com.nafshadigital.smartcallassistant.vo.SyncContactVO;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public class SyncContactsService extends Service {
     public int counter = 0;
-    public int recordsProcessed = 0;
+
     private DBHelper dbHelper;
     private Boolean stopThread = false;
-    private int syncSeconds = 59; // Every n 25 seconds the contacts will be synched
+    private int syncSeconds = 60; // Every n 25 seconds the contacts will be synched
+    private int minIntervalMilllis = 1000 * 60 * 10; //Every 10 mins
     private static final String TAG = "SyncContactsService";
     public SyncContactsService(Context applicationContext) {
         super();
@@ -63,32 +73,32 @@ public class SyncContactsService extends Service {
         return null;
     }
 
-    private void printContactList(int startFromIndex) {
-        printContactList();
-    }
 
     private void printContactList() {
 
         this.dbHelper = new DBHelper(this);
+
+        long currentMillis=System.currentTimeMillis();
+        long prevSyncTime= PrefUtils.getLastSyncTime(this);
+        long diffMillis=currentMillis-prevSyncTime;
+        if(diffMillis<minIntervalMilllis)
+            return;
         int recordCounter = 0;
-        int processRecords = recordsProcessed + 10;
+
         int contactsCount = 0;
 
         Cursor cursor = getContacts();
         contactsCount = cursor.getCount();
 
         System.out.println("Total Contacts in the Phone =" + contactsCount);
-        if (contactsCount <= processRecords) {
-            stopThread = true;
-            Log.i("Quit", "Thread finished its job" + contactsCount);
-            this.stoptimertask();
-        }
-        SharedPreferences sharedPreference = getApplicationContext().getSharedPreferences("LoginDetails",Context.MODE_PRIVATE);
-        String userid = sharedPreference.getString("userID","");
 
+        String userid=PrefUtils.getUserId(getApplicationContext());
+        SaveAllContactVO saveAllContactVO=new SaveAllContactVO();
+        saveAllContactVO.setUser_id(Integer.parseInt(userid));
+        List<SaveContact> contactList=new ArrayList<>();
         cursor.moveToFirst();
 
-        while (cursor.isAfterLast() == false) {
+        while (!cursor.isAfterLast()) {
 
             final String contactId =
                     cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID));
@@ -97,85 +107,96 @@ public class SyncContactsService extends Service {
                     ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = " + contactId, null, null);
 
 
-            while (phones.moveToNext()) {
-                String number = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-                final String name = cursor.getString(cursor.getColumnIndex(ContactsContract.Data.DISPLAY_NAME));
+            if (phones != null) {
+                while (phones.moveToNext()) {
+                    String number = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                    final String name = cursor.getString(cursor.getColumnIndex(ContactsContract.Data.DISPLAY_NAME));
 
-                {
-                    recordCounter++;
-                    if (recordCounter >= recordsProcessed && recordCounter <= processRecords) {
-                        System.out.println("Inside Loop Process records reached ----> " + recordsProcessed);
-                        System.out.println("Inside Loop Process records reached ----> " + processRecords);
-
-                        Log.d(recordCounter + ":" + "Display_Name", cursor.getString(cursor.getColumnIndex(ContactsContract.Data.DISPLAY_NAME)) + " Number" + number);
-                        Log.d(recordCounter + ":" + "Phone", number);
-
-                        final SQLiteDatabase db = this.dbHelper.getWritableDatabase();
-                        this.dbHelper.addSyncContacts(db, recordCounter, name, number);
-
-                        number = number.replaceAll("\\D", "").trim();
-                        if (number.substring(0, 1).equals("00")) {
-                            number = number.substring(2);
-                        }
-                        if (number.length() > 9) {
-
-                            SyncContactVO contacts = new SyncContactVO(null);
-                            contacts.user_id = userid;
-                            contacts.name = name;
-                            contacts.phone = number;
-
-
-                            Call<SaveContactResponse> call= SmartCallAssistantApiClient.getClient()
-                                    .create(ApiInterface.class).saveContact(contacts);
-                            final String finalNumber = number;
-                            call.enqueue(new Callback<SaveContactResponse>() {
-                                @Override
-                                public void onResponse(Call<SaveContactResponse> call, Response<SaveContactResponse> response) {
-                                    try {
-
-                                        SaveContactResponse contactResponse=response.body();
-                                        if(contactResponse!=null) {
-                                            String isNewContact = contactResponse.getPartnerTrueByPhone();
-                                            Log.d(TAG, "onResponse: isNewContact "+isNewContact);
-                                            if (isNewContact.equals("true")) {
-                                                // Set the Contact is a member of SmartCall Assistant Network
-                                                dbHelper.setMemberByPhone(db, finalNumber);
-                                            }
-                                        }
-                                        db.close();
-
-                                    }catch (Exception e){
-                                        Log.e(TAG, "onResponse: ",e );
-                                    }
-                                }
-
-                                @Override
-                                public void onFailure(Call<SaveContactResponse> call, Throwable t) {
-
-                                }
-                            });
+                    {
+                        recordCounter++;
 
 
 
-                        }
+                            Log.d(recordCounter + ":" + "Display_Name", cursor.getString(cursor.getColumnIndex(ContactsContract.Data.DISPLAY_NAME)) + " Number" + number);
+                            Log.d(recordCounter + ":" + "Phone", number);
+
+                            final SQLiteDatabase db = this.dbHelper.getWritableDatabase();
+                            this.dbHelper.addSyncContacts(db, recordCounter, name, number);
+
+                            number = number.replaceAll("\\D", "").trim();
+                            if (number.substring(0, 1).equals("00")) {
+                                number = number.substring(2);
+                            }
+                            if (number.length() > 9) {
+
+                                SyncContactVO contacts = new SyncContactVO(null);
+                                contacts.user_id = userid;
+                                contacts.name = name;
+                                contacts.phone = number;
+
+
+                               SaveContact saveContact= new SaveContact();
+                                saveContact.setName(name);
+                                saveContact.setPhone(number);
+                                contactList.add(saveContact);
+
+
+
+                            }
+
+
 
                     }
 
                 }
-                if (recordCounter >= processRecords || stopThread == true) {
-                    System.out.println("Process records reached ----> " + processRecords);
-                    break;
-                }
             }
-            phones.close();
+
+
+            if (phones != null) {
+                phones.close();
+            }
             cursor.moveToNext();
 
-            if (recordCounter >= processRecords || stopThread == true) {
-                recordsProcessed = processRecords;
-                System.out.println("Process records reached ----> " + recordsProcessed);
-                break;
-            }
 
+
+        }
+        if(contactList.size()>0 && NetworkUtils.isInternetOn(this)){
+            PrefUtils.setLastSyncTime(System.currentTimeMillis(),this);
+            Log.d(TAG, "printContactList: allcontact hit"+contactList.size());
+            saveAllContactVO.setContacts(contactList);
+            Call<AvailableContactsResponse> call= SmartCallAssistantApiClient.getClient()
+                    .create(ApiInterface.class).saveAllContacts(saveAllContactVO);
+            final SQLiteDatabase db = this.dbHelper.getWritableDatabase();
+            call.enqueue(new Callback<AvailableContactsResponse>() {
+                @Override
+                public void onResponse(Call<AvailableContactsResponse> call, Response<AvailableContactsResponse> response) {
+                    try {
+                        Log.d(TAG, "allcontact onResponse: ");
+                        AvailableContactsResponse contactResponse=response.body();
+                        if(contactResponse!=null) {
+                            List<AvailableContact> availableContactList=contactResponse.getList();
+                            if(availableContactList!=null )
+                                for(int i=0;i<availableContactList.size();i++){
+                                    String phoneNumber=availableContactList.get(i).getPhone();
+                                    if(phoneNumber!=null && phoneNumber.length()>0) {
+                                        Log.d(TAG, "onResponse allcontact: "+phoneNumber);
+                                        dbHelper.setMemberByPhone(db, phoneNumber);
+                                    }
+                                }
+                        }
+                        db.close();
+
+                    }catch (Exception e){
+                        Log.e(TAG, "onResponse: ",e );
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<AvailableContactsResponse> call, Throwable t) {
+                    Log.e(TAG, "allcontact onFailure: ",t );
+                    db.close();
+                }
+            });
         }
         cursor.close();
 
@@ -208,18 +229,24 @@ public class SyncContactsService extends Service {
 
     public synchronized int getActivityCount(int is_updated) {
         String countQuery = "";
-        if (is_updated > 1) // 0 means notupdate l means updated more than means both records
-        {
-            countQuery = "SELECT  * FROM " + dbHelper.SYNC_CONTACTS_TABLE_NAME;
-        } else {
-            countQuery = "SELECT  * FROM " + dbHelper.SYNC_CONTACTS_TABLE_NAME + " where is_updated=" + is_updated;
-        }
-        SQLiteDatabase db = this.dbHelper.getWritableDatabase();
-        Cursor cursor = db.rawQuery(countQuery, null);
+        int count=0;
+        try {
+            if (is_updated > 1) // 0 means notupdate l means updated more than means both records
+            {
+                countQuery = "SELECT  * FROM " + dbHelper.SYNC_CONTACTS_TABLE_NAME;
+            } else {
+                countQuery = "SELECT  * FROM " + dbHelper.SYNC_CONTACTS_TABLE_NAME + " where is_updated=" + is_updated;
+            }
+            SQLiteDatabase db = this.dbHelper.getWritableDatabase();
+            Cursor cursor = db.rawQuery(countQuery, null);
 
-        int count = cursor.getCount();
-        cursor.close();
-        db.close();
+             count = cursor.getCount();
+            cursor.close();
+            db.close();
+        }
+        catch (Exception e){
+            Log.e(TAG, "getActivityCount: ",e );
+        }
         return count;
     }
 
@@ -258,7 +285,7 @@ public class SyncContactsService extends Service {
                     System.out.println("System is coming up and not Permission granted yet !");
                 }
 
-                printContactList(recordsProcessed);
+                printContactList();
             }
         };
     }
