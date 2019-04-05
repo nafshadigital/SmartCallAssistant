@@ -59,7 +59,8 @@ public class TransparentActivity extends Activity {
     // You can change the number of emojis that will be flying on screen
 
     public void emoji_three(){
-        for(int i=0;i<5;i++) {
+        for(int i=0;i<5;i++)
+        {
             flyEmoji(R.drawable.ic_heart);
         }
 

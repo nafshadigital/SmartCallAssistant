@@ -156,16 +156,17 @@ public class SyncContactsService extends Service {
                 phones.close();
             }
             cursor.moveToNext();
-
-
-
         }
+
         if(contactList.size()>0 && NetworkUtils.isInternetOn(this)){
             PrefUtils.setLastSyncTime(System.currentTimeMillis(),this);
             Log.d(TAG, "printContactList: allcontact hit"+contactList.size());
+            saveAllContactVO.setContact_size(contactList.size());
             saveAllContactVO.setContacts(contactList);
             Call<AvailableContactsResponse> call= SmartCallAssistantApiClient.getClient()
                     .create(ApiInterface.class).saveAllContacts(saveAllContactVO);
+
+
             final SQLiteDatabase db = this.dbHelper.getWritableDatabase();
             call.enqueue(new Callback<AvailableContactsResponse>() {
                 @Override

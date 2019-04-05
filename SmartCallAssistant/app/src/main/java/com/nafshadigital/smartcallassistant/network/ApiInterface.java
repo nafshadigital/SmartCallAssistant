@@ -3,6 +3,7 @@ package com.nafshadigital.smartcallassistant.network;
 
 import com.nafshadigital.smartcallassistant.service.MaxIdResponse;
 import com.nafshadigital.smartcallassistant.vo.AvailableContactsResponse;
+import com.nafshadigital.smartcallassistant.vo.CallerNotificationVO;
 import com.nafshadigital.smartcallassistant.vo.CountryVO;
 import com.nafshadigital.smartcallassistant.vo.EmptyRequestVO;
 import com.nafshadigital.smartcallassistant.vo.FCMNotificationVO;
@@ -90,6 +91,10 @@ public interface ApiInterface {
     //TODO - verify its response
     @POST("sendHeart/")
     Call<ResponseBody> sendHeart(@Body SendHeartVO sendHeartVO);
+
+    //TODO - verify its response
+    @POST("CallerNotification/")
+    Call<ResponseBody> CallerNotification(@Body CallerNotificationVO callerNotificationVO);
 
 
     @POST("getmaxid/")

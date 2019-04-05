@@ -58,7 +58,12 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static android.Manifest.permission.CALL_PHONE;
+import static android.Manifest.permission.INTERNET;
+import static android.Manifest.permission.MODIFY_PHONE_STATE;
+import static android.Manifest.permission.READ_CONTACTS;
 import static android.Manifest.permission.READ_PHONE_STATE;
+import static android.Manifest.permission.RECEIVE_BOOT_COMPLETED;
 
 public class Dashboard extends AppCompatActivity {
 
@@ -82,6 +87,7 @@ public class Dashboard extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
 
         // Smart Call Assistant
         super.onCreate(savedInstanceState);
@@ -159,10 +165,6 @@ public class Dashboard extends AppCompatActivity {
             }
         });
 
-
-
-
-
         this.context = this;
 
         SyncContactsService syncContactsService = new SyncContactsService(this.context);
@@ -171,7 +173,7 @@ public class Dashboard extends AppCompatActivity {
         startService(syncContactsIntent);
 
         if (!isMyServiceRunning(SyncContactsService.class)) {
-            //    startService(syncContactsIntent);
+                startService(syncContactsIntent);
         }
 
         intent = new Intent(this.context,BgPCICallService.class);
@@ -184,7 +186,6 @@ public class Dashboard extends AppCompatActivity {
         Bundle bundle = getIntent().getExtras();
         if(bundle !=null && bundle.get("dashuserId")!=null) {
             selectedUserID = bundle.getString("dashuserId");
-            MyToast.show(this,"dashuserid="+ selectedUserID);
         }
 
         updateLastSeen();
@@ -205,7 +206,7 @@ public class Dashboard extends AppCompatActivity {
        // txtactcount.setText(""+actcount);
        // MyToast.show(this,""+actcount);
 
-        NavigationView navigationView = findViewById(R.id.navigation_view);
+        NavigationView navigationView = (NavigationView) findViewById(R.id.navigation_view);
         initInstances();
         displayActivity();
 
@@ -222,21 +223,11 @@ public class Dashboard extends AppCompatActivity {
         /*AudioManager am =  (AudioManager) getBaseContext().getSystemService(Context.AUDIO_SERVICE);
         am.setRingerMode(AudioManager.RINGER_MODE_VIBRATE); */
 
-        remActivity = findViewById(R.id.remactivity);
+        remActivity = (NotifyActivity) findViewById(R.id.remactivity);
         remActivity.isCompact = true;
         remActivity.init();
 
     }
-
-    /*
-    public void favoritecheck(View view){
-          String phnnum = "+919787249698";
-        /*if(phnnum.length() > 8) {
-            phnnum = phnnum.substring(phnnum.length()-8, phnnum.length());
-        }
-
-        MyToast.show(this,"Phnnum="+new FavoriteVO(getApplicationContext()).checkFavorites(phnnum));
-    }  */
 
     public void addactivty(View view) {
 
@@ -253,10 +244,8 @@ public class Dashboard extends AppCompatActivity {
     public void displayActivity() {
         ActivityService activitySer = new ActivityService(getApplicationContext());
         actAL = activitySer.getAllActivity();
-        // MyToast.show(actAL);
         ListAdapterViewActivity adapter = new ListAdapterViewActivity(this, actAL);
         listactivity.setAdapter(adapter);
-        //listactivity.setClickable(true);
         listactivity.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
@@ -390,6 +379,11 @@ public class Dashboard extends AppCompatActivity {
         }
     }
     private void requestPermission() {
+
+        ActivityCompat.requestPermissions(this, new String[]{CALL_PHONE, READ_PHONE_STATE,READ_CONTACTS, MODIFY_PHONE_STATE, INTERNET,   RECEIVE_BOOT_COMPLETED},
+                RequestPermissionCode);
+
+        /*
         ActivityCompat.requestPermissions(Dashboard.this, new String[]
                 {
                         Manifest.permission.
@@ -399,8 +393,10 @@ public class Dashboard extends AppCompatActivity {
 
         ActivityCompat.requestPermissions(Dashboard.this, new String[]
                 {
-                        Manifest.permission.READ_CONTACTS
+                        READ_CONTACTS
                 }, RequestPermissionCode);
+
+               */
 
 
     }
@@ -425,7 +421,7 @@ public class Dashboard extends AppCompatActivity {
 
     public boolean checkPermission() {
      //   int SecondPermissionResult = ContextCompat.checkSelfPermission(getApplicationContext(), SEND_SMS);
-        int PermissionResult = ContextCompat.checkSelfPermission(getApplicationContext(), READ_PHONE_STATE);
+        int PermissionResult = ContextCompat.checkSelfPermission(getApplicationContext(), CALL_PHONE);
 
         return PermissionResult == PackageManager.PERMISSION_GRANTED ;
 

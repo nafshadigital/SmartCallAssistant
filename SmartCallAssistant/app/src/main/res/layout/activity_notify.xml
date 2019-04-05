@@ -157,7 +157,6 @@
             android:layout_height="wrap_content"
             android:textColor="#dabb00"
             android:textStyle="bold"
-            android:layout_gravity="center"
             android:textSize="8dp" android:text="ELAPSED"  />
 </LinearLayout>
         <ImageView

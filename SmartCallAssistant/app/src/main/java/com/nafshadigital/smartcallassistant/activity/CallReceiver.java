@@ -9,26 +9,36 @@ import android.media.MediaPlayer;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.Build;
+import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.util.Log;
+import android.widget.Toast;
 
+import com.android.internal.telephony.ITelephony;
 import com.nafshadigital.smartcallassistant.helpers.AppRunning;
+import com.nafshadigital.smartcallassistant.helpers.PrefUtils;
 import com.nafshadigital.smartcallassistant.network.ApiInterface;
 import com.nafshadigital.smartcallassistant.network.SmartCallAssistantApiClient;
+import com.nafshadigital.smartcallassistant.util.DataManger;
 import com.nafshadigital.smartcallassistant.vo.ActivityVO;
 import com.nafshadigital.smartcallassistant.vo.CallLogVO;
+import com.nafshadigital.smartcallassistant.vo.CallerNotificationVO;
 import com.nafshadigital.smartcallassistant.vo.FavoriteVO;
 import com.nafshadigital.smartcallassistant.vo.NotificationVO;
 import com.nafshadigital.smartcallassistant.vo.RemainderVO;
+import com.nafshadigital.smartcallassistant.vo.SendHeartVO;
 import com.nafshadigital.smartcallassistant.vo.SendNotificationResponse;
 import com.nafshadigital.smartcallassistant.vo.SettingsVO;
 import com.nafshadigital.smartcallassistant.webservice.ActivityService;
 
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -51,6 +61,13 @@ public class CallReceiver extends BroadcastReceiver {
     public static String userId;
     Intent intent;
 
+    private TelephonyManager m_telephonyManager;
+    private ITelephony m_telephonyService;
+
+    private AudioManager m_audioManager;
+    Context context;
+
+
     @Override
     public void onReceive(Context context , Intent intent){
         System.out.println("Receiver Start");
@@ -67,7 +84,8 @@ public class CallReceiver extends BroadcastReceiver {
         }
 
 
-        if(intent.getAction().equals("android.intent.action.NEW_OUTGOING_CALL")){
+        if(intent.getAction().equals("android.intent.action.NEW_OUTGOING_CALL"))
+        {
             savedNumber = intent.getExtras().getString("android.intent.extra.PHONE_NUMBER");
         }
         else{
@@ -127,6 +145,35 @@ public class CallReceiver extends BroadcastReceiver {
                     // Toast.makeText(context, "Ringing RINGER_MODE_NORMAL" + savedNumber + " Call time " + callStartTime +" Date " + new Date() , Toast.LENGTH_LONG).show();
                 }else{
                     if(settingsVO.ismobilemute.equals("1")){
+
+                        if (android.os.Build.VERSION.SDK_INT > Build.VERSION_CODES.M){
+                            System.out.println("Kang  " + android.os.Build.VERSION.SDK_INT);
+
+
+                            this.context = context;
+                            m_telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+                            try {
+                                Class c = null;
+                                c = Class.forName(m_telephonyManager.getClass().getName());
+                                Method m = null;
+                                m = c.getDeclaredMethod("getITelephony");
+                                m.setAccessible(true);
+                                m_telephonyService = (ITelephony) m.invoke(m_telephonyManager);
+                                m_audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+                                m_telephonyManager.listen(new MyPhoneStateListener(), PhoneStateListener.LISTEN_CALL_STATE);
+                            } catch (Exception e) {
+                                System.out.println("Kang :" + e.toString());
+                                e.printStackTrace();
+                            }
+
+
+
+
+                        } else{
+                            System.out.println("SDK Version = " + android.os.Build.VERSION.SDK_INT);
+                        }
+
+
                         TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
                         try {
                             // Get the getITelephony() method
@@ -145,6 +192,8 @@ public class CallReceiver extends BroadcastReceiver {
                             e.printStackTrace();
                             System.out.println("Error = " + e.toString());
                         }
+
+
 
                         activity_id =settingsVO.activity_id ;
                         System.out.println("ActivityId="+activity_id);
@@ -177,6 +226,40 @@ public class CallReceiver extends BroadcastReceiver {
                         }
                         sms = sms.replace("<time>",replyTime);
 
+
+                        ///////////////////////////////////////
+                        String userid = PrefUtils.getUserId(context);
+
+                        CallerNotificationVO users = new CallerNotificationVO();
+                        users.sender_id = userid;               // From User ID
+                        users.receiver_phone = phoneNo;         // To Reeiver Phone Number, as we will not know the User ID of the
+                        users.message = sms;
+
+                        // Phone Number associated
+
+                        Call<ResponseBody> call= SmartCallAssistantApiClient.getClient()
+                                .create(ApiInterface.class).CallerNotification(users);
+                        call.enqueue(new Callback<ResponseBody>() {
+                            @Override
+                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                ResponseBody responseBody=response.body();
+                                if(responseBody!=null) {
+                                    try {
+                                        Log.d(TAG, "onResponse: "+responseBody.string());
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                Log.e(TAG, "onFailure: ",t );
+                            }
+                        });
+                        ///////////////////////////////////////
+
+
                         try {
 
                                /* SmsManager smsManager = SmsManager.getDefault();
@@ -190,9 +273,9 @@ public class CallReceiver extends BroadcastReceiver {
                                 noti.phnNum = phoneNo;
                                 noti.user_id = userId;
                                 noti.message = sms;
-                            Call<SendNotificationResponse> call= SmartCallAssistantApiClient.getClient()
+                            Call<SendNotificationResponse> callNotificationResponse= SmartCallAssistantApiClient.getClient()
                                     .create(ApiInterface.class).sendNotify(noti);
-                            call.enqueue(new Callback<SendNotificationResponse>() {
+                            callNotificationResponse.enqueue(new Callback<SendNotificationResponse>() {
                                 @Override
                                 public void onResponse(Call<SendNotificationResponse> call, Response<SendNotificationResponse> response) {
                                     Log.d(TAG, "onResponse: success");
@@ -301,6 +384,26 @@ public class CallReceiver extends BroadcastReceiver {
                 break;
         }
         laststate = state;
+    }
+
+    class MyPhoneStateListener extends PhoneStateListener {
+        public void onCallStateChanged(int state, String incomingNumber) {
+            Toast.makeText(context, incomingNumber, Toast.LENGTH_LONG).show();
+            switch (state) {
+                case TelephonyManager.CALL_STATE_RINGING:
+                    Log.e("Kang", incomingNumber);
+                    boolean whichService = DataManger.getInstance(context).isIncommingBlocked(incomingNumber);
+                    if (!whichService) // if incoming Number need to be blocked
+                    {
+                        Log.e("Kang", "Blocked");
+                        //m_audioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
+                        m_telephonyService.endCall();
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 
 }

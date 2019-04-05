@@ -38,6 +38,12 @@
             android:configChanges="orientation|screenSize"
             />
 
+        <receiver android:name=".service.AutoStartBroadcast">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
         <receiver
             android:name=".activity.CallReceiver"
             android:enabled="true"
