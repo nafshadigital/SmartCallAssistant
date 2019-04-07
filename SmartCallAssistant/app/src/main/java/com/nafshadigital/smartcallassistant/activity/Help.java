@@ -29,7 +29,8 @@ public class Help extends AppCompatActivity {
         txtmessage = findViewById(R.id.txtmessagehelp);
         btnmail = findViewById(R.id.btnhelpemail);
 
-        txttomail.setText("nafshadigital@gmail.com");
+        //txttomail.setText("nafshadigital@gmail.com");
+        txttomail.setText("waheed.rahuman@gmail.com");
         txttomail.setEnabled(false);
         subject = "Feedback from Smart Call Assistant App";
     }

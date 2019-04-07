@@ -28,6 +28,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
@@ -55,6 +56,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import io.fabric.sdk.android.Fabric;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -117,6 +119,8 @@ public class Dashboard extends AppCompatActivity {
 
         // Smart Call Assistant
         super.onCreate(savedInstanceState);
+        Fabric.with(this, new Crashlytics());
+
         setContentView(R.layout.activity_dashboard);
         titleEdit = findViewById(R.id.title);
         message = findViewById(R.id.message);
@@ -156,6 +160,9 @@ public class Dashboard extends AppCompatActivity {
                 String newToken = instanceIdResult.getToken();
                 fcm_Token = newToken;
                 Log.e("newToken",newToken);
+
+                logUser(fcm_Token);
+
 
                 // Save FCM Token into the context
                 SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("LoginDetails", Context.MODE_PRIVATE);
@@ -567,6 +574,21 @@ public class Dashboard extends AppCompatActivity {
             flowHearts();
         }
     }
+    public void forceCrash(View view) {
+        throw new RuntimeException("This is a crash");
+    }
+
+    private void logUser(String fcm_Token) {
+
+        SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("LoginDetails", Context.MODE_PRIVATE);
+
+        sharedPreferences = context.getSharedPreferences("LoginDetails", Context.MODE_PRIVATE);
+        selectedUserID =  sharedPreferences.getString("userID", "");
+
+        Crashlytics.setUserIdentifier(selectedUserID);
+        Crashlytics.setUserName(fcm_Token.substring(0,10));
+    }
+
 }
 
 

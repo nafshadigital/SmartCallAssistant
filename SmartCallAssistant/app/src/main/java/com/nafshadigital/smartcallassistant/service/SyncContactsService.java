@@ -115,8 +115,6 @@ public class SyncContactsService extends Service {
                     {
                         recordCounter++;
 
-
-
                             Log.d(recordCounter + ":" + "Display_Name", cursor.getString(cursor.getColumnIndex(ContactsContract.Data.DISPLAY_NAME)) + " Number" + number);
                             Log.d(recordCounter + ":" + "Phone", number);
 
@@ -124,9 +122,17 @@ public class SyncContactsService extends Service {
                             this.dbHelper.addSyncContacts(db, recordCounter, name, number);
 
                             number = number.replaceAll("\\D", "").trim();
-                            if (number.substring(0, 1).equals("00")) {
-                                number = number.substring(2);
+
+                            try{
+                                if (number.substring(0, 1).equals("00")) {
+                                    number = number.substring(2);
+                                }
                             }
+                            catch(Exception e)
+                            {
+
+                            }
+
                             if (number.length() > 9) {
 
                                 SyncContactVO contacts = new SyncContactVO(null);

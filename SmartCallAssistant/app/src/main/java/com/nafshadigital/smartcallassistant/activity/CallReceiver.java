@@ -114,11 +114,14 @@ public class CallReceiver extends BroadcastReceiver {
 
     public void onCallStateChanged(Context context, int state, String number){
 
-        if(laststate == state){
+        try {
+            if (laststate == state) {
                 this.ringtone.stop();
-            return;
+                return;
+            }
         }
-
+        catch(Exception e)
+        {}
 
 
         switch (state){
@@ -141,7 +144,13 @@ public class CallReceiver extends BroadcastReceiver {
                     AudioManager am = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
                     am.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
 
-                    this.ringtone.play();
+                    try{
+                        this.ringtone.play();
+                    }
+                    catch(Exception e)
+                    {
+                    }
+
                     // Toast.makeText(context, "Ringing RINGER_MODE_NORMAL" + savedNumber + " Call time " + callStartTime +" Date " + new Date() , Toast.LENGTH_LONG).show();
                 }else{
                     if(settingsVO.ismobilemute.equals("1")){
@@ -314,7 +323,13 @@ public class CallReceiver extends BroadcastReceiver {
 
             case TelephonyManager.CALL_STATE_OFFHOOK:
                 System.out.println("TelephonyManager.CALL_STATE_OFFHOOK");
-                this.ringtone.stop();
+
+                try {
+                    this.ringtone.stop();
+                }
+                catch(Exception e)
+                {}
+
                 if(laststate != TelephonyManager.CALL_STATE_RINGING)
                 {
 
@@ -339,7 +354,13 @@ public class CallReceiver extends BroadcastReceiver {
 
             case TelephonyManager.CALL_STATE_IDLE :
                 System.out.println("TelephonyManager.CALL_STATE_OFFHOOK");
-                this.ringtone.stop();
+                try {
+                    this.ringtone.stop();
+                }
+                catch(Exception e)
+                {
+
+                }
                 if(laststate == TelephonyManager.CALL_STATE_RINGING){
                //     Toast.makeText(context, "Ringing but no pickup" + savedNumber + " Call time " + callStartTime +" Date " + new Date() , Toast.LENGTH_LONG).show();
 

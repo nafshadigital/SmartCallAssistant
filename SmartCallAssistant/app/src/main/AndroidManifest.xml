@@ -147,6 +147,10 @@
         <activity
             android:name=".activity.NotificationDetail"
             android:configChanges="orientation|screenSize" />
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="0cd8f8b435d39437e1339d1c18640cbc92e1775e"
+            />
     </application>
 
 </manifest>
