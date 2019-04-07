@@ -22,6 +22,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -71,6 +72,7 @@ public class Dashboard extends AppCompatActivity {
     ImageView imgadd;
     ListView listactivity;
     TextView txtactcount;
+    EditText message , titleEdit;
     ArrayList<ActivityVO> actAL;
     DrawerLayout drawerLayout;
     ActionBarDrawerToggle drawerToggle;
@@ -86,12 +88,61 @@ public class Dashboard extends AppCompatActivity {
     private SyncContactsService syncContactsService;
 
     @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+
+        System.out.println("DashBoard onNewIntent " +  intent.getExtras());
+
+        if (intent.getExtras() != null)
+        {
+            String title = intent.getExtras().getString("title");
+            String body = intent.getExtras().getString("body");
+
+            titleEdit.setText(title);
+            message.setText(body);
+        }
+        else {
+            String title = "Title";
+            String body = "Body";
+
+            titleEdit.setText(title);
+            message.setText(body);
+
+        }
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
 
 
         // Smart Call Assistant
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
+        titleEdit = findViewById(R.id.title);
+        message = findViewById(R.id.message);
+
+
+        Intent intent = getIntent();
+        System.out.println("DashBoard onCreate" +  intent.getExtras());
+
+        if (intent.getExtras() != null)
+        {
+            String title = intent.getExtras().getString("title");
+            String body = intent.getExtras().getString("body");
+
+
+            titleEdit.setText(title);
+            message.setText(body);
+        }
+        else {
+            String title = "Title";
+            String body = "Body";
+
+            titleEdit.setText(title);
+            message.setText(body);
+
+        }
+
 
         imgadd = findViewById(R.id.btnaddactivity);
         listactivity = findViewById(R.id.listactivity);

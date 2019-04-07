@@ -34,6 +34,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
+            <TextView
+                android:id="@+id/tvmobprofile"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+
         </LinearLayout>
     </TableRow>
 
@@ -67,13 +73,18 @@
             android:drawableStart="@android:drawable/ic_dialog_email"
             android:hint="Email"/>
 
-     <!--   <EditText
+       <EditText
             android:id="@+id/txtmobilenoprofile"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:drawableLeft="@android:drawable/ic_dialog_dialer"
-            android:hint="Mobile no"/>
-
+            android:padding="@dimen/_10sdp"
+            android:drawablePadding="@dimen/_10sdp"
+            android:textColor="@color/white_color"
+            android:textColorHint="@color/white_color"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:drawableLeft="@android:drawable/ic_menu_call"
+            android:hint="Mobile Number"/>
+        <!--
         <EditText
             android:id="@+id/txtcodeprofile"
             android:layout_width="match_parent"

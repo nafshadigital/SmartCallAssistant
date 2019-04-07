@@ -22,9 +22,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:background="#f3dcba"
-
-        >
+    android:background="#f3dcba">
         <TextView
             android:id="@+id/tvdashboard"
             android:text="My Activity"
@@ -34,7 +32,7 @@
             android:textColor="#000000"
             android:layout_weight="1"
             android:visibility="gone"
-            android:layout_marginLeft="5sp" android:layout_marginTop="4sp" />
+            android:layout_marginLeft="0sp" android:layout_marginTop="0sp" />
 
     <com.nafshadigital.smartcallassistant.activity.NotifyActivity
         android:id="@+id/remactivity"
@@ -50,9 +48,9 @@
             app:srcCompat = "@mipmap/add"
             android:layout_gravity="right"
             android:onClick="addactivty"
-            android:paddingTop="5sp"
+            android:paddingTop="0sp"
             android:visibility="gone"
-            android:paddingBottom="5sp" android:paddingRight="5sp"
+            android:paddingBottom="0sp" android:paddingRight="0sp"
             />
 </LinearLayout>
 <!--
@@ -62,6 +60,8 @@
     android:text="favorite"
     android:onClick="favoritecheck"
     /> -->
+
+
         <ListView
             android:id="@+id/listactivity"
             android:layout_width="match_parent"
@@ -72,6 +72,32 @@
             android:layout_marginTop="@dimen/_10sdp"
            >
         </ListView>
+
+    <EditText
+        android:visibility="gone"
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textNoSuggestions"
+        android:padding="@dimen/_10sdp"
+        android:drawablePadding="@dimen/_10sdp"
+        android:textColor="@color/black"
+        android:layout_marginTop="@dimen/_10sdp"
+        />
+    <EditText
+        android:visibility="gone"
+        android:id="@+id/message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10sp"
+        android:textColor="#000000"
+        style="@style/buttonStyle"
+        android:lines="5"
+        android:background="@drawable/control_border"
+        android:padding="10dp"
+        android:inputType="none"
+        android:enabled="false" />
+
     <FrameLayout
         android:id="@+id/animation_holder"
         android:layout_width="fill_parent"

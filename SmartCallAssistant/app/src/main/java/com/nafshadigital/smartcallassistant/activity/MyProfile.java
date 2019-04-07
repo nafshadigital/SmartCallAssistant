@@ -55,8 +55,11 @@ public class MyProfile extends AppCompatActivity {
 
         txtname = findViewById(R.id.txtnameprofile);
         txtemail = findViewById(R.id.txtemailprofile);
-      //  txtmobno = (EditText) findViewById(R.id.txtmobilenoprofile);
-     //   txtcode = (EditText) findViewById(R.id.txtcodeprofile);
+        txtmobno = (EditText) findViewById(R.id.txtmobilenoprofile);
+
+        txtmobno.setEnabled(false);
+
+        //   txtcode = (EditText) findViewById(R.id.txtcodeprofile);
         btnupdate = findViewById(R.id.btnupdateprofile);
 
         Bundle bundle = getIntent().getExtras();
@@ -77,7 +80,7 @@ public class MyProfile extends AppCompatActivity {
                     ProfileVO profileVO = new ProfileVO(getApplicationContext());
                     profileVO.name = txtname.getText().toString();
                     profileVO.email = txtemail.getText().toString();
-                  //  profileVO.mobile_no = txtmobno.getText().toString();
+                    profileVO.mobile_no = txtmobno.getText().toString();
                  //   profileVO.code = txtcode.getText().toString();
 
                     int result = profileVO.updateProfile();
@@ -148,12 +151,16 @@ public class MyProfile extends AppCompatActivity {
                         if(myProfileResponse.getUserRecord().size()>0){
                             name=myProfileResponse.getUserRecord().get(0).getName();
                             email=myProfileResponse.getUserRecord().get(0).getEmail();
+                            String mobile=myProfileResponse.getUserRecord().get(0).getCountryCode() + myProfileResponse.getUserRecord().get(0).getMobile();
+
+                            setTitle("My Profile - " + myProfileResponse.getUserRecord().get(0).getId());
                             if(name.equals("null") && email.equals("null")){
                                 txtname.setText("");
                                 txtemail.setText("");
                             }else{
                                 txtname.setText(name);
                                 txtemail.setText(email);
+                                txtmobno.setText(mobile);
                             }
                         }
                     }
