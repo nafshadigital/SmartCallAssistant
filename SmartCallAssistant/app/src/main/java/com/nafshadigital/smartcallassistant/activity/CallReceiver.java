@@ -134,6 +134,7 @@ public class CallReceiver extends BroadcastReceiver {
 
                 FavoriteVO favoriteVO = new FavoriteVO(context);
                 String phoneNo = savedNumber;
+                try {
                     phoneNo = phoneNo.replace(" ", "");
                 }
                 catch(Exception e)
