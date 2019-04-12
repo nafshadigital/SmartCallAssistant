@@ -134,8 +134,15 @@ public class CallReceiver extends BroadcastReceiver {
 
                 FavoriteVO favoriteVO = new FavoriteVO(context);
                 String phoneNo = savedNumber;
-                phoneNo = phoneNo.replace(" ", "");
+                    phoneNo = phoneNo.replace(" ", "");
+                }
+                catch(Exception e)
+                {}
+                try{
                 phoneNo = phoneNo.replace("-", "");
+                }
+                catch(Exception e)
+                {}
 
                 int res = favoriteVO.checkFavorites(phoneNo);
 
@@ -158,7 +165,6 @@ public class CallReceiver extends BroadcastReceiver {
                         if (android.os.Build.VERSION.SDK_INT > Build.VERSION_CODES.M){
                             System.out.println("Kang  " + android.os.Build.VERSION.SDK_INT);
 
-
                             this.context = context;
                             m_telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
                             try {
@@ -174,10 +180,6 @@ public class CallReceiver extends BroadcastReceiver {
                                 System.out.println("Kang :" + e.toString());
                                 e.printStackTrace();
                             }
-
-
-
-
                         } else{
                             System.out.println("SDK Version = " + android.os.Build.VERSION.SDK_INT);
                         }
@@ -409,7 +411,7 @@ public class CallReceiver extends BroadcastReceiver {
 
     class MyPhoneStateListener extends PhoneStateListener {
         public void onCallStateChanged(int state, String incomingNumber) {
-            Toast.makeText(context, incomingNumber, Toast.LENGTH_LONG).show();
+            //Toast.makeText(context, incomingNumber, Toast.LENGTH_LONG).show();
             switch (state) {
                 case TelephonyManager.CALL_STATE_RINGING:
                     Log.e("Kang", incomingNumber);

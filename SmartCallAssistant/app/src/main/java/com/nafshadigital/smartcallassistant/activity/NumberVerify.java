@@ -40,8 +40,6 @@ EditText txtverifycode;
         if(bundle !=null && bundle.get("userVO")!=null) {
             selectedUserID = bundle.getString("userVO");
           //  MyToast.show(this,selectedUserID);
-
-
         }
     }
 

@@ -63,10 +63,10 @@ public class DBHelper extends SQLiteOpenHelper implements IWebServiceDeclaration
         String tbl_calllogs = "create table " + CALLLOG_TABLE_NAME + "(id integer primary key AUTOINCREMENT,number text,dt_log text,incoming integer,outgoing integer)";
         db.execSQL(tbl_calllogs);
 
-        this.addCalllog(db, 984677567,"2018-08-18",0,1);
-        this.addCalllog(db, 954564568,"2018-03-12",1,0);
-        this.addCalllog(db, 985454542,"2018-04-30",0,1);
-        this.addCalllog(db, 984845455,"2018-05-20",1,0);
+//      this.addCalllog(db, 984677567,"2018-08-18",0,1);
+//      this.addCalllog(db, 954564568,"2018-03-12",1,0);
+//      this.addCalllog(db, 985454542,"2018-04-30",0,1);
+//      this.addCalllog(db, 984845455,"2018-05-20",1,0);
 
         String tbl_remainder = "create table " + REMAINDER_TABLE_NAME + "(id integer primary key AUTOINCREMENT,st_date text,end_date text,message text,type text,value text)";
         db.execSQL(tbl_remainder);

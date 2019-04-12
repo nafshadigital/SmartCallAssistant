@@ -60,8 +60,14 @@ public class FavoriteVO {
     }
 
     public int checkFavorites(String phnnum){
-        if(phnnum.length() > 8) {
-            phnnum = phnnum.substring(phnnum.length()-8);
+        try {
+            if (phnnum.length() > 8) {
+                phnnum = phnnum.substring(phnnum.length() - 8);
+            }
+        }
+        catch(Exception e)
+        {
+            return 0;
         }
         String selectQuery = "select * from " +dbHelper.FAVORITE_TABLE_NAME + " where phnnumber like '%" +  phnnum +"'";
 
