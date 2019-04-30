@@ -3,6 +3,7 @@ package com.nafshadigital.smartcallassistant.network;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.nafshadigital.smartcallassistant.webservice.MyRestAPI;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
@@ -41,6 +42,11 @@ public class SmartCallAssistantApiClient {
                 .addConverterFactory(ScalarsConverterFactory.create())
                 .build();
         return retrofit;
+    }
+
+    public static String getBaseUrl()
+    {
+        return MyRestAPI.PostCall("checkOTP",  null);
     }
 
     /**

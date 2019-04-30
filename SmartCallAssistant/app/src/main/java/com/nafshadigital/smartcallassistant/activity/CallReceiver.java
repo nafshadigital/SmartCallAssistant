@@ -123,7 +123,6 @@ public class CallReceiver extends BroadcastReceiver {
         catch(Exception e)
         {}
 
-
         switch (state){
             case  TelephonyManager.CALL_STATE_RINGING:
                 System.out.println("case  TelephonyManager.CALL_STATE_RINGING");
@@ -372,9 +371,15 @@ public class CallReceiver extends BroadcastReceiver {
                     Date today = new Date();
                     favoriteVO = new FavoriteVO(context);
                     phoneNo = savedNumber;
-                    phoneNo = phoneNo.replace(" ", "");
-                    phoneNo = phoneNo.replace("-", "");
-
+                    try {
+                        phoneNo = phoneNo.replace(" ", "");
+                    }catch(Exception e)
+                    {}
+                    try {
+                        phoneNo = phoneNo.replace("-", "");
+                    }
+                    catch(Exception e)
+                    {}
                     res = favoriteVO.checkFavorites(phoneNo);
 
 

@@ -223,12 +223,16 @@ public class SendHeartActivity extends AppCompatActivity {
     }
 
     public void animate(View v) {
-        if (lottieAnimationView.isAnimating()) {
-            lottieAnimationView.cancelAnimation();
-            //button.setText(getString(R.string.play));
-        } else {
-            lottieAnimationView.playAnimation();
-            //button.setText(getString(R.string.pause));
+
+        if (android.os.Build.VERSION.SDK_INT <= 27)
+        {
+            if (lottieAnimationView.isAnimating()) {
+                lottieAnimationView.cancelAnimation();
+                //button.setText(getString(R.string.play));
+            } else {
+                lottieAnimationView.playAnimation();
+                //button.setText(getString(R.string.pause));
+            }
         }
     }
 

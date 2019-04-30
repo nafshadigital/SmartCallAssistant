@@ -166,11 +166,12 @@ public class Dashboard extends AppCompatActivity {
 
                 // Save FCM Token into the context
                 SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("LoginDetails", Context.MODE_PRIVATE);
+                String userid = sharedPreferences.getString("userID","");
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.putString("fcmtoken", fcm_Token);
                 editor.commit();
 
-                String userid = sharedPreferences.getString("userID","");
+
 
                 SyncContactVO users = new SyncContactVO(null);
                 users.fcmtoken = fcm_Token;

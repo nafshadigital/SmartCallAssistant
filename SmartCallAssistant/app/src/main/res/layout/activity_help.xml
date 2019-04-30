@@ -23,6 +23,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="#000000"
+            android:visibility="gone"
             android:hint="Enter Email"/>
     </LinearLayout>
 
@@ -42,6 +43,21 @@
         android:hint="Enter Message"
         android:background="@drawable/borderline"/>
 
+    <EditText
+        android:id="@+id/txt_fcm"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textMultiLine"
+        android:lines="8"
+        android:minLines="6"
+        android:gravity="top|left"
+        android:layout_margin="15sp"
+        android:maxLines="10"
+        android:scrollbars="vertical"
+        android:textColor="#000000"
+        android:padding="3sp"
+        android:hint="Debug Details"
+        android:background="@drawable/borderline"/>
     <Button
         android:id="@+id/btnhelpemail"
         android:layout_width="wrap_content"

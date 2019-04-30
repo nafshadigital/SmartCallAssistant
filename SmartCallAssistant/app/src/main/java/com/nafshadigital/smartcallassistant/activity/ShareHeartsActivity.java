@@ -2,6 +2,7 @@ package com.nafshadigital.smartcallassistant.activity;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v7.app.ActionBar;
@@ -91,12 +92,15 @@ public class ShareHeartsActivity extends AppCompatActivity {
     }
 
     public void animate(View v) {
-        if (lottieAnimationView.isAnimating()) {
-            lottieAnimationView.cancelAnimation();
-            //button.setText(getString(R.string.play));
-        } else {
-            lottieAnimationView.playAnimation();
-            //button.setText(getString(R.string.pause));
+
+        if (android.os.Build.VERSION.SDK_INT <= 27) {
+            if (lottieAnimationView.isAnimating()) {
+                lottieAnimationView.cancelAnimation();
+                //button.setText(getString(R.string.play));
+            } else {
+                lottieAnimationView.playAnimation();
+                //button.setText(getString(R.string.pause));
+            }
         }
     }
 

@@ -1,6 +1,8 @@
 package com.nafshadigital.smartcallassistant.activity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
@@ -14,7 +16,7 @@ import com.nafshadigital.smartcallassistant.helpers.MyToast;
 
 public class Help extends AppCompatActivity {
     Button btnmail;
-    EditText txtmessage,txttomail;
+    EditText txtmessage,txttomail,txt_fcm;
     String subject,message;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +28,7 @@ public class Help extends AppCompatActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
 
         txttomail = findViewById(R.id.txttomailhelp);
+        txt_fcm = findViewById(R.id.txt_fcm);
         txtmessage = findViewById(R.id.txtmessagehelp);
         btnmail = findViewById(R.id.btnhelpemail);
 
@@ -33,6 +36,12 @@ public class Help extends AppCompatActivity {
         txttomail.setText("waheed.rahuman@gmail.com");
         txttomail.setEnabled(false);
         subject = "Feedback from Smart Call Assistant App";
+
+        SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("LoginDetails", Context.MODE_PRIVATE);
+        String userid = sharedPreferences.getString("userID","");
+        String fcm_token = sharedPreferences.getString("fcmtoken","");
+
+        txt_fcm.setText(userid + "\n\n\n" + fcm_token);
     }
 
     public boolean onOptionsItemSelected(android.view.MenuItem item){
