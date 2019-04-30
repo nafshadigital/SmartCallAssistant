@@ -124,21 +124,75 @@ public class Dashboard extends AppCompatActivity {
         Fabric.with(this, new Crashlytics());
 
         setContentView(R.layout.activity_dashboard);
+
         titleEdit = findViewById(R.id.title);
         message = findViewById(R.id.message);
-
+        imgadd = findViewById(R.id.btnaddactivity);
+        listactivity = findViewById(R.id.listactivity);
+        this.context = this;
 
         Intent intent = getIntent();
         System.out.println("DashBoard onCreate" +  intent.getExtras());
 
-        setTitleNBody(intent);
+        setTitleNBody(intent);  // Set Title for the Windows
+
+        saveFCMToken();         // Generate Token
+
+        sendNotification();     // Send Notification
+
+        startContactsSyncService();  // Sync the Contacts
+
+        startCallMonitorService();  // Start the call monitoring service
+
+        selectedUserID =  getSharedPrefernceData("userID");
+
+        Bundle bundle = getIntent().getExtras();
+        if(bundle !=null && bundle.get("dashuserId")!=null) {
+            selectedUserID = bundle.getString("dashuserId");
+        }
+
+        updateLastSeen();  // Update the last seen
+
+      /*  JSONObject jsonupdate = new JSONObject();
+        try {
+            jsonupdate.put("token", selectedUserID);
+            MyToast.show(getApplicationContext(),selectedUserID);
+        }catch (JSONException e) {
+
+        }
+        String res = MyRestAPI.PostCall("updateLastSeen/",jsonupdate); */
+
+        manifestPermission();  // Permission management
+
+        ActivityService actService = new ActivityService(getApplicationContext());
+        int actcount = actService.getActivityCount();
+       // txtactcount.setText(""+actcount);
+       // MyToast.show(this,""+actcount);
+
+        NavigationView navigationView = (NavigationView) findViewById(R.id.navigation_view);
+
+        initInstances();
+        displayActivity();
 
 
-        imgadd = findViewById(R.id.btnaddactivity);
-        listactivity = findViewById(R.id.listactivity);
-       // txtactcount = (TextView) findViewById(R.id.tvtotnoact);
+       // SharedPreferences sharedPreferences = getBaseContext().getSharedPreferences("bgservice", Context.MODE_PRIVATE);
 
-        SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("LoginDetails", Context.MODE_PRIVATE);
+        getSettings(); // Mobile sound status settings
+
+
+        JSONObject jsonObject = new JSONObject();
+        //String res = MyRestAPI.PostCall("updateLastSeen"+"/"+ + "/",jsonObject);
+
+        /*AudioManager am =  (AudioManager) getBaseContext().getSystemService(Context.AUDIO_SERVICE);
+        am.setRingerMode(AudioManager.RINGER_MODE_VIBRATE); */
+
+        remActivity = (NotifyActivity) findViewById(R.id.remactivity);
+        remActivity.isCompact = true;
+        remActivity.init();
+
+    }
+
+    private void saveFCMToken() {
 
         FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener( Dashboard.this,  new OnSuccessListener<InstanceIdResult>() {
             @Override
@@ -181,61 +235,12 @@ public class Dashboard extends AppCompatActivity {
 
             }
         });
+    }
 
-        sendNotification();
-
-        this.context = this;
-
-        startContactsSyncService();
-
-        startCallMonitorService();
-
-        selectedUserID =  getSharedPrefernceData("userID");
-
-        Bundle bundle = getIntent().getExtras();
-        if(bundle !=null && bundle.get("dashuserId")!=null) {
-            selectedUserID = bundle.getString("dashuserId");
-        }
-
-        updateLastSeen();
-
-      /*  JSONObject jsonupdate = new JSONObject();
-        try {
-            jsonupdate.put("token", selectedUserID);
-            MyToast.show(getApplicationContext(),selectedUserID);
-        }catch (JSONException e) {
-
-        }
-        String res = MyRestAPI.PostCall("updateLastSeen/",jsonupdate); */
-
-        manifestPermission();
-
-        ActivityService actService = new ActivityService(getApplicationContext());
-        int actcount = actService.getActivityCount();
-       // txtactcount.setText(""+actcount);
-       // MyToast.show(this,""+actcount);
-
-        NavigationView navigationView = (NavigationView) findViewById(R.id.navigation_view);
-        initInstances();
-        displayActivity();
-
-
-       // SharedPreferences sharedPreferences = getBaseContext().getSharedPreferences("bgservice", Context.MODE_PRIVATE);
+    private void getSettings() {
         SettingsVO settingsVO = new SettingsVO(getApplicationContext());
         settingsVO.getSettings();
         String isMobileMute =settingsVO.ismobilemute;
-
-
-        JSONObject jsonObject = new JSONObject();
-        //String res = MyRestAPI.PostCall("updateLastSeen"+"/"+ + "/",jsonObject);
-
-        /*AudioManager am =  (AudioManager) getBaseContext().getSystemService(Context.AUDIO_SERVICE);
-        am.setRingerMode(AudioManager.RINGER_MODE_VIBRATE); */
-
-        remActivity = (NotifyActivity) findViewById(R.id.remactivity);
-        remActivity.isCompact = true;
-        remActivity.init();
-
     }
 
     private String getSharedPrefernceData(String preferenceKey) {
@@ -353,10 +358,10 @@ public class Dashboard extends AppCompatActivity {
                         startActivity(in);
                         break;
 
-                 /*   case R.id.contacts:
-                        Intent i = new Intent(Dashboard.this, Contacts.class);
+                  case R.id.sync_contact:
+                        Intent i = new Intent(Dashboard.this, SyncContacts.class);
                         startActivity(i);
-                        break; */
+                        break;
 
                     case R.id.callog:
                         Intent calllog = new Intent(Dashboard.this, CallLogs.class);

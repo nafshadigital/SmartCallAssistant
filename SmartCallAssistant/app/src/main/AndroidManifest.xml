@@ -12,38 +12,35 @@
     <uses-permission android:name="android.permission.PROCESS_INCOMING_CALLS" />
     <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
 
-
-
-
     <application
         android:name=".helpers.AppRunning"
         android:allowBackup="true"
         android:icon="@mipmap/appicon"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/appicon"
-        android:usesCleartextTraffic="true"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
+        android:usesCleartextTraffic="true"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning,UnusedAttribute">
-        <activity android:name=".activity.SplashScreen"
-            android:configChanges="orientation|screenSize"
-            >
+        <activity android:name=".activity.SyncContacts"></activity>
+        <activity
+            android:name=".activity.SplashScreen"
+            android:configChanges="orientation|screenSize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.Login"
-            android:configChanges="orientation|screenSize"
-            />
+        <activity
+            android:name=".activity.Login"
+            android:configChanges="orientation|screenSize" />
 
         <receiver android:name=".service.AutoStartBroadcast">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
-
         <receiver
             android:name=".activity.CallReceiver"
             android:enabled="true"
@@ -56,37 +53,37 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name=".activity.Dashboard"
+        <activity
+            android:name=".activity.Dashboard"
+            android:configChanges="orientation|screenSize" />
+        <activity
+            android:name=".floatingAnimation.TransparentActivity"
             android:configChanges="orientation|screenSize"
-            />
-        <activity android:name=".floatingAnimation.TransparentActivity"
-            android:configChanges="orientation|screenSize"
-            android:theme="@style/Theme.Transparent"/>
+            android:theme="@style/Theme.Transparent" />
         <activity
             android:name=".activity.NavigationDrawer"
+            android:configChanges="orientation|screenSize"
             android:label="@string/title_activity_navigation_drawer"
-            android:configChanges="orientation|screenSize"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".activity.AddActivity"
-            android:configChanges="orientation|screenSize"
-            />
-        <activity android:name=".activity.MyProfile"
-            android:configChanges="orientation|screenSize"
-            />
-        <activity android:name=".activity.Contacts"
-            android:configChanges="orientation|screenSize"
-            />
-        <activity android:name=".activity.CallLogs"
-            android:configChanges="orientation|screenSize"
-            />
-        <activity android:name=".activity.CallmebackActivity"
-            android:configChanges="orientation|screenSize"
-            />
+        <activity
+            android:name=".activity.AddActivity"
+            android:configChanges="orientation|screenSize" />
+        <activity
+            android:name=".activity.MyProfile"
+            android:configChanges="orientation|screenSize" />
+        <activity
+            android:name=".activity.Contacts"
+            android:configChanges="orientation|screenSize" />
+        <activity
+            android:name=".activity.CallLogs"
+            android:configChanges="orientation|screenSize" />
+        <activity
+            android:name=".activity.CallmebackActivity"
+            android:configChanges="orientation|screenSize" />
 
         <service
             android:name=".service.SyncContactsService"
             android:enabled="true" />
-
         <service
             android:name=".activity.BgPCICallService"
             android:enabled="true" />
@@ -95,36 +92,34 @@
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
-        </receiver>
-
-        <!-- <activity android:name=".activity.NotifyActivity" /> -->
-        <activity android:name=".activity.ShareHeartsActivity"
-            android:configChanges="orientation|screenSize"
-            />
-        <activity android:name=".activity.SendHeartActivity"
-            android:configChanges="orientation|screenSize"
-            />
-        <activity android:name=".activity.FavouriteActivity"
-            android:configChanges="orientation|screenSize"
-            />
-        <activity android:name=".activity.StoreContactsInSQLLiteService"
-            android:configChanges="orientation|screenSize"
-            />
-        <activity android:name=".activity.Settings"
-            android:configChanges="orientation|screenSize"
-            />
-        <activity android:name=".activity.Remainder"
-            android:configChanges="orientation|screenSize"
-            />
-        <activity android:name=".activity.EnterMobilenumber"
-            android:configChanges="orientation|screenSize"
-            />
-        <activity android:name=".activity.NumberVerify"
-            android:configChanges="orientation|screenSize"
-            />
-        <activity android:name=".activity.TestActivity"
-            android:configChanges="orientation|screenSize"
-            />
+        </receiver> <!-- <activity android:name=".activity.NotifyActivity" /> -->
+        <activity
+            android:name=".activity.ShareHeartsActivity"
+            android:configChanges="orientation|screenSize" />
+        <activity
+            android:name=".activity.SendHeartActivity"
+            android:configChanges="orientation|screenSize" />
+        <activity
+            android:name=".activity.FavouriteActivity"
+            android:configChanges="orientation|screenSize" />
+        <activity
+            android:name=".activity.StoreContactsInSQLLiteService"
+            android:configChanges="orientation|screenSize" />
+        <activity
+            android:name=".activity.Settings"
+            android:configChanges="orientation|screenSize" />
+        <activity
+            android:name=".activity.Remainder"
+            android:configChanges="orientation|screenSize" />
+        <activity
+            android:name=".activity.EnterMobilenumber"
+            android:configChanges="orientation|screenSize" />
+        <activity
+            android:name=".activity.NumberVerify"
+            android:configChanges="orientation|screenSize" />
+        <activity
+            android:name=".activity.TestActivity"
+            android:configChanges="orientation|screenSize" />
 
         <service
             android:name=".activity.NotifyTransparent"
@@ -136,21 +131,23 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-        <activity android:name=".activity.LoginViaDeviceid"
-            android:configChanges="orientation|screenSize"/>
-        <activity android:name=".activity.CallDetail"
-            android:configChanges="orientation|screenSize"
-            />
-        <activity android:name=".activity.Help"
-            android:configChanges="orientation|screenSize"
-            />
+
+        <activity
+            android:name=".activity.LoginViaDeviceid"
+            android:configChanges="orientation|screenSize" />
+        <activity
+            android:name=".activity.CallDetail"
+            android:configChanges="orientation|screenSize" />
+        <activity
+            android:name=".activity.Help"
+            android:configChanges="orientation|screenSize" />
         <activity
             android:name=".activity.NotificationDetail"
             android:configChanges="orientation|screenSize" />
+
         <meta-data
             android:name="io.fabric.ApiKey"
-            android:value="0cd8f8b435d39437e1339d1c18640cbc92e1775e"
-            />
+            android:value="0cd8f8b435d39437e1339d1c18640cbc92e1775e" />
     </application>
 
 </manifest>

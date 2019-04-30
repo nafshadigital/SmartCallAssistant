@@ -17,7 +17,10 @@
             android:id="@+id/favourite"
             android:icon="@drawable/ic_fav"
             android:title="Favourite" />
-
+        <item
+            android:id="@+id/sync_contact"
+            android:icon="@drawable/ic_sync_contact"
+            android:title="Find Friend" />
         <item
             android:id="@+id/heart"
             android:icon="@drawable/ic_hand_heart"
