@@ -95,15 +95,17 @@ public class Dashboard extends AppCompatActivity {
 
         System.out.println("DashBoard onNewIntent " +  intent.getExtras());
 
-        if (intent.getExtras() != null)
-        {
+        setTitleNBody(intent);
+    }
+
+    private void setTitleNBody(Intent intent) {
+        if (intent.getExtras() != null) {
             String title = intent.getExtras().getString("title");
             String body = intent.getExtras().getString("body");
 
             titleEdit.setText(title);
             message.setText(body);
-        }
-        else {
+        } else {
             String title = "Title";
             String body = "Body";
 
@@ -129,23 +131,7 @@ public class Dashboard extends AppCompatActivity {
         Intent intent = getIntent();
         System.out.println("DashBoard onCreate" +  intent.getExtras());
 
-        if (intent.getExtras() != null)
-        {
-            String title = intent.getExtras().getString("title");
-            String body = intent.getExtras().getString("body");
-
-
-            titleEdit.setText(title);
-            message.setText(body);
-        }
-        else {
-            String title = "Title";
-            String body = "Body";
-
-            titleEdit.setText(title);
-            message.setText(body);
-
-        }
+        setTitleNBody(intent);
 
 
         imgadd = findViewById(R.id.btnaddactivity);
@@ -196,51 +182,15 @@ public class Dashboard extends AppCompatActivity {
             }
         });
 
-        FCMNotificationVO fcmNotificationVO = new FCMNotificationVO();
-
-        fcmNotificationVO.title = "Title";
-        fcmNotificationVO.message = "Message";
-        fcmNotificationVO.token = fcm_Token;
-
-
-        Call<SendNotificationResponse> call= SmartCallAssistantApiClient.getClient()
-                .create(ApiInterface.class).sendNotification(fcmNotificationVO);
-        call.enqueue(new Callback<SendNotificationResponse>() {
-            @Override
-            public void onResponse(Call<SendNotificationResponse> call, Response<SendNotificationResponse> response) {
-                Log.v("newToken","Calling Notification sender PHP ");
-                try {
-                    SendNotificationResponse sendNotificationResponse=response.body();
-                    if(sendNotificationResponse!=null && sendNotificationResponse.getMessage()!=null)
-                    MyToast.show(getApplicationContext(),sendNotificationResponse.getMessage());
-                }catch (Exception e) {
-                    Log.v("newToken","Trying to sending notification " + e.toString() + "\n" + e.getMessage());
-                }
-            }
-
-            @Override
-            public void onFailure(Call<SendNotificationResponse> call, Throwable t) {
-
-            }
-        });
+        sendNotification();
 
         this.context = this;
 
-        SyncContactsService syncContactsService = new SyncContactsService(this.context);
+        startContactsSyncService();
 
-        syncContactsIntent = new Intent(this.context, syncContactsService.getClass());
-        startService(syncContactsIntent);
+        startCallMonitorService();
 
-        if (!isMyServiceRunning(SyncContactsService.class)) {
-                startService(syncContactsIntent);
-        }
-
-        intent = new Intent(this.context,BgPCICallService.class);
-        ((AppRunning) context.getApplicationContext()).setBGServiceRunning(true);
-        startService(intent);
-
-        sharedPreferences = context.getSharedPreferences("LoginDetails", Context.MODE_PRIVATE);
-        selectedUserID =  sharedPreferences.getString("userID", "");
+        selectedUserID =  getSharedPrefernceData("userID");
 
         Bundle bundle = getIntent().getExtras();
         if(bundle !=null && bundle.get("dashuserId")!=null) {
@@ -286,6 +236,61 @@ public class Dashboard extends AppCompatActivity {
         remActivity.isCompact = true;
         remActivity.init();
 
+    }
+
+    private String getSharedPrefernceData(String preferenceKey) {
+        SharedPreferences sharedPreferences;
+        sharedPreferences = context.getSharedPreferences("LoginDetails", Context.MODE_PRIVATE);
+
+        return sharedPreferences.getString(preferenceKey, "");
+    }
+
+    private void startCallMonitorService() {
+        Intent intent;
+        intent = new Intent(this.context, BgPCICallService.class);
+        ((AppRunning) context.getApplicationContext()).setBGServiceRunning(true);
+        startService(intent);
+    }
+
+    private void startContactsSyncService() {
+        SyncContactsService syncContactsService = new SyncContactsService(this.context);
+
+        syncContactsIntent = new Intent(this.context, syncContactsService.getClass());
+        startService(syncContactsIntent);
+
+        if (!isMyServiceRunning(SyncContactsService.class)) {
+                startService(syncContactsIntent);
+        }
+    }
+
+    private void sendNotification() {
+        FCMNotificationVO fcmNotificationVO = new FCMNotificationVO();
+
+        fcmNotificationVO.title = "Title";
+        fcmNotificationVO.message = "Message";
+        fcmNotificationVO.token = fcm_Token;
+
+
+        Call<SendNotificationResponse> call= SmartCallAssistantApiClient.getClient()
+                .create(ApiInterface.class).sendNotification(fcmNotificationVO);
+        call.enqueue(new Callback<SendNotificationResponse>() {
+            @Override
+            public void onResponse(Call<SendNotificationResponse> call, Response<SendNotificationResponse> response) {
+                Log.v("newToken","Calling Notification sender PHP ");
+                try {
+                    SendNotificationResponse sendNotificationResponse=response.body();
+                    if(sendNotificationResponse!=null && sendNotificationResponse.getMessage()!=null)
+                    MyToast.show(getApplicationContext(),sendNotificationResponse.getMessage());
+                }catch (Exception e) {
+                    Log.v("newToken","Trying to sending notification " + e.toString() + "\n" + e.getMessage());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<SendNotificationResponse> call, Throwable t) {
+
+            }
+        });
     }
 
     public void addactivty(View view) {
@@ -581,10 +586,8 @@ public class Dashboard extends AppCompatActivity {
 
     private void logUser(String fcm_Token) {
 
-        SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("LoginDetails", Context.MODE_PRIVATE);
 
-        sharedPreferences = context.getSharedPreferences("LoginDetails", Context.MODE_PRIVATE);
-        selectedUserID =  sharedPreferences.getString("userID", "");
+        selectedUserID =  getSharedPrefernceData("userID");
 
         Crashlytics.setUserIdentifier(selectedUserID);
         Crashlytics.setUserName(fcm_Token.substring(0,10));

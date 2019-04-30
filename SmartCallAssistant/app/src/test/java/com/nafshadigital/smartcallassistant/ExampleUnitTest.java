@@ -1,4 +1,4 @@
-package com.malaris.smartcallassistant;
+package com.nafshadigital.smartcallassistant.activity;
 
 import org.junit.Test;
 
